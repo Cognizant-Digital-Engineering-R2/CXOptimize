@@ -14,6 +14,7 @@ OS:           Windows 7 6.1 amd64
 
 ## Documentation
 
+Details about properties are detailed in [User Guide](../USERGUIDE.md)
 
 ## Development / Contribution
 

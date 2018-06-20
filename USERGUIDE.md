@@ -20,7 +20,7 @@ The configuration created in the above step will be used in the collector.
 CXOptimize supports 3 different types of collectors and they support different set of features as given below.Please select your collector based on the support matrix provided below.
 
 | Metrics       | Selenium Java           | Selenium C#/VB.Net   | CodedUI   | Chrome Plugin   | JavascriptCollector  | Comments   |
-| ------------- |:-------------:| -----:| -----:| -----:| -----:| -----:| -----:|
+| ------------- |:-------------:| -----:| -----:| -----:| -----:| -----:|
 | SPA Support   | Yes | Yes | Yes |  No | Yes | no support for Angular2/Angular4
 | Resource Header   | Yes | Yes | Yes | No | No |
 | Navigation Timing   | Yes | Yes | Yes | Yes | Yes |
@@ -190,7 +190,7 @@ For Single Page Applications like AngularJS,React etc in addition to above follo
 
 CXOptimize API is heart/brain of the entire system which provides RESTful API for the Collector and UI to function properly.In addition to that entire business logic is part of the API tier.There are multiple APIs as part of this which can be used to consume the data from CXOptimize with lot of other systems.
 
-Details about CXOptimize API properties - found here
+[CXOptimize API properties found here] (/CXOptimizeAPI/README.md)
 
 [CXOptimize API Documentation found here](/Documents/CXOptimize-API User Guide.docx)
 

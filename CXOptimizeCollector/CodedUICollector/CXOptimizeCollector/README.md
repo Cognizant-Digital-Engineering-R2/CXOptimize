@@ -1,18 +1,14 @@
 ## CXOptimize Collector
 
-Collector Module is java executable which is responsible for collecting performance and other metrics from the Web Driver when included into Selenium scripts.This module is also responsible for transforming collected data into required format needed by the centralized engine. 
+Collector Module is .net dll which is responsible for collecting performance and other metrics from the BrowserWindow when included into CodedUI scripts.This module is also responsible for transforming collected data into required format needed by the centralized engine. 
+CodedUI needs license from Microsoft
 
 ## Build
 
-``` gradlew clean build```
-
-IDE Used : IntelliJ IDEA Community Edition 2017.2.6
-Gradle :
+IDE Used : Visual Studio 2013 Enterprise Edition
+Runtime :
 ```
-Gradle:       3.1
-Groovy:       2.4.7
-Ant:          Apache Ant(TM) version 1.9.6 compiled on June 29 2015
-JVM:          1.8.0_73 (Oracle Corporation 25.73-b02)
+CLR:          .Net Framework 4.5.2
 OS:           Windows 7 6.1 amd64
 ```
 

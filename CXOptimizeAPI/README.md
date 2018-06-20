@@ -130,11 +130,11 @@ The test project with in this workspace requires connection to Elastic Search to
 
 ### Documentation
 
-Detailed API documentation is found here
+[CXOptimize API Documentation found here](/Documents/CXOptimize-API User Guide.docx)
 
-Installation details found here
+[Installation](../INSTALLATION.md) document found here
 
-Userguide is found here
+[User Guide](../USERGUIDE.md) document found here
 
 ## Development / Contribution
 
