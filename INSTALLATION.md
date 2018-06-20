@@ -9,21 +9,29 @@ CXOptimize componenets can be installed as scaled-in or scaled-out mode
 4.  JAVA_HOME system environment variable set
 
 	
-##	Scaled In mode (Windows)
-1.  In order to install the server side components, please copy the CXOptimize_2.0.3.zip from the [Releases](../../Releases/latest) folder.
+##	Scaled In mode
+
+In order to install the server side components, copy the executables for windows or linux from the [Releases](../../Releases/latest/executables/cxoptimizecomponents) folder.
 	
 ![](/Documents/images/installpackage.png "CXOptimize components")
 
-2.  Once extracted,run installer.bat file from command prompt (not by double-clicking it). Make sure the command prompt is opened as Administrator.
-3.  This will configure all required properties and install all the component’s necessary.
-4.  It is important not to close any of the opened command prompt. The installer.bat automatically validates if all components are up and running.
-5.  Use the urls.txt file if you want to manually validate all components.
-6.	(Optional) Manually naviage to freegeoip folder and excute freegeoip.exe.This is used to get geo location data for a given IP.It uses open source version of the IP database from MaxMind.More details will be found [here](https://github.com/fiorix/freegeoip)
-7.	(Optional) Grafana - alternative to Kibana Dashboard incase if you need rich UI and Dashboard experience.Setup details can be found [here](https://github.com/grafana/grafana)
+###	Windows
+1.  Once copied,run installer.bat file from command prompt (not by double-clicking it). Make sure the command prompt is opened as Administrator.
+2.  This will configure all required properties and install all the component’s necessary.
+3.  It is important not to close any of the opened command prompt. The installer.bat automatically validates if all components are up and running.
+4.  Use the urls.txt file if you want to manually validate all components.
+5.	(Optional) Manually naviage to freegeoip folder and excute freegeoip.exe.This is used to get geo location data for a given IP.It uses open source version of the IP database from MaxMind.More details will be found [here](https://github.com/fiorix/freegeoip)
+6.	(Optional) Grafana - alternative to Kibana Dashboard incase if you need rich UI and Dashboard experience.Setup details can be found [here](https://github.com/grafana/grafana)
 
+###	Linux
+1.	Navigate to \elasticsearch-5.5.2\bin and execute ./elasticsearch (This can be executed as service as well using tools like systemctl etc)
+2.	Navigate to \api and execute java -jar CXOptimizeAPI-2.0.3.jar
+3.	Navigate to \kibana-5.5.2-linux-x86_64\bin and execute ./kibana
+4.	Navigate to \ui and execute java -jar CXOptimizeUI-2.0.3.jar
+5.	Navigate to \caddy and execute ./caddy Caddyfile
 	
-##	Scaled Out mode (Windows)
-In order to install the server side components, please copy the CXOptimize_2.0.3.zip from the [Releases](../../Releases/latest) folder.
+##	Scaled Out mode
+In order to install the server side components, copy the executables for windows or linux from the [Releases](../../Releases/latest/executables/cxoptimizecomponents) folder.
 
 ![](/Documents/images/installpackage.png "CXOptimize components") 
  
@@ -32,7 +40,7 @@ In order to install the server side components, please copy the CXOptimize_2.0.3
 2.  Navigate to elasticsearch-5.5.2/config and update elasticsearch.yml
 3.  http.port: ESPORT (any port which is accessible to other machines - default 9200) 
 4.  Navigate to elasticsearch-5.5.2/bin in command prompt
-5.  Run elasticsearch-service.bat install (This will install ES as service)
+5.  Run elasticsearch-service.bat install (This will install ES as service) or ./elasticsearch for linux
 6.  Run elasticsearch-service.bat start
 7.  Test if ES is up by http://localhost:port
 
@@ -53,7 +61,7 @@ In order to install the server side components, please copy the CXOptimize_2.0.3
 4.   server.basePath="/cxoptimize"
 5.   elasticsearch.url:ESURL
 6.   Navigate to /kibana-5.5.2-windows-x86/bin in command prompt
-7.   Run kibana.bat (This will start Kibana tier)
+7.   Run kibana.bat (This will start Kibana tier) or ./kibana for linux
 
 ### Step 4 - Install CXOptimize UI:
 1.   Copy UI folder to machine where you want to deploy UI tier
@@ -68,7 +76,7 @@ In order to install the server side components, please copy the CXOptimize_2.0.3
 2.   Navigate to /caddy and update caddyfile
 3.   Just Update MACHINEIP & PORT for each component
 4.   Navigate to /caddy in command prompt
-5.   Run caddy.exe (This will start Caddy Web Server Proxy from which all the components can be accessed and this ties all components together)
+5.   Run caddy.exe or ./caddy Caddyfile (This will start Caddy Web Server Proxy from which all the components can be accessed and this ties all components together)
 6.   Test if UI is up by http://caddyurl:caddyport/cxoptimize/login (admin/password)
 
 ### Step 6 - Install Optional Components (freegeoip & Grafana):

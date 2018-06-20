@@ -47,6 +47,7 @@ bootstrap : https://github.com/angular-ui/bootstrap/blob/master/LICENSE
 justgauge : https://github.com/toorshia/justgage/blob/master/LICENSE
 chromeHAR : https://github.com/ericduran/chromeHAR/blob/gh-pages/LICENSE
 chartjs : https://github.com/chartjs/Chart.js/blob/master/LICENSE.md
+jsPDF : https://github.com/MrRio/jsPDF/blob/master/MIT-LICENSE.txt
  
 
 ========================================================================
@@ -57,7 +58,7 @@ The following components are provided under the Others. See project link for det
 
 rhino : https://www.mozilla.org/media/MPL/2.0/index.txt
 org.json : http://www.json.org/license.html
-free geoip : https://github.com/fiorix/freegeoip/blob/master/LICENSE
+freegeoip : https://github.com/fiorix/freegeoip/blob/master/LICENSE
 jquery : https://github.com/jquery/jquery/blob/master/LICENSE.txt
 
 

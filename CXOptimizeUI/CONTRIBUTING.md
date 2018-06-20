@@ -14,7 +14,7 @@ For general queries and discussions, please use the Cognizant CXOptimize Forum o
 
 ### Sign the CLA
 
-Before you contribute, we first ask people to sign a [Contributor License Agreement](https://www.clahub.com/agreements/CognizantQAHub/Cognizant-CXOptimize) (or CLA). We ask this so that we know that contributors have the right to donate the code.
+Before you contribute, we first ask people to sign a [Contributor License Agreement](https://www.clahub.com/agreements/Cognizant-Digital-Engineering-PACE/CXOptimize) (or CLA). We ask this so that we know that contributors have the right to donate the code.
 
 When you open your pull request we ask that you indicate that you've signed the CLA. This will reduce the time it takes for us to integrate it.
 

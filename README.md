@@ -13,6 +13,12 @@ Thank you for agreeing to take part in this survey, your inputs/thoughts will he
 
 [Cognizant CXOptimize Survey](https://docs.google.com/forms/d/e/1FAIpQLSe87PCSBklPe7l5QHf3a06R9flnPmSrhslZS0WUERmtvbz6ag/viewform)
 
+## Feedback
+
+Thank you for trying out our solution please provide your valuable feedback to improve the product. This survey should take only 4-5 minutes to complete.
+
+[Cognizant CXOptimize Feedback](https://docs.google.com/forms/d/e/1FAIpQLSfazirv0beYrgXzuy8NZRPHDIwcQYHftLAr9SfYz3VZQZo5rg/viewform)
+
 ## Download
 
 Download the latest version from the [Releases](../../Releases/latest). After extracting the zip, follow the steps from [INSTALLATION.md](../INSTALLATION.md)
