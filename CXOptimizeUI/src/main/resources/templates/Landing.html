@@ -1,0 +1,658 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Landing</title>
+    <link href="css/login.bootstrap.min.css" rel="stylesheet"></link>
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet"></link>
+    <link rel="stylesheet" href="css/bootstrap_dt.css"></link>
+    <link href="css/typica-login.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/tooltip_style.css"></link>
+    <link rel="stylesheet" href="css/bootstrap-responsive.css"></link>
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css"></link>
+    <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css"></link>
+
+    <style>
+        #cNameError,
+        #pNameError,
+        #sNameError {
+            color: #999;
+            max-height: 0;
+            transition: 0.28s;
+            overflow: hidden;
+            color: red;
+            font-style: italic;
+        }
+
+        .something-semantic {
+            display: table;
+            padding-top: 10%;
+            padding-left: 32%;
+        }
+
+        .something-else-semantic {
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 15px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .landing li {
+            list-style: circle;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 4px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: #5bb75b;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(11px);
+            -ms-transform: translateX(11px);
+            transform: translateX(11px);
+        }
+
+        /* Rounded sliders */
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .landing input {
+            visibility: hidden;
+        }
+
+        .landing label {
+            border-radius: 1.5em;
+            padding-left: 1em;
+            padding-right: 1em;
+            padding-top: .25em;
+            padding-bottom: .25em;
+            cursor: pointer;
+        }
+
+        .landing label:hover {
+            background: #bdffa0;
+        }
+
+        .landing input:checked+label {
+            background: #5cb85c;
+            color: white;
+        }
+
+        .lFont {
+            font-family: 'Lato', Helvetica, sans-serif;
+            font-size: .95em;
+            font-weight: bold;
+            -webkit-font-smoothing: subpixel-antialiased;
+            text-align: middle;
+            vertical-align: middle;
+            color: #074088;
+        }
+
+        .pFont {
+            font-family: 'Lato', Helvetica, sans-serif;
+            font-size: .9em;
+            -webkit-font-smoothing: subpixel-antialiased;
+            text-align: middle;
+            vertical-align: middle;
+        }
+
+        .easyPaginateNav {
+            text-align: right;
+        }
+    </style>
+    <script type="text/javascript" src="js/jquery.v1.8.3.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap_dt.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="js/jscookie.js"></script>
+    <script type="text/javascript" src="js/jquery.easyPaginate.js?6"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        function changeCurrent(e) {
+
+            (function($) {
+            $('#Current_RunID').val(e);
+            })(jQuery);
+        }
+
+        function changeBaseline(e) {
+
+            (function($) {
+            $('#Baseline_RunID').val(e);
+            })(jQuery);
+        }
+
+        function loadProject(clientNameIndex) {
+
+            (function($) {
+                $("#runDetails").empty();
+                var json = JSON.parse(decodeURIComponent($('#ClientList').val()));
+                var projectHtml = '<ul class="landing">';
+                $('#ProjectDetails').empty();
+                $('#ScenarioDetails').empty();
+                $("#runDetails").empty();
+                for (var i = 0; i < json.ClientList[clientNameIndex].ProjectList.length; i++) {
+                    projectHtml = projectHtml + '<li class="landing"><input class="landing" type="radio" value="' + json.ClientList[clientNameIndex].ProjectList[i].PName + '" name="project_select" id="' + json.ClientList[clientNameIndex].ProjectList[i].PName + '"/><label for="' + json.ClientList[clientNameIndex].ProjectList[i].PName + '" onclick=loadScenario(' + clientNameIndex + ',' + i + ')>' + json.ClientList[clientNameIndex].ProjectList[i].PName + '</label></li>';
+
+                }
+                projectHtml = projectHtml + '</ul>';
+                $("#ProjectDetails").append(projectHtml);
+            })(jQuery);
+
+        }
+
+        function loadScenario(clientNameIndex, projectNameIndex) {
+
+            (function($) {
+                $("#runDetails").empty();
+                var json = JSON.parse(decodeURIComponent($('#ClientList').val()));
+                var scenarioHtml = '<ul class="landing">';
+                $('#ScenarioDetails').empty();
+                $("#runDetails").empty();
+                for (var i = 0; i < json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList.length; i++) {
+                    scenarioHtml = scenarioHtml + '<li class="landing"><input class="landing" type="radio" value="' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList[i].SName + '" name="scenario_select" id="' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList[i].SName + '_scenario"/><label for="' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList[i].SName + '_scenario" onclick=loadRun(' + clientNameIndex + ',' + projectNameIndex + ',' + i + ')>' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList[i].SName + '</label></li>';
+
+                }
+                scenarioHtml = scenarioHtml + '</ul>';
+                $("#ScenarioDetails").append(scenarioHtml);
+            })(jQuery);
+        }
+
+        function loadRun(clientNameIndex, projectNameIndex, scenarioNameIndex) {
+
+            var runHtml;
+            (function($) {
+                $("#runDetails").empty();
+                if ($('#Run').prop('checked')) {
+                    var json = JSON.parse(decodeURIComponent($('#ClientList').val()));
+
+                    var jServices = jQuery.noConflict();
+                    jServices.ajaxSetup({
+                        contentType: "application/json; charset=UTF-8",
+                        headers: {
+                            "Authorization": "Bearer " + Cookies.get('token')
+                        }
+                    });
+
+                    var hostName = (window.location.origin).split(":");
+                    var APIPort = '80';
+                    if (!isNaN(hostName[2])) {
+                        APIPort = hostName[2];
+                    } else {
+                        if (hostName[0] === 'https') {
+                            APIPort = '443';
+                        }
+                    }
+                    var curDate = new Date();
+                    curDate = curDate.toString();
+                    var timeZone = curDate.split(" ");
+
+                    var runapi_url = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getRunDetails';
+                    runapi_url = runapi_url + '?ClientName=' + json.ClientList[clientNameIndex].CName + '&ProjectName=' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].PName + '&Scenario=' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList[scenarioNameIndex].SName + '&TimeZone=' + timeZone[5];
+                    jServices.getJSON(runapi_url, function(json_runids) {
+                        runHtml = '<div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-2"><p class="lFont">Baseline Run ID :   </p></div><div class="col-md-1 w-75"> <input class="form-control" type="number" id="Baseline_RunID" name="Baseline_RunID" disabled="disabled"/></div><div class="col-md-2"><p class="lFont">Current Run ID :   </p></div><div class="col-md-1 w-75"> <input class="form-control" type="number" id="Current_RunID" name="Current_RunID" disabled="disabled"/></div><div class="col-md-1"><p class="lFont">Override:   </p></div><div class="col-md-1 w-75"> <label class="switch"><input type="checkbox" id="Override_Run" name="Override_Run"/><div class="slider round"></div></label></div><div class="col-md-1"><div class="help-tip"><p>Select - If test run needs to be override</p></div></div><div class="col-md-1"><p class="lFont">Seconds:   </p></div><div class="col-md-1 w-75"> <label class="switch"><input type="checkbox" id="scale_ck" name="scale_ck"/><div class="slider round"></div></label></div><div class="col-md-1"><div class="help-tip"><p>Select - to view report in seconds scale</p></div></div></div><div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-12"><div class="row  p-2 text-justify"><div class="col-md-1 p-2 text-center " ><p class="lFont">Run ID</p></div><div class="col-md-5 p-2 text-center " ><p class="lFont">Test Duration </p></div><div class="col-md-1 p-2 text-center " ><p class="lFont">Release</p></div><div class="col-md-1 p-2 text-center " ><p class="lFont">Build</p></div><div class="col-md-2 p-2 text-center" ><p class="lFont">Select Baseline Run</p></div><div class="col-md-2 p-2 text-center " > <p class="lFont">Select Current Run</p></div></div><div class="row"><div class="col-md-12" id="runPaging">';
+                        for (var i = json_runids.RunIDs.length - 1; i >= 0; i--) {
+                            runHtml = runHtml + '<span> <div class="row  p-2 text-justify"><div class="col-md-1 p-2 text-center " ><p class="pFont">' + json_runids.RunIDs[i].RunID + '</p></div><div class="col-md-5 p-2 text-justify " ><p class="pFont">' + json_runids.RunIDs[i].Time + '</p></div><div class="col-md-1 p-2 text-center " ><p class="pFont">' + json_runids.RunIDs[i].Release + '</p></div><div class="col-md-1 p-2 text-center " ><p class="pFont">' + json_runids.RunIDs[i].Build + '</p></div>';
+                            if (json_runids.RunIDs[i].RunID == json_runids.BaselineRunID) {
+                                runHtml = runHtml + '<div class="col-md-2 p-2 text-center "><input type="radio"  name="baselineRunID" value="' + json_runids.RunIDs[i].RunID + '" checked="checked" onclick="changeBaseline(\'' + json_runids.RunIDs[i].RunID + '\');"/></div>';
+                            } else {
+                                runHtml = runHtml + '<div class="col-md-2 p-2 text-center "><input type="radio"  name="baselineRunID" value="' + json_runids.RunIDs[i].RunID + '" onclick="changeBaseline(\'' + json_runids.RunIDs[i].RunID + '\');"/></div>';
+                            }
+                            if (json_runids.RunIDs[i].RunID == json_runids.RunID) {
+                                runHtml = runHtml + '<div class="col-md-2 p-2 text-center "><input type="radio"  name="currentRunID" value="' + json_runids.RunIDs[i].RunID + '" checked="checked" onclick="changeCurrent(\'' + json_runids.RunIDs[i].RunID + '\');"/></div></div></span>';
+                            } else {
+                                runHtml = runHtml + '<div class="col-md-2 p-2 text-center "><input type="radio"  name="currentRunID" value="' + json_runids.RunIDs[i].RunID + '" onclick="changeCurrent(\'' + json_runids.RunIDs[i].RunID + '\');"/></div></div></span>';
+                            }
+                        }
+                        runHtml = runHtml + '</div></div></div></div>';
+                        $("#runDetails").append(runHtml);
+                        $('#Baseline_RunID').val(json_runids.BaselineRunID);
+                        $('#Current_RunID').val(json_runids.RunID);
+                        $('#runPaging').easyPaginate({
+                            paginateElement: 'span',
+                            elementsPerPage: 10,
+                            effect: 'climb',
+                            firstButtonText: '<< ',
+                            lastButtonText: ' >>',
+                            prevButtonText: ' Prev ',
+                            nextButtonText: ' Next '
+                        });
+                    });
+
+                }
+
+                if ($('#Transaction').prop('checked')) {
+                    var json = JSON.parse(decodeURIComponent($('#ClientList').val()));
+                    var jServices = jQuery.noConflict();
+                    jServices.ajaxSetup({
+                        contentType: "application/json; charset=UTF-8",
+                        headers: {
+                            "Authorization": "Bearer " + Cookies.get('token')
+                        }
+                    });
+
+                    var hostName = (window.location.origin).split(":");
+                    var APIPort = '80';
+                    if (!isNaN(hostName[2])) {
+                        APIPort = hostName[2];
+                    } else {
+                        if (hostName[0] === 'https') {
+                            APIPort = '443';
+                        }
+                    }
+                    var curDate = new Date();
+                    curDate = curDate.toString();
+                    var timeZone = curDate.split(" ");
+
+                    var runapi_url = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getRunDetails';
+                    runapi_url = runapi_url + '?ClientName=' + json.ClientList[clientNameIndex].CName + '&ProjectName=' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].PName + '&Scenario=' + json.ClientList[clientNameIndex].ProjectList[projectNameIndex].ScenarioList[scenarioNameIndex].SName + '&TimeZone=' + timeZone[5];
+                    jServices.getJSON(runapi_url, function(json_runids) {
+                        runHtml = '<div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-2"><p class="lFont">Current Run ID :   </p></div><div class="col-md-1 w-75"> <input class="form-control" type="number" id="Current_RunID" name="Current_RunID" disabled="disabled"/></div><div class="col-md-1"><p class="lFont">Override:   </p></div><div class="col-md-1 w-75"> <label class="switch"><input type="checkbox" id="Override_Run" name="Override_Run"/><div class="slider round"></div></label></div><div class="col-md-1"><div class="help-tip"><p>Select - If test run needs to be override</p></div></div><div class="col-md-1"><p class="lFont">Seconds:   </p></div><div class="col-md-1 w-75"> <label class="switch"><input type="checkbox" id="scale_ck" name="scale_ck"/><div class="slider round"></div></label></div><div class="col-md-1"><div class="help-tip"><p>Select - to view report in seconds scale</p></div></div></div><div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-12"><div class="row  p-2 text-justify"><div class="col-md-1 p-2 text-center " ><p class="lFont">Run ID</p></div><div class="col-md-5 p-2 text-center " ><p class="lFont">Test Duration </p></div><div class="col-md-1 p-2 text-center " ><p class="lFont">Release</p></div><div class="col-md-1 p-2 text-center " ><p class="lFont">Build</p></div><div class="col-md-2 p-2 text-center " > <p class="lFont">Select Current Run</p></div></div><div class="row"><div class="col-md-12" id="runPaging">';
+                        for (var i = json_runids.RunIDs.length - 1; i >= 0; i--) {
+                            runHtml = runHtml + '<span> <div class="row  p-2 text-justify"><div class="col-md-1 p-2 text-center " ><p class="pFont">' + json_runids.RunIDs[i].RunID + '</p></div><div class="col-md-5 p-2 text-justify " ><p class="pFont">' + json_runids.RunIDs[i].Time + '</p></div><div class="col-md-1 p-2 text-center " ><p class="pFont">' + json_runids.RunIDs[i].Release + '</p></div><div class="col-md-1 p-2 text-center " ><p class="pFont">' + json_runids.RunIDs[i].Build + '</p></div>';
+                            if (json_runids.RunIDs[i].RunID == json_runids.RunID) {
+                                runHtml = runHtml + '<div class="col-md-2 p-2 text-center "><input type="radio"  name="currentRunID" value="' + json_runids.RunIDs[i].RunID + '" checked="checked" onclick="changeCurrent(\'' + json_runids.RunIDs[i].RunID + '\');"/></div></div></span>';
+                            } else {
+                                runHtml = runHtml + '<div class="col-md-2 p-2 text-center "><input type="radio"  name="currentRunID" value="' + json_runids.RunIDs[i].RunID + '" onclick="changeCurrent(\'' + json_runids.RunIDs[i].RunID + '\');"/></div></div></span>';
+                            }
+                        }
+                        runHtml = runHtml + '</div></div></div></div>';
+                        $("#runDetails").append(runHtml);
+                        $('#Current_RunID').val(json_runids.RunID);
+                        $('#runPaging').easyPaginate({
+                            paginateElement: 'span',
+                            elementsPerPage: 10,
+                            effect: 'climb',
+                            firstButtonText: '<< ',
+                            lastButtonText: ' >>',
+                            prevButtonText: ' Prev ',
+                            nextButtonText: ' Next '
+                        });
+                    });
+                }
+
+                if ($('#Time').prop('checked')) {
+                    var json = JSON.parse(decodeURIComponent($('#ClientList').val()));
+                    var runHtml = '<div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-3"><p class="lFont">Baseline Window (UTC) :   </p></div><div class="col-md-1"><p class="lFont">Start :   </p></div><div class="col-md-3 w-75"><div id="datetimepicker1" class="input-append date"><input data-format="MM/dd/yyyy hh:mm:ss" type="text" id="BaselineStart" name="BaselineStart" style="width: 82%;"></input><span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span></div></div><div class="col-md-1"><p class="lFont">End:   </p></div><div class="col-md-3 w-75"><div id="datetimepicker2" class="input-append date"><input data-format="MM/dd/yyyy hh:mm:ss" type="text" id="BaselineEnd" name="BaselineEnd" style="width: 82%;"></input><span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span></div></div></div><div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-3"><p class="lFont">Current Window (UTC):   </p></div><div class="col-md-1"><p class="lFont">Start:   </p></div><div class="col-md-3 w-75"><div id="datetimepicker3" class="input-append date"><input data-format="MM/dd/yyyy hh:mm:ss" type="text" id="CurrentStart" name="CurrentStart"  style="width: 82%;"></input><span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span></div></div><div class="col-md-1"><p class="lFont">End:   </p></div><div class="col-md-3 w-75"><div id="datetimepicker4" class="input-append date"><input data-format="MM/dd/yyyy hh:mm:ss" type="text" id="CurrentEnd" name="CurrentEnd" style="width: 82%;"></input><span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span></div></div></div><div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div class="col-md-1"><p class="lFont">Seconds:   </p></div><div class="col-md-1 w-75"> <label class="switch"><input type="checkbox" id="scale_ck" name="scale_ck"/><div class="slider round"></div></label></div><div class="col-md-1"><div class="help-tip"><p>Select - to view report in seconds scale</p></div></div></div>';
+                    //var runHtml='<div class="row  p-2 m-2 text-justify"  style ="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5" ><div id="datetimepicker" class="input-append date"><input type="text"></input><span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span></div></div>';
+                    $("#runDetails").append(runHtml);
+
+                    $(function() {
+                        $('#datetimepicker1').datetimepicker({
+                            language: 'en',
+                            startDate: -Infinity,
+                            endDate: new Date(),
+                            autoclose: true
+                        });
+                    });
+                    $(function() {
+                        $('#datetimepicker2').datetimepicker({
+                            language: 'en',
+                            startDate: -Infinity,
+                            endDate: new Date(),
+                            autoclose: true
+                        });
+                    });
+                    $(function() {
+                        $('#datetimepicker3').datetimepicker({
+                            language: 'en',
+                            startDate: -Infinity,
+                            endDate: new Date(),
+                            autoclose: true
+                        });
+                        $("#datetimepicker3").on("dp.change", function(e) {
+                            $('#datetimepicker4').data("DateTimePicker").minDate(e.date);
+                        });
+                    });
+                    $(function() {
+                        $('#datetimepicker4').datetimepicker({
+                            language: 'en',
+                            startDate: -Infinity,
+                            endDate: new Date(),
+                            autoclose: true
+                        });
+                        $("#datetimepicker4").on("dp.change", function(e) {
+                            $('#datetimepicker3').data("DateTimePicker").maxDate(e.date);
+                        });
+                    });
+                }
+            })(jQuery);
+        }
+
+        function handleinput() {
+            (function($) {
+            if ($('input[name=client_select]:checked').length == 0) {
+                alert("Please select any Client !!");
+                document.getElementById('loginData').onsubmit = function() {
+                    return false;
+                };
+                return false;
+            } else if ($('input[name=project_select]:checked').length == 0) {
+                alert("Please select any Project !!");
+                document.getElementById('loginData').onsubmit = function() {
+                    return false;
+                };
+                return false;
+            } else if ($('input[name=scenario_select]:checked').length == 0) {
+                alert("Please select any Scenario !!");
+                document.getElementById('loginData').onsubmit = function() {
+                    return false;
+                };
+                return false;
+            } else {
+                if ($('#Run').prop('checked')) {
+                    $('#analysisType').val('Run');
+                    $('#baselineRun').val($('#Baseline_RunID').val());
+                    $('#currentRun').val($('#Current_RunID').val());
+                    $('#Override').val($('#Override_Run').prop('checked'));
+                } else if ($('#Transaction').prop('checked')) {
+                    $('#analysisType').val('Transaction');
+                    $('#currentRun').val($('#Current_RunID').val());
+                    $('#Override').val($('#Override_Run').prop('checked'));
+                } else if ($('#Time').prop('checked')) {
+                    $('#analysisType').val('Time');
+                    changeEpochTime();
+                    $('#bsStart').val($('#BaselineStart').val());
+                    $('#bsEnd').val($('#BaselineEnd').val());
+                    $('#crStart').val($('#CurrentStart').val());
+                    $('#crEnd').val($('#CurrentEnd').val());
+                } else {
+                    $('#analysisType').val('Run');
+                    $('#baselineRun').val($('#Baseline_RunID').val());
+                    $('#currentRun').val($('#Current_RunID').val());
+                }
+                $('#clientName').val($('input[name="client_select"]:checked').val());
+                $('#projectName').val($('input[name="project_select"]:checked').val());
+                $('#scenarioName').val($('input[name="scenario_select"]:checked').val());
+                $('#scale').val($('#scale_ck').prop('checked'));
+                document.getElementById('loginData').onsubmit = function() {
+                    return true;
+                };
+                return true;
+            }})(jQuery);
+        }
+
+        function handleSettings() {
+        (function($) {
+            /*
+            if ($('input[name=client_select]:checked').length == 0) {
+                alert("Please select any Client !!");
+                document.getElementById('loginData1').onsubmit = function () {
+                    return false;
+                };
+                return false;
+            } else if ($('input[name=project_select]:checked').length == 0) {
+                alert("Please select any Project !!");
+                document.getElementById('loginData1').onsubmit = function () {
+                    return false;
+                };
+                return false;
+            } else if ($('input[name=scenario_select]:checked').length == 0) {
+                alert("Please select any Scenario !!");
+                document.getElementById('loginData1').onsubmit = function () {
+                    return false;
+                };
+                return false;
+            } else {
+                $('#clientName1').val($('input[name="client_select"]:checked').val());
+                $('#projectName1').val($('input[name="project_select"]:checked').val());
+                $('#scenarioName1').val($('input[name="scenario_select"]:checked').val());
+                document.getElementById('loginData1').onsubmit = function () {
+                    return true;
+                };
+                return true;
+            }
+            */
+
+            $('#clientName1').val($('input[name="client_select"]:checked').val());
+            $('#projectName1').val($('input[name="project_select"]:checked').val());
+            $('#scenarioName1').val($('input[name="scenario_select"]:checked').val());
+            document.getElementById('loginData1').onsubmit = function() {
+                return true;
+            };
+            return true;
+            })(jQuery);
+        }
+
+        function changeEpochTime() {
+        (function($) {
+            if ($('#Time').prop('checked')) {
+                var parts = '';
+                if (document.getElementById("CurrentEnd").value.length > 5) {
+                    parts = document.getElementById("CurrentStart").value.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+                    //document.getElementById("CurrentStart").value = Date.UTC(+parts[3], parts[2]-1, +parts[1], +parts[4], +parts[5]);
+                    document.getElementById("CurrentStart").value = Date.UTC(parts[3], parts[1] - 1, parts[2], parts[4], parts[5]);
+                }
+                if (document.getElementById("CurrentEnd").value.length > 5) {
+                    parts = document.getElementById("CurrentEnd").value.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+                    document.getElementById("CurrentEnd").value = Date.UTC(parts[3], parts[1] - 1, parts[2], parts[4], parts[5]);
+                }
+                if (document.getElementById("BaselineStart").value.length > 5) {
+                    parts = document.getElementById("BaselineStart").value.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+                    document.getElementById("BaselineStart").value = Date.UTC(parts[3], parts[1] - 1, parts[2], parts[4], parts[5]);
+
+                }
+                if (document.getElementById("BaselineEnd").value.length > 5) {
+                    parts = document.getElementById("BaselineEnd").value.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+                    document.getElementById("BaselineEnd").value = Date.UTC(parts[3], parts[1] - 1, parts[2], parts[4], parts[5]);
+
+                }
+            }
+            })(jQuery);
+        }
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var detailsJson = "";
+        //var json="";
+        var analysisType = "";
+        var username = /*[[${#httpServletRequest.remoteUser}]]*/ Test;
+        (function($) {
+
+            $(document).ready(function() {
+                var hostName = (window.location.origin).split(":");
+                var APIPort = '80';
+                if (!isNaN(hostName[2])) {
+                    APIPort = hostName[2];
+                } else {
+                    if (hostName[0] === 'https') {
+                        APIPort = '443';
+                    }
+                }
+                var curDate = new Date();
+                curDate = curDate.toString();
+                var timeZone = curDate.split(" ");
+                var updateJSON = '{' + '"UserName": "' + username + '" , "TimeZone" : "' + timeZone[5] + '"}';
+                var postUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getClientDetails';
+                //var postUrl = 'http://localhost:9001/getClientDetails';
+                var jsonRequest = $.ajax({
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + Cookies.get('token')
+                    },
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: postUrl,
+                    data: JSON.stringify(updateJSON)
+                });
+                jsonRequest.always(function(data) {
+                    var json = data;
+
+                    var Client_html = '<ul class="landing">';
+                    for (var i = 0; i < json.ClientList.length; i++) {
+
+                        Client_html = Client_html + '<li class="landing"><input class="landing" type="radio" value="' + json.ClientList[i].CName + '" name="client_select" id="' + json.ClientList[i].CName + '"/><label for="' + json.ClientList[i].CName + '" onclick=loadProject("' + i + '")>' + json.ClientList[i].CName + '</label></li>';
+
+
+                    }
+                    Client_html = Client_html + '</ul><input type="hidden" id="ClientList" value="' + encodeURIComponent(JSON.stringify(json)) + '"/>';
+                    $("#ClientDetails").append(Client_html);
+                });
+            });
+
+        })(jQuery);
+
+
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        jQuery(document).ready(function($) {});
+        /*]]>*/
+    </script>
+</head>
+
+<body class="bg-primary p-0" style="color :black">
+<div class="p-0">
+    <div class="container py-4">
+        <div th:replace="fragments/header :: header" />
+        <div class="bg-even p-2" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
+            <div class="row  p-2 text-justify">
+                <div class="col-md-12">
+                    <legend><span class="blue">Select Details</span></legend>
+                </div>
+            </div>
+            <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
+                <div class="col-md-2">
+                    <p class="lFont">Analysis Type : </p>
+                </div>
+                <div class="col-md-3 text-Center"> <input type="radio" id="Run" name="analysis_type" value="Run" checked="checked" />
+                    <label for="Run">Run</label></div>
+                <div class="col-md-3 text-Center"><input type="radio" id="Transaction" name="analysis_type" value="Transaction" />
+                    <label for="Transaction">Transaction</label></div>
+                <div class="col-md-3 text-Center"><input type="radio" id="Time" name="analysis_type" value="Time" />
+                    <label for="Time">Time</label></div>
+                <div class="col-md-1">
+                    <div class="help-tip">
+                        <p>Choose Analysis Type:<br></br>Run - to compare against two runs<br></br>Transaction - to compare against best performing transactions across different run<br></br>Time - to compare against two different time window</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row  p-2 m-2 text-center" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
+                <div class="col-md-12">
+                    <div class="row  p-2 text-justify">
+
+                        <div class="col-md-3 p-2 mx-2 text-center ">
+                            <p class="lFont">Select Client</p>
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3 p-2 mx-2 text-center ">
+                            <p class="lFont">Select Project</p>
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3 p-2 mx-2 text-center ">
+                            <p class="lFont">Select Scenario</p>
+                        </div>
+
+                    </div>
+                    <div class="row  p-2 text-justify">
+
+                        <div class="col-md-3 p-2 mx-2 text-justify " id="ClientDetails" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5;overflow-y: auto;max-height: 15em;"></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3 p-2 mx-2 text-justify " id="ProjectDetails" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5;overflow-y: auto;max-height: 15em;"></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3 p-2 mx-2 text-justify " id="ScenarioDetails" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5;overflow-y: auto;max-height: 15em;"></div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" id="runDetails">
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div>
+                        <!--<form class="form" id="loginData" action="CXOptimiseDashboard.html" enctype="text/plain" method="get">-->
+                        <form class="form" id="loginData" th:action="@{/Dashboard}" th:object="${cxop}" method="post">
+
+                            <div class="footer text-right" style="margin-top:2%">
+                                <input id="clientName" type="hidden" th:field="*{clientName}" />
+                                <input id="projectName" type="hidden" th:field="*{projectName}" />
+                                <input id="scenarioName" type="hidden" th:field="*{scenarioName}" />
+                                <input id="analysisType" type="hidden" th:field="*{analysisType}" />
+                                <input id="baselineRun" type="hidden" th:field="*{baselineRun}" />
+                                <input id="currentRun" type="hidden" th:field="*{currentRun}" />
+                                <input id="Override" type="hidden" th:field="*{Override}" />
+                                <input id="scale" type="hidden" th:field="*{scale}" />
+                                <input id="bsStart" type="hidden" th:field="*{baselineStartDate}" />
+                                <input id="bsEnd" type="hidden" th:field="*{baselineEndDate}" />
+                                <input id="crStart" type="hidden" th:field="*{currentStartDate}" />
+                                <input id="crEnd" type="hidden" th:field="*{currentEndDate}" />
+                                <button type="submit" name="dashboard" class="btn btn-success" onclick="handleinput()">Dashboard</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div>
+
+                        <form class="form" id="loginData1" th:action="@{/Settings.html}" th:object="${cxop}" method="get">
+
+                            <div class="footer text-justify" style="margin-top:2%">
+                                <input id="clientName1" type="hidden" name="ClientName" />
+                                <input id="projectName1" type="hidden" name="ProjectName" />
+                                <input id="scenarioName1" type="hidden" name="Scenario" />
+                                <button type="submit" name="settings" class="btn btn-success" onclick="handleSettings()">Settings</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+</html>

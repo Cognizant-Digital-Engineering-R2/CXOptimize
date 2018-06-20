@@ -1,0 +1,65 @@
+group 'com.cognizant.pace.CXOptimize.UI'
+version '2.0.3'
+
+buildscript {
+    repositories {
+        mavenCentral()
+		jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'CXOptimizeUI'
+    version =  '2.0.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+configurations {
+    deployerJars
+    packaged
+    compile {
+        extendsFrom packaged
+    }
+}
+
+dependencies {
+
+    //UI
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.json:json:20090211")
+    // tag::security[]
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity4:2.1.2.RELEASE")
+    // end::security[]
+
+    packaged 'org.codehaus.groovy:groovy-all:2.4.6'
+    packaged 'org.apache.ivy:ivy:2.4.0-rc1'
+    packaged 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    packaged 'org.apache.ant:ant:1.9.6'
+    packaged 'org.json:json:20090211'
+    packaged 'javax.xml.bind:jaxb-api:2.1'
+    testCompile("junit:junit")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.springframework.security:spring-security-test")
+}
+
+sourceSets.main.java.srcDirs = []
+sourceSets.main.groovy.srcDirs += ["src/main/java"]
+
+
+

@@ -1,0 +1,2073 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="css/tooltip_style.css"></link>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+    <style type="text/css">
+    #divOverlay {
+      resize: both;
+      height: auto;
+      width: auto;
+      background-color: Silver;
+      text-align: left;
+      position: absolute;
+      left: 680px;
+      top: 525px;
+      z-index: 10000;
+      opacity: 1.5;
+    }
+
+     #g1 text:nth-child(7) tspan {
+    font-size: .60em !important;
+    }
+
+    #txtcontent {
+      resize: both;
+      height: auto;
+      width: 250px;
+      margin-left: 5px;
+      margin-right: 30px;
+      word-wrap: break-word;
+      font-family: Lucida Grande, Tahoma, sans-serif;
+    }
+
+    #window {
+      border-radius: 15px;
+      background: #f5f5f0;
+      border: 2px solid #ebebe0;
+    }
+
+    #cdivOverlay {
+      resize: both;
+      height: auto;
+      width: auto;
+      background-color: Silver;
+      text-align: left;
+      position: absolute;
+      left: 550px;
+      top: 260px;
+      z-index: 10000;
+      opacity: 1.5;
+    }
+
+    #respdivOverlay {
+      resize: both;
+      height: auto;
+      width: auto;
+      background-color: Silver;
+      text-align: left;
+      position: absolute;
+      left: 400px;
+      top: 260px;
+      z-index: 10000;
+      opacity: 1.5;
+    }
+
+    #ctxtcontent {
+      resize: both;
+      height: auto;
+      width: 300px;
+      margin-left: 5px;
+      margin-right: 30px;
+      word-wrap: break-word;
+      font-family: Lucida Grande, Tahoma, sans-serif;
+    }
+
+    #resptxtcontent {
+      resize: both;
+      height: auto;
+      width: 500px;
+      word-wrap: break-word;
+      font-family: Lucida Grande, Tahoma, sans-serif;
+    }
+
+    #cwindow {
+      border-radius: 15px;
+      background: #f5f5f0;
+      border: 2px solid #ebebe0;
+    }
+
+    #respwindow {
+      border-radius: 15px;
+      background: #f5f5f0;
+      border: 2px solid #ebebe0;
+    }
+
+    #rdivOverlay {
+      resize: both;
+      height: auto;
+      width: auto;
+      background-color: Silver;
+      text-align: left;
+      position: absolute;
+      left: 210px;
+      top: 220px;
+      z-index: 10000;
+      opacity: 1.5;
+    }
+
+    #rtxtcontent {
+      resize: both;
+      height: auto;
+      width: 700px;
+      margin-left: 25px;
+      margin-right: 30px;
+      word-wrap: break-word;
+      font-family: Lucida Grande, Tahoma, sans-serif;
+    }
+
+    #rwindow {
+      border-radius: 15px;
+      background: #f5f5f0;
+      border: 2px solid #ebebe0;
+    }
+
+    #tnxrdivOverlay {
+      resize: both;
+      height: auto;
+      width: auto;
+      background-color: Silver;
+      text-align: left;
+      position: absolute;
+      left: 210px;
+      top: 220px;
+      z-index: 10000;
+      opacity: 1.5;
+    }
+
+    #tnxrtxtcontent {
+      resize: both;
+      height: auto;
+      width: 700px;
+      margin-left: 25px;
+      margin-right: 30px;
+      word-wrap: break-word;
+      font-family: Lucida Grande, Tahoma, sans-serif;
+    }
+
+    #tnxrwindow {
+      border-radius: 15px;
+      background: #f5f5f0;
+      border: 2px solid #ebebe0;
+    }
+
+    select {
+      font-family: Lucida Grande, Tahoma, sans-serif;
+      font-size: 12px;
+    }
+
+    .pie-legend {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .pie-legend span {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 100%;
+      margin-right: 16px;
+      margin-bottom: -2px;
+    }
+
+    .pie-legend li {
+      margin-bottom: 10px;
+    }
+
+
+
+
+    </style>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-migrate-3.0.0.js"></script>
+    <script type="text/javascript" src="js/jquery-migrate-1.2.1.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.pager.js"></script>
+    <script type="text/javascript" src="js/jscookie.js"></script>
+    <script type="text/javascript" src="js/jspdf.min.js"></script>
+    <script type="text/javascript" src="js/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/chart.js"></script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    function drawShape() {
+      for (var l = document.getElementsByTagName("Canvas"), t = l.length, e = 0; t > e; e++) {
+        var i = document.getElementById(l[e].id),
+          f = i.getContext("2d");
+        l[e].id.includes("medium") && (f.fillStyle = "orange", f.fillRect(0, 0, 40, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText("Medium", 0, 10)), l[e].id.includes("high") && (f.fillStyle = "red", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText("High", 0, 10)), l[e].id.includes("low") && (f.fillStyle = "green", f.fillRect(0, 0, 22, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText("Low", 0, 10)), "A" == l[e].id.charAt(0) && (f.fillStyle = "#009900", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", "1" == l[e].id.charAt(1) ? f.fillText(l[e].id.substring(1, 4).concat("%"), 0, 10) : f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "B" == l[e].id.charAt(0) && (f.fillStyle = "#99ff33", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "C" == l[e].id.charAt(0) && (f.fillStyle = "#ffcc00", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "D" == l[e].id.charAt(0) && (f.fillStyle = "#ff751a", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "E" == l[e].id.charAt(0) && (f.fillStyle = "#ff3333", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "F" == l[e].id.charAt(0) && (f.fillStyle = "#cc0000", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", "0" == l[e].id.charAt(1) ? f.fillText(l[e].id.substring(2, 3).concat("%"), 0, 10) : f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10))
+      }
+    }
+    /*]]>*/
+
+
+    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    function getQueryVariable(variable) {
+      var blank = "";
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+          return unescape(pair[1]);
+        }
+      }
+      return blank;
+    }
+
+    function reply_click(id, val) {
+      var dialog = document.getElementById('window');
+      dialog.show();
+      $('#txtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px\">' + '<b>Transactions:<br><br></b>' + val + '</p>');
+    }
+
+    function comparison_click(id, val) {
+      var cdialog = document.getElementById('cwindow');
+      cdialog.show();
+      $('#ctxtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px\">' + '<b>Analysis:<br><br></b>' + val + '</p>');
+    }
+
+    function time_click(val) {
+      var respdialog = document.getElementById('respwindow');
+      respdialog.show();
+      $('#resptxtcontent').html('<p style=\"font-weight:bold;font-size:1.09vw\">Transaction Time Distribution</p><br><canvas id=\"skills\" style=\"width: 90%; height: 50%; margin-top: 0 auto; position:relative;\"></canvas><br><div id="pie_legend"></div>');
+      load_chart(val);
+    }
+
+    function recommendation_click(id, val) {
+      var rdialog = document.getElementById('rwindow');
+      rdialog.show();
+      $('#rtxtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px;text-align:left\">' + val + '</p>');
+      drawShape();
+    }
+
+    function tnxrecommendation_click(id, val) {
+      var tnxrdialog = document.getElementById('tnxrwindow');
+      tnxrdialog.show();
+      $('#tnxrtxtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px;text-align:left\">' + val + '</p>');
+      drawShape();
+    }
+
+    window.onload = function() {
+      var dialog = document.getElementById('window');
+      document.getElementById('exit').onclick = function() {
+        dialog.close();
+      };
+
+      var cdialog = document.getElementById('cwindow');
+      document.getElementById('cexit').onclick = function() {
+        cdialog.close();
+      };
+
+      var respdialog = document.getElementById('respwindow');
+      document.getElementById('respexit').onclick = function() {
+        respdialog.close();
+      };
+
+      var rdialog = document.getElementById('rwindow');
+      document.getElementById('rexit').onclick = function() {
+        rdialog.close();
+      };
+
+      var tnxrdialog = document.getElementById('tnxrwindow');
+      document.getElementById('tnxrexit').onclick = function() {
+        tnxrdialog.close();
+      };
+    };
+
+    $(function() {
+      $('#txtcontent').on('click', 'a', function() {
+        var text = $(this).text();
+        var flag = false;
+        var sdialog = document.getElementById('window');
+        sdialog.close();
+        document.getElementById("summaryTab").className = "";
+        document.getElementById("recommendTab").className = "selected";
+        document.getElementById("summaryContent").className = "";
+        document.getElementById("tnxrecommendContent").className = "selected";
+        document.getElementById("mainContent").style.height = "auto";
+        var splitdata = recommendationTableContent.split("<tr>");
+        text = "<td>" + text + "</td>";
+        var tempRecommend = "";
+        for (var i = 0; i < splitdata.length; i++) {
+          if (splitdata[i].indexOf(text) != -1) {
+            tempRecommend = "<tr>" + splitdata[i];
+            break;
+          }
+        }
+        tempRecommend = tempRecommend.replace("recommendation_click", "tnxrecommendation_click");
+        tempRecommend = tempRecommend.replace("rshow", "tnxrshow");
+        // Transactions Recommendations
+        $('#tnxrecommendationRows').html(tempRecommend);
+      });
+    });
+
+    $(function() {
+      $('#show-all').on('click', 'img', function() {
+        document.getElementById("tnxrecommendContent").className = "";
+        document.getElementById("recommendContent").className = "selected";
+        document.getElementById("mainContent").style.height = "545px";
+      });
+    });
+    /*]]>*/
+
+
+    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    var recommendationTableContent = '';
+    var tnxData;
+    var apiURL = '';
+    (function($) {
+      $(document).ready(function() {
+        var clientname = $('#clientName').val().replace(/[^a-zA-Z0-9|^_|^\-|^\s]/g,'');
+        $('#client').html('<b>Client Name :</b>' + clientname);
+        var projectname = $('#projectName').val().replace(/[^a-zA-Z0-9|^_|^\-|^\s]/g,'');
+        $('#project').html('<b>Project Name :</b>' + projectname);
+        var scenarioname = $('#scenarioName').val().replace(/[^a-zA-Z0-9|^_|^\-|^\s]/g,'');
+        $('#scenario').html('<b>Scenario Name :</b>' + scenarioname);
+        var runID = $('#currentRun').val().replace(/[^0-9]/g,'');
+        var baselineRunID = $('#baselineRun').val().replace(/[^0-9]/g,'');
+        var filter = '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname;
+        var timeFilter = '';
+        var analysisType = $('#analysisType').val().replace(/[^a-zA-Z]/g,'');
+        if (analysisType == undefined || analysisType == "") {
+          analysisType = 'Run';
+        }
+        filter += '&AnalysisType=' + analysisType;
+        if (analysisType == 'Run' || analysisType == 'Transaction') {
+          if (runID == undefined || runID == "") {} else {
+            filter += '&RunID=' + runID;
+          }
+          if (analysisType == 'Transaction') {} else {
+            if (baselineRunID == undefined || baselineRunID == "") {
+            } else {
+              filter += '&BaselineRunID=' + baselineRunID;
+            }
+          }
+          if ($('#Override').val() !== 'false') {filter += '&Override=true';}
+        } else {
+          timeFilter += '&BaselineStart=' + $('#bsStart').val().replace(/[^0-9]/g,'');
+          timeFilter += '&BaselineEnd=' + $('#bsEnd').val().replace(/[^0-9]/g,'');
+          timeFilter += '&CurrentStart=' + $('#crStart').val().replace(/[^0-9]/g,'');
+          timeFilter += '&CurrentEnd=' + $('#crEnd').val().replace(/[^0-9]/g,'');
+          filter += timeFilter;
+        }
+
+        if ($('#scale').val() === 'true') {filter += '&Scale=seconds';}
+
+        var jServices = jQuery.noConflict();
+        jServices.ajaxSetup({
+          contentType: "application/jsonp; charset=UTF-8",
+          headers:{"Authorization" : "Bearer " + Cookies.get('token')}
+        });
+        var hostName = (window.location.origin).split(":");
+        var APIPort = '80';
+        if (!isNaN(hostName[2])) {
+          APIPort = hostName[2];
+        } else {
+            if(hostName[0] === 'https'){
+                APIPort = '443';
+            }
+        }
+        apiURL = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getSummaryReport' + filter;
+        //var apiURL = 'http://localhost:9001/getSummaryReport' + filter;
+        jServices.getJSON(apiURL, function(json) {
+          //RunID
+          var runID = json.header.CurrentRunID;
+          $('#currid').html('<b>Current RunID :</b> ' + runID + ' (' + json.header.CurrentRunDuration + ')');
+          //Kibana
+          var Kiburl = hostName[0] + ':' + hostName[1] + ':' + APIPort + json.kibanaURL;
+          $('#kibanaiframe').attr('src', Kiburl);
+          //header
+          tnxData = json;
+          var platform = '<b>Platform :</b> ' + json.Transactions[0].platform;
+          $('#platform').html(platform);
+          var useragent = '<b>Browser :</b> ' + json.Transactions[0].browser;
+          $('#useragent').html(useragent);
+          var curRel = '<b>Current :</b> ' + json.header.CurrentRelease + '(' + json.header.CurrentBuildNo + ')';
+          $('#current').html(curRel);
+          var baseRel = '<b>Baseline :</b> ' + json.header.BaselineRelease + '(' + json.header.BaselineBuildNo + ')';
+          $('#baseline').html(baseRel);
+          var blineid = '<b>Baseline RunID :</b> ' + json.header.BaselineRunID + ' (' + json.header.BaselineRunDuration + ')';
+          $('#blineid').html(blineid);
+          var sampleFilter = '';
+          var resFilter = '';
+          if (analysisType == 'Run' || analysisType == 'Transaction') {
+            sampleFilter += '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname + '&AnalysisType=' + analysisType + '&RunID=' + json.header.CurrentRunID;
+            if (analysisType == 'Run') {
+              resFilter += sampleFilter + '&BaselineRunID=' + json.header.BaselineRunID;
+            }
+          } else {
+            sampleFilter += '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname + '&AnalysisType=' + analysisType + timeFilter;
+            resFilter += sampleFilter;
+          }
+
+           var summaryScore = 0;
+          summaryScore = Math.round(((json.execSummary.totalScore * json.compliance.totalScoreComplianceWeight) + (json.compliance.compareCompliancePercentage * json.compliance.compareComplianceWeight) + (json.compliance.indvScoreCompliancePercentage * json.compliance.indvScoreComplianceWeight) + (json.compliance.slaCompliancePercentage * json.compliance.slaComplianceWeight))/100);
+
+          //executive summary
+          var content = '';
+		  var breakTag = '';
+          content += 'CXOptimize status for the current run : <b>' + customValue(summaryScore) + '</b><br>';
+          content += 'CXOptimize determines total of <b>' + json.execSummary.callsReduction + ' HTTP </b> calls can be reduced by merging Stylesheets and Javascripts<br>';
+          if (json.execSummary.cssCnt > 0) {
+            content += 'Improve page rendering time by moving <b>' + json.execSummary.cssCnt + ' Stylesheets</b>  from BODY to HEAD<br>';
+          }
+		  else
+          {
+            breakTag += '<br>';
+          }
+          if (json.execSummary.jsCnt > 0) {
+            content += 'Avoid render blocking by moving <b>' + json.execSummary.jsCnt + ' Javascripts</b> from HEAD to bottom of page or include ASYNC/DEFER attribute<br>';
+          }
+		  else
+          {
+            breakTag += '<br>';
+          }
+          if (json.execSummary.htmlSize > 0) {
+            content += 'Minify HTML and internal Stylesheet and Javascript will reduce <b>' + json.execSummary.htmlSize + ' KB</b> of payload<br>';
+          }
+		  else
+          {
+            breakTag += '<br>';
+          }
+          if (json.execSummary.commentSize > 0) {
+            content += 'Reduce page size by <b>' + json.execSummary.commentSize + ' KB</b> by removing unneccessory comments<br>';
+          }
+		  else
+          {
+            breakTag += '<br>';
+          }
+          if (json.execSummary.bandwidthSaving > 0) {
+            content += 'Network Bandwidth Usage for all transcations can be reduced by <b>' + Math.round(parseFloat(json.execSummary.bandwidthSaving)) + ' %</b><br>';
+          }
+		  else
+          {
+            breakTag += '<br>';
+          }
+
+		  content += breakTag;
+          content += '<br>';
+
+
+
+          $('#ExecSummary').html(content);
+          //gauge
+          var g1 = new JustGage({
+            id: 'g1',
+            title: "Run Status",
+            label: "Performance",
+            value: summaryScore,
+            min: 0,
+            max: 100,
+			hideMinMax: true,
+            pointer: true,
+            gaugeWidthScale: 1.2,
+            customSectors: [{
+              color: '#009900',
+              lo: 75,
+              hi: 100
+            }, {
+              color: '#99ff33',
+              lo: 60,
+              hi: 74
+            }, {
+              color: '#ffcc00',
+              lo: 40,
+              hi: 59
+            }, {
+              color: '#cc0000',
+              lo: 0,
+              hi: 39
+            }],
+            counter: true,
+            titleFontColor: "black",
+            titleFontFamily: "Arial",
+            titlePosition: "top",
+            relativeGaugeSize: true,
+            humanFriendly: true,
+            counter: false,
+			textRenderer: customValue
+          });
+
+		  function customValue(val)
+          {
+            if (val < 40)
+            {
+                return 'Poor';
+            } else if (val >= 40 && val < 60)
+            {
+                return 'Bad';
+            } else if (val >= 60 && val < 75)
+            {
+                return 'Good';
+            } else if (val >= 75 )
+            {
+                return 'Very Good';
+            }
+          }
+          //rulesSummary
+          var content = '';
+          for (var i = 0; i < json.rulesSummary.length; i++) {
+            content += '<tr><td>' + json.rulesSummary[i].priority + '</td><td>' + json.rulesSummary[i].Rule + '</td><td>' + json.rulesSummary[i].count + '</td><td><img src="images/view_icon.png" id="show' + i + '" alt="' + (json.rulesSummary[i].txnList).split('<a').join('<br><a href=\'#\'') + '" onClick="reply_click(this.id, this.alt)" Style="cursor: pointer;"/></td></tr>';
+          }
+          if (content == '')
+          {
+            content += '<tr><td colspan="4">All transactions are performance complaint</td></tr>';
+            $('#rulesSummaryRows').html(content);
+          }
+          else
+          {
+            $('#rulesSummaryRows').html(content);
+            $("#Recommendation_Summary").tablesorter({
+              widthFixed: false,
+              sortList: [
+                [0, 0]
+              ]
+            }).tablesorterPager({
+              container: $("#Recommendation_Summary_pager"),
+              size: 5,
+              positionFixed: false
+            });
+          }
+          //sla
+          content = '';
+          for (var i = 0; i < json.Transactions.length; i++) {
+            if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla)) {
+              content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].restime + '</td></tr>';
+            }
+          }
+          if (content == '') {
+            content += '<tr><td colspan="3">All transactions within SLA</td></tr>';
+            $('#slaRows').html(content);
+          } else {
+            $('#slaRows').html(content);
+            $("#Transactions_Above_SLA").tablesorter({
+              widthFixed: false,
+              sortList: [
+                [2, 1]
+              ]
+            }).tablesorterPager({
+              container: $("#Transactions_Above_SLA_pager"),
+              size: 5,
+              positionFixed: false
+            });
+          }
+          //score
+          content = '';
+          for (var i = 0; i < json.Transactions.length; i++) {
+            content += '<tr style="font-family:"Georgia", Times,"Times New Roman", serif;"><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].score + '</td></tr>';
+          }
+          $('#scoreRows').html(content);
+          $("#Transactions_Worst_Score").tablesorter({
+            widthFixed: false,
+            sortList: [
+              [1, 0]
+            ]
+          }).tablesorterPager({
+            container: $("#Transactions_Worst_Score_pager"),
+            size: 5,
+            positionFixed: false
+          });
+          //clientTime
+          content = '';
+          for (var i = 0; i < json.Transactions.length; i++) {
+            content += '<tr style="font-family:"Georgia", Times,"Times New Roman", serif;"><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].clientTime + '</td></tr>';
+          }
+          $('#timeRows').html(content);
+          $("#Transactions_ProcessingTime").tablesorter({
+            widthFixed: false,
+            sortList: [
+              [2, 1]
+            ]
+          }).tablesorterPager({
+            container: $("#Transactions_ProcessingTime_pager"),
+            size: 5,
+            positionFixed: false
+          });
+          //Degraded
+          content = '';
+          for (var i = 0; i < json.Transactions.length; i++) {
+            content += '<tr style="font-family:"Georgia", Times,"Times New Roman", serif;"><td align="left">' + json.Transactions[i].name + '</td><td style=\"text-align: center; font-weight: bold; color:black\">' + json.Transactions[i].deviation + '</td></tr>';
+          }
+          $('#degradedRows').html(content);
+          $("#Transactions_degraded").tablesorter({
+            widthFixed: false,
+            sortList: [
+              [1, 1]
+            ]
+          }).tablesorterPager({
+            container: $("#Transactions_degraded_pager"),
+            size: 5,
+            positionFixed: false
+          });
+          //responseTime
+          content = '';
+          var clientTime = 0;
+          for (var i = 0; i < json.Transactions.length; i++) {
+            if (json.Transactions[i].speedIndex === undefined) {
+            if(parseInt(json.Transactions[i].clientProcessing) < 0)
+                {
+                    clientTime = 0;
+                }
+                else
+                {
+                    clientTime = parseInt(json.Transactions[i].clientProcessing);
+                }
+              content += '<tr><td align="left">' + json.Transactions[i].name + '<div class="help-tip"><p>' + json.Transactions[i].url + '</p></td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].ninetyfiveper + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + clientTime.toString() + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].visuallyComplete + '</td><td>' + json.Transactions[i].resourceCount + '</td><td>' + json.Transactions[i].resourceSize + '</td><td><a href="TransactionSamples.html' + sampleFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer">' + json.Transactions[i].count + '</a></td><td><a href="har/HarViewer.html' + filter + '&TransactionName=' + json.Transactions[i].name + '&SampleValue=' + json.Transactions[i].ninetyfiveper + '" target="_blank" rel="noopener noreferrer">View HAR</a></td><td><img src=\"images/piechart.PNG\" alt=\"' + json.Transactions[i].name + '\" onClick=\"time_click(this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
+            } else {
+
+              content += '<tr><td align="left">' + json.Transactions[i].name + '<div class="help-tip"><p>' + json.Transactions[i].url + '</p></td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].ninetyfiveper + '</td><td>' + json.Transactions[i].speedIndex + '</td><td>' + json.Transactions[i].ttfbUser + '</td><td>' + json.Transactions[i].ttfpUser + '</td><td>' + (parseInt(json.Transactions[i].serverTime) + parseInt(json.Transactions[i].downloadTime)).toString() + '</td><td>' + json.Transactions[i].clientProcessing  + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].visuallyComplete +'</td><td>' + json.Transactions[i].resourceCount + '</td><td>' + json.Transactions[i].resourceSize + '</td><td><a href="TransactionSamples.html' + sampleFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer">' + json.Transactions[i].count + '</a></td><td><a href="har/HarViewer.html' + filter + '&TransactionName=' + json.Transactions[i].name + '&SampleValue=' + json.Transactions[i].ninetyfiveper + '" target="_blank" rel="noopener noreferrer">View HAR</a></td><td><img src=\"images/piechart.PNG\" alt=\"' + json.Transactions[i].name + '\" onClick=\"time_click(this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
+            }
+
+          }
+          $('#responseTimeRows').html(content);
+          $("#ResponseTime").tablesorter({
+            widthFixed: false,
+            sortList: [
+              [2, 1]
+            ]
+          }).tablesorterPager({
+            container: $("#ResponseTime_pager"),
+            size: 15,
+            positionFixed: false
+          });
+          //recommendation
+          var canvasProperties;
+          var propArray;
+          var recommLength = 0;
+          var recommContent = '';
+          content = '';
+          for (var i = 0; i < json.Transactions.length; i++) {
+            recommContent = '';
+            for (var j = 0; j < json.Transactions[i].recommendations.length; j++) {
+              canvasProperties = json.Transactions[i].recommendations[j].canvPriority;
+              propArray = canvasProperties.split(",");
+              recommContent += '<li><canvas id=\'' + propArray[0] + '\' width=\'' + propArray[1] + '\' height=\'' + propArray[2] + '\'></canvas>';
+              canvasProperties = json.Transactions[i].recommendations[j].canvScore;
+              propArray = canvasProperties.split(",");
+              recommContent += '<canvas id=\'' + propArray[0] + '\' width=\'' + propArray[1] + '\' height=\'' + propArray[2] + '\'></canvas>';
+              recommContent += ' ';
+              recommContent += json.Transactions[i].recommendations[j].desc + '</li>';
+            }
+            content += '<tr><td>' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].score + '</td><td><img src=\"images/checklist.png\" id=\"rshow' + i + '\" alt=\"' + recommContent + '\" onClick="recommendation_click(this.id, this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
+          }
+          $('#recommendationRows').html(content);
+          recommendationTableContent = content;
+          $("#Recommendations_new").tablesorter({
+            widthFixed: false,
+            sortList: [
+              [1, 0]
+            ]
+          }).tablesorterPager({
+            container: $("#Recommendations_pager"),
+            size: 15,
+            positionFixed: false
+          });
+          //comparison
+          content = '';
+          for (var i = 0; i < json.Transactions.length; i++) {
+            content += '<tr><td>' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].baselineRT + '</td><td>' + json.Transactions[i].currentRT + '</td><td>' + json.Transactions[i].deviation + '</td><td><img src="images/analysis.png" id="cshow' + i + '" alt="' + json.Transactions[i].comparativeAnalysis + '" onClick="comparison_click(this.id, this.alt)" Style="cursor: pointer;"/></td><td><a href="ResourceComparison.html' + resFilter + '&TransactionName=' + json.Transactions[i].name + '&CurrentSampleValue=' + json.Transactions[i].currentRT + '&BaselineSampleValue=' + json.Transactions[i].baselineRT + '" target="_blank" rel="noopener noreferrer"><img src="images/compare.png" Style="cursor: pointer;width: auto; height: auto"/></a></td><td><a href="BrowserComparison.html' + resFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer"><img src="images/browsericons.png" Style="cursor: pointer;width: auto; height: auto"/></a></td></tr>';
+          }
+          $('#comparisonRows').html(content);
+          $("#Comparison").tablesorter({
+            widthFixed: false,
+            sortList: [
+              [3, 1]
+            ]
+          }).tablesorterPager({
+            container: $("#Comparison_pager"),
+            size: 15,
+            positionFixed: false
+          });
+        });
+      });
+
+    })(jQuery);
+
+
+    /*]]>*/
+
+
+    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    function reloadKibana() {
+      document.getElementById('kibanaiframe').src = document.getElementById('kibanaiframe').src;
+      captureSummaryContent();
+    }
+    var contLength = 0;
+    function resizeSummaryContent() {
+      document.getElementById("summaryContent").style.height = contLength + "px";
+    }
+    function captureSummaryContent() {
+      if (document.getElementById("summaryContent").scrollHeight != 0 && contLength == 0)
+        contLength = document.getElementById("mainContent").scrollHeight;
+    }
+    function getRandomColor() {
+      var letters = '56789ABCDE'.split('');
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * letters.length)];
+      }
+      return color;
+    }
+
+  function generatePDF()
+{
+    var clientname = $('#clientName').val().replace(/[^a-zA-Z0-9|^_|^\-|^\s]/g,'');
+    var projectname = $('#projectName').val().replace(/[^a-zA-Z0-9|^_|^\-|^\s]/g,'');
+    var scenarioname = $('#scenarioName').val().replace(/[^a-zA-Z0-9|^_|^\-|^\s]/g,'');
+    var runID = $('#currentRun').val().replace(/[^0-9]/g,'');
+    var baselineRunID = $('#baselineRun').val().replace(/[^0-9]/g,'');
+    var filter = '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname;
+    var timeFilter = '';
+    var analysisType = $('#analysisType').val().replace(/[^a-zA-Z]/g,'');
+    if (analysisType == undefined || analysisType == "")
+	{
+		analysisType = 'Run';
+	}
+	filter += '&AnalysisType=' + analysisType;
+	if (analysisType == 'Run' || analysisType == 'Transaction')
+	{
+	    if (runID == undefined || runID == "") {} else {
+            filter += '&RunID=' + runID;
+          }
+          if (analysisType == 'Transaction') {} else {
+            if (baselineRunID == undefined || baselineRunID == "") {
+            } else {
+              filter += '&BaselineRunID=' + baselineRunID;
+            }
+          }
+          if ($('#Override').val() !== 'false') {filter += '&Override=true';}
+	} else {
+          timeFilter += '&BaselineStart=' + $('#bsStart').val().replace(/[^0-9]/g,'');
+          timeFilter += '&BaselineEnd=' + $('#bsEnd').val().replace(/[^0-9]/g,'');
+          timeFilter += '&CurrentStart=' + $('#crStart').val().replace(/[^0-9]/g,'');
+          timeFilter += '&CurrentEnd=' + $('#crEnd').val().replace(/[^0-9]/g,'');
+          filter += timeFilter;
+	}
+
+	if ($('#scale').val() === 'true') {filter += '&Scale=seconds';}
+
+	var jServices = jQuery.noConflict();
+	jServices.ajaxSetup({
+          contentType: "application/jsonp; charset=UTF-8",
+          headers:{"Authorization" : "Bearer " + Cookies.get('token')}
+	});
+	var hostName = (window.location.origin).split(":");
+	var APIPort = '80';
+	if (!isNaN(hostName[2]))
+	{
+          APIPort = hostName[2];
+        } else {
+            if(hostName[0] === 'https'){
+                APIPort = '443';
+            }
+	}
+	apiURL = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getSummaryReport' + filter;
+
+
+             jServices.getJSON(apiURL, function(json) {
+                var reportImg = 'data:image/png;base64,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';
+
+                var doc = new jsPDF('l', 'mm', [297, 210]);
+
+                    doc.setFontSize(30);
+                    doc.addImage(reportImg, 'JPEG', 14, 8, 20, 20);
+                    doc.text('CXOptimize Summary Report', 35, 22);
+                    doc.setFontSize(16);
+                    doc.setDrawColor(0,0,153);
+                    doc.line(14,30,285,30);
+                    doc.line(14,55,285,55);
+                    doc.line(14,30,14,55);
+                    doc.line(285,30,285,55);
+                	doc.text('ClientName : ' + json.header.ClientName, 16, 37);
+                	doc.text('ProjectName : ' + json.header.ProjectName, 105, 37);
+                	doc.text('Scenario : ' + json.header.ScenarioName, 200, 37);
+                	doc.text('Baseline : ' + json.header.BaselineRunDuration + ' (RunID :' + json.header.BaselineRunID + ')', 16, 45);
+                	doc.text('Current : ' + json.header.CurrentRunDuration + ' (RunID :' + json.header.CurrentRunID + ')', 16, 53);
+                    doc.setDrawColor(45,100,245);
+                	doc.setFillColor(45,100,245);
+                	doc.rect(14, 60, 209, 15, 'FD');
+                	doc.setTextColor(255, 255, 255);
+                	doc.setFontSize(20);
+                	doc.text(14,70, 'Executive Summary');
+
+                	doc.setFontSize(12);
+                	doc.setTextColor(0, 0, 0);
+                	var line = 85;
+                	if(json.execSummary.callsReduction > 0)
+                	{
+                	doc.text(15,line,'CXOptimize determines total of '  + json.execSummary.callsReduction + ' HTTP calls can be reduced by merging Stylesheets and Javascripts');
+                	line = line + 7;
+                	}
+                	if(json.execSummary.cssCnt > 0)
+                	{
+                	doc.text(15,line,'Improve page rendering time by moving '  + json.execSummary.cssCnt + ' Stylesheets from BODY to HEAD');
+                	line = line + 7;
+                	}
+                	if(json.execSummary.callsReduction > 0)
+                	{
+                	doc.text(15,line,'Avoid render blocking by moving ' + json.execSummary.jsCnt + ' Javascripts from HEAD to bottom of page or include ASYNC/DEFER attribute');
+                	line = line + 7;
+                	}
+                	if(json.execSummary.htmlSize > 0)
+                	{
+                	doc.text(15,line,'Minify HTML and internal Stylesheet and Javascript will reduce ' + json.execSummary.htmlSize + ' KB of payload');
+                	line = line + 7;
+                	}
+                	if(json.execSummary.commentSize > 0)
+                	{
+                	doc.text(15,line,'Reduce page size by ' + json.execSummary.commentSize + ' KB by removing unneccessory comments');
+                	line = line + 7;
+                	}
+                	if(Math.round(parseFloat(json.execSummary.bandwidthSaving)) > 0)
+                	{
+                	doc.text(15,line,'Network Bandwidth Usage for all transcations can be reduced by ' + Math.round(parseFloat(json.execSummary.bandwidthSaving)) + ' %');
+                	line = line + 7;
+                	}
+
+
+                 var summaryScore = 0;
+                summaryScore = Math.round(((json.execSummary.totalScore * json.compliance.totalScoreComplianceWeight) + (json.compliance.compareCompliancePercentage * json.compliance.compareComplianceWeight) + (json.compliance.indvScoreCompliancePercentage * json.compliance.indvScoreComplianceWeight) + (json.compliance.slaCompliancePercentage * json.compliance.slaComplianceWeight))/100);
+                if(summaryScore >= 75)
+                {
+                    doc.setDrawColor(0,153,0);
+                    doc.setFillColor(0,153,0);
+                    doc.rect(225, 60, 60, 15, 'FD');
+                    doc.rect(225, 80, 60, 34, 'FD');
+                    doc.rect(225, 120, 60, 15, 'FD');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.text(238,130,'Very Good');
+                } else if(summaryScore < 75 && summaryScore >= 60)
+                {
+                    doc.setDrawColor(153,255,51);
+                    doc.setFillColor(153,255,51);
+                    doc.rect(225, 60, 60, 15, 'FD');
+                    doc.rect(225, 80, 60, 34, 'FD');
+                    doc.rect(225, 120, 60, 15, 'FD');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.text(245,130,'Good');
+                } else if(summaryScore < 60 && summaryScore >= 40)
+                {
+                    doc.setDrawColor(255,204,0);
+                    doc.setFillColor(255,204,0);
+                    doc.rect(225, 60, 60, 15, 'FD');
+                    doc.rect(225, 80, 60, 34, 'FD');
+                    doc.rect(225, 120, 60, 15, 'FD');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.text(248,130,'Bad');
+                } else{
+                    doc.setDrawColor(204,0,0);
+                    doc.setFillColor(204,0,0);
+                    doc.rect(225, 60, 60, 15, 'FD');
+                    doc.rect(225, 80, 60, 34, 'FD');
+                    doc.rect(225, 120, 60, 15, 'FD');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.text(248,130,'Poor');
+                }
+
+                doc.setTextColor(255, 255, 255);
+                doc.text(226,70, 'CXOptimize Score');
+                doc.setFontSize(100);
+                if(summaryScore == 100)
+                {
+                    doc.text(226,110,summaryScore.toString());
+                }
+                else
+                {
+                     doc.text(235,110,summaryScore.toString());
+                }
+
+
+
+
+                    doc.setDrawColor(45,100,245);
+                	doc.setFillColor(45,100,245);
+                	doc.rect(14, 125, 209, 10, 'FD');
+                	doc.setTextColor(255, 255, 255);
+                	doc.setFontSize(15);
+                	doc.text(14,132, 'Compliance                              Weight       Threshold     Score      Status');
+
+                	doc.setFontSize(10);
+                	doc.setTextColor(0, 0, 0);
+                	doc.text(15,140,'Total Score Compliance :                                      ' + json.compliance.totalScoreComplianceWeight + '                             ' + json.compliance.totalScoreThreshold + '                   ' + json.execSummary.totalScore);
+                	if(json.compliance.totalScoreCompliance)
+                	{
+                	    doc.setDrawColor(0,153,0);
+                    	doc.setFillColor(0,153,0);
+                    	doc.rect(170, 137, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,140,'true');
+                	}
+                	else
+                	{
+                	    doc.setDrawColor(204,0,0);
+                    	doc.setFillColor(204,0,0);
+                    	doc.rect(170, 137, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,140,'false');
+                	}
+
+                	doc.setTextColor(0, 0, 0);
+                	doc.text(15,150,'Individual Transaction Score Compliance :           ' + json.compliance.indvScoreComplianceWeight + '                             ' + json.compliance.indvScoreComplianceThreshold + '                   ' + json.compliance.indvScoreCompliancePercentage);
+                	if(json.compliance.indvScoreComplianceStatus)
+                	{
+                    	doc.setDrawColor(0,153,0);
+                    	doc.setFillColor(0,153,0);
+                    	doc.rect(170, 147, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,150,'true');
+                	}
+                	else
+                	{
+                	    doc.setDrawColor(204,0,0);
+                    	doc.setFillColor(204,0,0);
+                    	doc.rect(170, 147, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,150,'false');
+                	}
+                	doc.setTextColor(0, 0, 0);
+                	doc.text(15,160,'Comparison Compliance :                                     ' + json.compliance.compareComplianceWeight + '                             ' + json.compliance.compareComplianceThreshold + '                   ' + json.compliance.compareCompliancePercentage);
+                	if(json.compliance.compareComplianceStatus)
+                	{
+                    	doc.setDrawColor(0,153,0);
+                    	doc.setFillColor(0,153,0);
+                    	doc.rect(170, 157, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,160,'true');
+                	}
+                	else
+                	{
+                	    doc.setDrawColor(204,0,0);
+                    	doc.setFillColor(204,0,0);
+                    	doc.rect(170, 157, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,160,'false');
+                	}
+                	doc.setTextColor(0, 0, 0);
+                	doc.text(15,170,'SLA Compliance :                                                  ' + json.compliance.slaComplianceWeight + '                             ' + json.compliance.slaComplianceThreshold + '                   ' + json.compliance.slaCompliancePercentage);
+                	if(json.compliance.slaComplianceStatus)
+                	{
+                    	doc.setDrawColor(0,153,0);
+                    	doc.setFillColor(0,153,0);
+                    	doc.rect(170, 167, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,170,'true');
+                	}
+                	else
+                	{
+                	    doc.setDrawColor(204,0,0);
+                    	doc.setFillColor(204,0,0);
+                    	doc.rect(170, 167, 10, 5, 'FD');
+                    	doc.setTextColor(255, 255, 255);
+                    	doc.text(171,170,'false');
+                	}
+                	doc.setTextColor(0, 0, 0);
+
+                doc.addPage();
+
+                	doc.setFontSize(20);
+                	doc.setDrawColor(45,100,245);
+                	doc.setFillColor(45,100,245);
+                	doc.rect(14, 15, 270, 10, 'FD');
+                	doc.setTextColor(255, 255, 255);
+                    doc.text('Summary View', 14, 22);
+                    doc.setTextColor(0, 0, 0);
+                	doc.setFontSize(13);
+                	doc.setDrawColor(45,100,245);
+                	doc.setFillColor(45,100,245);
+                	doc.rect(14, 34, 70, 8, 'FD');
+                	doc.rect(175, 34, 75, 8, 'FD');
+                	doc.setTextColor(255, 255, 255);
+                 doc.text("Top 5 Transaction with higher time", 14, 40);
+                 doc.text("Top 5 Transaction with Worst Score", 175, 40);
+                    doc.setTextColor(0, 0, 0);
+                	var slaColumns = ["Transaction","SLA","Time"];
+                	var scoreColumns = ["Transaction","Score"];
+                	var compColumns = ["Transaction","Deviation"];
+                	var cliprocColumns = ["Transaction","ClientTime","ResourceTime"];
+
+
+
+                var rowCounter = 0;
+                var slaData = new Array();
+                var scoreData = new Array();
+                var cliprocData = new Array();
+                var compData = new Array();
+                for(i=0;i< json.Transactions.length;i++)
+                {
+                    slaData[rowCounter] = new Array(3);
+                    slaData[rowCounter][0] = json.Transactions[i].name;
+                    slaData[rowCounter][1] = json.Transactions[i].sla;
+                    slaData[rowCounter][2] = json.Transactions[i].restime;
+
+                    cliprocData[rowCounter] = new Array(3);
+                    cliprocData[rowCounter][0] = json.Transactions[i].name;
+                    cliprocData[rowCounter][1] = json.Transactions[i].resourceLoadTime;
+                    cliprocData[rowCounter][2] = json.Transactions[i].clientProcessing;
+
+
+
+                    scoreData[rowCounter] = new Array(2);
+                    scoreData[rowCounter][0] = json.Transactions[i].name;
+                    scoreData[rowCounter][1] = json.Transactions[i].score;
+
+                    compData[rowCounter] = new Array(2);
+                    compData[rowCounter][0] = json.Transactions[i].name;
+                    compData[rowCounter][1] = json.Transactions[i].deviation;
+
+
+
+                    rowCounter = rowCounter + 1;
+
+                }
+
+
+                slaData.sort(order3Desc);
+                cliprocData.sort(order3Asc);
+                compData.sort(orderDesc);
+                scoreData.sort(orderAsc);
+
+                 doc.autoTable(slaColumns, slaData.splice(0,5), {
+                        startY: 50,
+                        showHeader: 'firstPage',
+                        margin: {right: 125}
+                    });
+
+                	// Reset page to the same as before previous table
+                    doc.setPage(1 + doc.internal.getCurrentPageInfo().pageNumber - doc.autoTable.previous.pageCount);
+
+
+                	doc.autoTable(scoreColumns, scoreData.splice(0,5), {
+                        startY: 50,
+                        showHeader: 'firstPage',
+                        margin: {left: 175}
+                    });
+
+                	let first = doc.autoTable.previous;
+                	doc.setFontSize(13);
+                	doc.setDrawColor(45,100,245);
+                	doc.setFillColor(45,100,245);
+                	doc.rect(14,first.finalY + 5, 120, 8, 'FD');
+                	doc.rect(175,first.finalY + 5, 60, 8, 'FD');
+                	doc.setTextColor(255, 255, 255);
+                	doc.text("Top 5 Transaction having higher client processing time", 14, first.finalY + 10);
+                    doc.text("Top 5 degraded transaction", 175, first.finalY + 10);
+                    doc.setTextColor(0, 0, 0);
+                    doc.autoTable(cliprocColumns, cliprocData.splice(0,5), {
+                        startY: first.finalY + 15,
+                        showHeader: 'firstPage',
+                        margin: {right: 125}
+                    });
+
+                	// Reset page to the same as before previous table
+                    doc.setPage(1 + doc.internal.getCurrentPageInfo().pageNumber - doc.autoTable.previous.pageCount);
+
+                    doc.autoTable(compColumns, compData.splice(0,5), {
+                        startY: first.finalY + 15,
+                        showHeader: 'firstPage',
+                        margin: {left: 175}
+                    });
+
+                	doc.addPage();
+
+                	var chromeImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAFZElEQVR4AW2VA5AkXRaFv/vey1KPPbO2bdu2bdu2bdu2d3/b9j92D6u6U++e7eiOiqjt2JPGOd+9SeP/aPPznhzy4UMGZIBNH/m07f/K59f4cLgSRBhMHVz74tftBwSw7Y0viWnFCgHOItnVT30kk6rMgvbvE6DBta93ay9nnkXb3k85X1euKRAGI4zNhPif0Ov/ADiv3nKVxdVrbTHErnzcgxir6nQikJesXrNproNPq26ejGdDAjkSIMF4MgFBloqfh2XLXg/snPNFIC8GMN0rIpBXdPr3DlX1i5DzOtwdcCDgbpKAMWSBinuQCBbj3tDvPwk4zstyDMGufMwD2LqiHwBfXXPfUNd/KaReCrE1SJMViwXhDhLgsMBqkSdCKOcgDwOOsdAEwG3P/e9jgKaX9q5ZeXWaGRs7IeUihBjNAMAMcsabBoBgETCkDC4kAGU8Ryzuit3ldwa2N4dqSz9e5wboL/fc9LHX/vPKjdeq1baFpeBgMRLNaI8ehU6HtHo1mKiG+6GdJXamJrpTNNGidqP3D38MeEbeNjS7+PZ34HmvvfPtNk/ZmY8+fZe94tSd5CU9OhbohABNy7IHP4TBgx/B4cEGZLDCdlJd9VuGV/2RotuhSEZRaH6ZEgpmxF7vDsDZ1h7zAG6+44Yfa/A3B5Hf/ZvL4q2ONsRuQagaNr3mdey66xP50TEtV+9ukeB66xLPvGfieqOfkS//DP1+lxDAgsAsY0QRPg68JVmRafH7BndG3WS/vsMGbvDPLcTqCNd8zOPYfZcn8o5vH2VYG70iIODUy0ou2Cw+/LSncMvrX4H2/B6KpWg+24x5mN0XwG7045esbTxfCKw1SWUn2Zv+fCV3v/IAN/7Gt/nkxbfk1ItnWTYItBkEpACHRs4db9DlQw+5mHj5awgpYQCGMBmwD4u3CLW3K1y+VCwMyPnZbdegDWsYDTZw1a6GXmEL4QIETYZex7h6X8u+egNxai1mGYKBsSC0lLns5C4wQEJAt85cur7PX2+xhtdUmdYMARrbGJ87udMmNgAEEpIIuB+SdNQXTGRg4MYPNwWOxmlusjYyU0EKIFgwRZitxHXXJtZ29+L1NFgCNAk6mp1D4aqbb94ncbUAl+SIJGNPavni7pN56d0Tva4zPXJaF1lwcCSmus7z7lUQD/2VoBkgjAFaGLk6BtuXYjDAjxF25zG+VWZ50eMblx7HbVddh2894yF89fiaS/a0ILjLdQqeeY8OszN/IB/5MzFNgZxFV/EYgCQBrf9UKbwJiEyoFyMvP+n7vOimm3nWfe5D31eDGZXv5bNn/oPHFn/m1tc0vIFgGl/7KKG21U8BbN2PnxcAj1X+kYI9HWiBxIQOVTNMpQ7XXLKSKOeCq3bz6OVH+cW9wGtNhs97c9aPgWfEQQwpjmoBWOYt3g33w2wjkIEIAmBVd0CWs3V4gDxbszqKj9ymA15iMA7PQHLXrpkyvwWgaFw2e+K9ud4l1w6AW/b7ehH+glkPaDXRiYAkZ990xTuvWfOeW4zINUQbVz4fXla1z3+uU7QAeIjR2HqLbS4jegrHWOMPkWuvoyTJJbWS3OQalo1uWGS95galaN0DapEcSHnOU1ZzXnFMSiFi5phh9an3ZaxrnX+NCGQr243ejZ/xaE/GMBmE7Ewfqvn2TUqec52ZheoBd5Szfj6caed/mYNB/N9fZnnKfZjUdS68ZmgGhQAVB2dv5UV4thn3Ozyqr3vPXjP1tzuMQHkkZ3N2/lNVPv/TX7a+Y9XhZuKnvxgwCTl3U8i9ZONKvnHeWfY4u/aaD97RV77pWjPsnLaDv/zL/v2AAF734vWxGmUBziL9F4ldCbbChT9xAAAAAElFTkSuQmCC';
+                var firefoxImg = 'data:image/png;base64,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';
+                var ieImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB/ElEQVR4AZ3UA6xdTRDA8d7atm3bjmpHRVxHtRvUtoLatm0Gtdug/Gpf/tPMe5lM921OvpP8cjyzs0rlOmqPPJ4aqdV9CHlQEoWQzrxL4wzkCR6S6/pYhJt4i6/4iAfYjG5IL9/6k+iPOBfHXsQ9YnK+i5YmiTd4E7yTn8P4hbAKGJH7iIiLwe4k0i1yronP8sMfxD2iSWeVqM8/SVR/Z8Qt8/NFDEVbVBXtsUN3k/r+I0rruLprhiMujqKmPK+FtI5qx5vgYTkvd1WREU8RQT95lhOXMEru0yOtnFPL9Z2kJKqa98hnq+iAH6gn94XxHG+QWX1sq16oWq+r6Zz8nVxMRUe1cA6oriqJaqiiVEdRzFEzSyeaJLHS/s2CqqpVvdRP0UBrASbRyuQEdrlzPuyYhkH9ln/W2C5KLec8eK9bF5CtYF1KCaqaHz7iNM7hbACncQvjU0pQ17TkqppB//vQCSqYgf2JMvIuHVIjZMiagHpuE4TknAUvzZTbqBuCtEoaEye7xPLupmsd03QvyuvG6P9QBauw2/WN7aaGdprK+TcuYSVmYgG2477aeU/qWL4kc9SWHUMEsQDT85g3gU6ELaqCMCIiLP4ov70V2AFXJuBXwIUXweSgFeitowQm4yJe46t4izvYhgEo4lkz/iTqWU6UlKR57HtXyxNsCR1YNTyP9gAAAABJRU5ErkJggg==';
+                var safariImg = 'data:image/png;base64,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';
+                var desktopImg ='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH4AwVDTgry1wtZgAAAkRJREFUSMftlT9PFFEUxX93Zt6bWcDdAJuwhdHGL4AdBSUfwMJGTTRQWirfwJ6O+AlMaAmxs9WIRDsLgkiWQAgJyYqwOzt/3rWYXUMxw2rYxMaTvEwmc94997xzZwb+YwTkzdqavt3Y4OveHiJSSVSUWd/HB05zRxhafN8v56pyp9Xi+YuXyMP78/ru2z6pKtXlwQHzYYgV4WMcE1pLGIbVnTvHo4UFgoPDQ4IwZKZeH2n30vPoAi3nEBGiKMLzvFLuz4sLDo6PCQTBWsv09PS1RzS0DjAz4BljMMaUcrMswxMhKCswCkNelmX4vl/amAJOFe+PKlbl4hx5nlc+90RuJgCQ53mlc72pg6GAc65cgDEIQJFF+RF54xFwzpW6UHXjEVDVChdjCHmIq1kMx1aE4j1Q1cqg/gZpmmKMKQRUcU4JEOj1ehwdHV1/DIA3WBmUfrdEhFqthoiQpCleo0GAFva63e5IgQdTk9wNAl7/OKdfMftZlmGtxTlXhFyfmixuBkWqFiJkQAKoSCUvSVNy53Cq3KpNEDxZWaG+tcX3k5NB7sVmudJ5nqZ0ez224z479Gl4QhRNEEYRig72FFcAay23m02eLi8jO9vbem9ujstOh7gfU6vVSPoJiGCMIYljPm1u8mp9nUyKFlye8XhpiWerq6TiEUURcdwrAkZIkoTZVouw2SQ4aLfxrQXAGct57tDBn0pU6e7u0vnymfkoRAfj55zBb7fZf/+BqcVFvDxHA/PbtxpD5+wMd3p648n89/gFB+ATb6GFDNIAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTYtMTItMjFUMTM6NTY6NDMtMDU6MDBrpm9bAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE2LTEyLTIxVDEzOjU2OjQzLTA1OjAwGvvX5wAAAABJRU5ErkJggg==';
+                var tabletImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB/lBMVEUAAADMrq5OLCspEhIpExIpExIpEhIrFBQzHBw0HR00HR00HR0zHR1LLCuzkJBxTU0ODQ0aGxskJSUkJSUkJSUkJSUrLCwvMDAvMDAvMDApKioZGhpVNTVaODgNDQ0lJSU2NjY2NjY2NjY4ODg/Pz9AQEBAQEBAQEA1NTUaGxtDKCddOzoNDQ0lJSU2NjY1NTU1NTU1NTU7Ozs/Pz8/Pz9AQEA1NTUaGxtDKCheOzsNDQ01NTU3Nzc+Pj4/Pz8aGxtDKCdcOjkNDQ01NTU7Ozs/Pz8aGxtDKChbOTkNDQ03Nzc+Pj4/Pz9AQEA1NTUZGxtDKChdOzsNDQ07Ozs/Pz9AQEA2NTUqHR1IKChdOzsNDQ01NTU3Nzc+Pj4/QEA7NjZ3JyZiLCtbOTkNDQ01NTU1NTU7OztAQEA2NTUoHR1IKShcOjkNDQ01NTU4ODg+Pj4/Pz81NTUaGxtDKCheOzsNDQ01NTU8PDxDKCddOzoNDQ04ODg+Pj5AQEAaGxtDKChbOTgNDQ01NTU1NTU8PDxAQEA1NTUaGxtDKChcOjkNDQ0lJSU2NjY1NTU1NTU4ODg/Pz81NTUaGxtCJyd1UVAODQ0WFxcdHh4dHh4dHh4dHh4kJiYkJSUZGhpWNjbPs7NWMzMuFBMuFBMuFBMuFBMyFxc3HR1QMDC8m5oAAACvdOSiAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAHdElNRQfgDBUNOTfGRkBoAAABCklEQVQoz2NgoANgZGJmYYUANnYOTi4Q4Obh5WPgFxAUEoYAEVExcQkQkJSSlmGQlZNXUIQCJWUVVTUgUNfQ1GLQ1tHV04cCA0MjYxMgMDUzt2CwtEJI6Fvb2NqBJewdGBydkCQMnF1cwRJu7gwenkgS+tZe3j4mJr5+/gEMgUHIEgYawSEmJqFh4REMkVHIEvrRMbE+JnHxCYkMSckoEimpaSEm6RmZWQzZOSgS+rl5+QW+hUXFDCWlqBIpZeUhQOdWMFRWoUro51bX1JrV1TM0NKJJNDW3tLa1dzB0dnX39KKAvv4JEydNZpgyddr0GShg5qzZc+bOY5i/YOGixahgydJly1dQMcoBrjRyUZE8lIgAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTYtMTItMjFUMTM6NTc6NTUtMDU6MDArHjHBAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE2LTEyLTIxVDEzOjU3OjU1LTA1OjAwWkOJfQAAAABJRU5ErkJggg==';
+                var phoneImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACZFBMVEUAAAC/pqZgQ0JUOTlWOztWOztdPT1XPDxUNDNRJSVcOjqmh4diRUUMDAwTExMZGhohGhpEHx4pGxsZGhoZGxsYGRk8JiVSODgMDQ0REREZGhokHBw8Hx4rHBwaGhoaGhoZGhovHR1RMC8YGRkeHh4mJiYoKCgmKCgnKCgoKCgoKCgmJycyISFQLCsrLCw1NTU7Ozs/Pz8/Pz8/Pz87PDw4JiZRLS0rLCw1NTU4ODg/Pz8/Pz8/Pz8/Pz88PDw4JiZRLCsrLCw1NTU2NjY+Pj4/Pz8/Pz8/Pz88PDw4JiZRLy4rLCw1NTU1NTU8PDw/Pz9QKSkrLCw1NTU1NTU5OTk/Pz8/Pz9UNzcrKys1NTU3Nzc+Pj4/Pz9VOzorKys1NTU1NTU9PT0/Pz9TOTgrKys1NTU1NTU6Ojo/Pz9UOTkrKys1NTU4ODg/Pz8/Pz9VOzsrKys1NTU2NjY9PT0/Pz9UOjkrKys1NTU1NTU7OztTOTgrKys1NTU4ODg/Pz8/Pz9UOjorKys2NjY+Pj4/Pz9VOzsrKys1NTU1NTU8PDw/Pz9TOTkrKys1NTU1NTU1NTU5OTk/Pz88PDw4JiZTOTgrKys2NjY1NTU1NTU1NTU1NTU3Nzc/Pz88PT04JiZTOTkZGhofHx8fHx8eHx8hHx8fHx8fHx8nJycoKSkzISFSNzcNDQ0ODg4NDg4mEhKJIB8+FRUMDg4VFRUaGhovHR1fQkIMDAwNDg4LDQ0pEhGaIiBFFhUKDQ0QEREYGRk5IyO6n59TNzdDKypFLCxFLCxPLSxHLCxFLCxFLCxQNjadfHsAAADc2z3cAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAHdElNRQfgDBUNOSKrm6SDAAABJUlEQVQoz2NggABGJmYWVjZ2Dk4ubgYUwMPLxy8gKCQsIiqGKiEuISklLSMrJ6+giCqhpKyiqqauoamlrYMqoaunb2BoZGRkbGKKKmFmbmFpZW1jY2tnjyrh4Ojk7OLq5ubu4Ykq4eXt4+vnj0UiIDAoOCQ0DFMiPCIoMio6BlMiNi4oPiExCVMiOSUoNS09A1MiMysoNTsnNw9DIr8gKLWwqLgEQ6K0LCi1vKLSH0OiqjooNbWmtq4eXaKhESiR1tTcgi7R2gaUaO/o7EKX6O7p7evr658wcdJkVIkpU6dNnzFz1uw5c+ehSsxfsHDR4iVLly1fsRJVYtXqNWvXrd+wcdPmLagSW7dt37Fz1+49e/ftR5U4cPDQ4SNHjx0/cfIURAAAZddjVVG4XUIAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTYtMTItMjFUMTM6NTc6MzQtMDU6MDBLBjPyAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE2LTEyLTIxVDEzOjU3OjM0LTA1OjAwOluLTgAAAABJRU5ErkJggg==';
+
+                var linuxImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH4AwVDTcc9HmUpgAABKhJREFUSMellctvlFUYxn/n++abaYVhpsMwUjpTqa0lhNqqhZaLJlSD0IUxYeFCBC+b7tyQuIREE/EPcMGG6A4T4gJsgWhAwmUipfRioGC9JJ1L26EzzEzn/s13vuOitFpCLwnv/nl/53ne854jeFKlUkmxQuVyOe7evcvFixeJRCLs27ePY8eO4fV6UerZ0traWuFgDWWaJhMTEwwMDHD+/HmSySSDg4MYhkFfXx9CiGW12mrNhRCk02lu3LhBf38/09PTrFu3jmw2S39/P+l0+vkAAJVKBW9dHaZZpbm5hRMnT7Kru5tUKkWhUHh+gFIwl83QFPLQsaOJeCxKYHM9Uspl81+oVWcghCCXyxDccJ/Tx0tYxZvEM1Hu3QbTtLAsa0X9GhwIHDLFnpemaNtRR1tTjlbtAX45hcPhIB6PrxjRqg4UipF7MZjUGLv+D6lELUnVjhkIsG2Tk1u3btHd3Y3L5XpmXCs6EEKQSiYZGh4l0PU5MxuPM+78AE/Xx7z59iGmpuJcu3aNcDi8rAvHaoArV64gpaS9o4OGUCMN2yL4/X68Xg/nzp1jaGiIM2fO0NraSjAYxLbttTnQNI14PM7ly5fp7e2lrq6OULCBzs43aGraSiAQ4OjRo7jdbsLhMGfPnsU0zbVHJKXk0qVLNDY20tPTg8vlwuPx4Pf7cbvdKKXo6uriwIED6LrOhQsXGB0dRdO01QGaphGJRBgfH+fw4cO43W4Mw0DXdQzDoKamBqfTicvlYv/+/bS3t5NIJBgYGKBYLC6Zh7bc6YeHhwkGg7S0tCwKlFIIIdA0DafTia7r+P1+QqEQSinGxsaIRqMrA4QQ5PJ5JiNRNtfXo+v6YvOFayiEQAiBUgrbtkkkEmQyGVKpFOl0erWIBNVKEVGaojCXpVAoLDZegNi2jWVZFItFHqfTpDNzeH1+Nnh8uGpqVwAIDYVGnX2VD9t+QMV+5ObNMIVCAcuyME2TarWKaZrk83kez0bZsf4yn74V46O9Zd7fmWfL+jT/37f/9kBJVHECvXwbI/UNoVCCA9ksX37/NeVKhd5D7y7mb5omkUiM6cl7HKz/lV3vPKK6VyDlFGbkW+zG3QiHaynArsyiJvow5BBKWUgBzS9X6Ane59RXJ6itcdLW1oaUktnZWR48+INMdBzpLWI5QFoKVQW9FEbNXEWEepcChO5EE1XsioVdBQFoDsV7e6uMxiwG7wyRTCaRUpJMJrk//pDyTJjP2stUBVjF+Wdd11OUR75AdwSeAiiJkBLbBFkCZYNwwAavzZHOLKeu/8Lt39xo2vwPNxmJc/A1SY0DZJn5Qyko5g0y617FKzxLAUppWJVGRP5P7HIRZSuEE8QLsHVTjgYV485fBhoKp9OJz+ejY2sOlyNDVYKQEJupZaT8NoHdn7AN91MOXBvRXz+NfPyQ6swI5cnriPQgRvYR2cx6gtv3cKSrFacxL1FobPfeR6Z/oly0Gfnby8/JnXha9/CisxZ4sjMLgFKppBAC0KhaFrl0klz0d8rRO+RUHaKhE7fHg0PX0XUdh2FQnUuQH/qOmekEE3YrvqZ2XmluZsuWerxeLz6fT/wLOfsv/iN5NVAAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTYtMTItMjFUMTM6NTU6MjgtMDU6MDBE+YklAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE2LTEyLTIxVDEzOjU1OjI4LTA1OjAwNaQxmQAAAABJRU5ErkJggg==';
+                var androidImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH4AwVDTUI3JUiWQAABFRJREFUSMeNlk1sVFUUx3/3Y2Y6tNDaYilULUgtEIxFibrAkChsIHEhrNRoXODCmLjCpQsxUTcuiboxUReycIXGGI0GTGyCBQxKAaVYPgq1MNjOtH1v3se9x8WbmbZTtJzkJu/ed8/5n/s//3veU2EYCoBSCq0NqcSkPgFAAQJLnput/s4oQ9604JxHxANgAbTSBH6Gn69+w0jpJEEy2+QstaeFJijUItCCLTLQ+Qg7evfSme/Gi0dVq5EEvswnZ97j1N8/ZYuNENDXPkApmKASTaGVBsCLp7t1HQVT5MbMZZRSjf0K2NS1jVcH3+Lell6s1ppjl49yauI4SmmMMo2MvHgSF/H42qcx2tLTdj9efCPomckhtDaoptNduP0r3459wUtbD2IjF3D25gkEadom5EyewTU72Lf5ACvz7Q2aBKEUTBClVX658eOS6ig050unKUcldOJjgnT2Dhwrdq/fz77NB7g8faFReIAwmWVybpxXBt9k+9qd+FpB5z0VkQuJXIi+kypEPD1tD7Cn/wVaTBGrc4sSUEpjdY72QhfPPvQyqwodNSE0ywB0c+JeHKmkbOjYQmexG6NzbF79GFoZvDi8OAqmyKaubXjx9K58kJ62PlKf4MUtAbHzwILVOQbX7CRMA8JkhhPXf/gf9WfmvAOEJ9ftpuoCzpdOI7iGxK2IEMcJqUvZsnorr20/xGxc5tTEcR7teWqJQpotdhHTUYld6/czl8zw/tDrjJfHiOMY7z1WEIK5gHK5gl3dQsEUcTalNddOi12xLIBWmlX5e8ibQjZP85QrFWxLEec9Gslkl6QpcRJnIhQhSZLl2KkJAuI4aVS1GkUkSYKIZO1nXlosylbkLqI371WLtJadCJU1OqUUy7Dx37bArx6r3j60qvFY7zNCvbnJ3QPWaM5OIrV4mbOVGqoxhmvlUUYmhylXp7g1N7FsgetFvlK+yLmbp6lUp5icu44xBqUVSoFVgNIKYy2Tc+O8e+wNEh+xa+Nzd83QtfIo349+iSBUkwBjDFprQGFBYbTGaI1WhjCdRfCcnRxm6Op39HUM0LuqDyeea9Oj5Eye3lUbcOIYL1/ij9JvXJn+k6oLUGRMiPgaAJmKlNbo2jDGYE2OidkrfDB0kCNnD+NFqKYBHw6/zZHfD+PFU00CPh5+h4+GD1FJprDGNjKvDxRYrQx5m88W1eLe5yQl9XGjkImPSOpzhFgiUH7RNwTAAzmbI6dz6NZcG/2dW7PslwyDkxQvDicpguBxiPhsLh6jzRI/rRR9HQO057uw4hXPbNjHyO2TXK+M1U5RvySGS9MjfHXxM+biCreqN6gk/3D04qfMxmUmw3G0md8PghdP54pu9vQ/T8EUUWEYitaGscoIX49+zl9T5xbQUO8WC/8tFs8XCtloy30rN7K3/0Ue7noC51wGkOnZkKqYUjhB5ML5OAtjqhpIozWo+i0DBTldoKuwhqJtJXUpAP8CpVQRCnxNpZcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTYtMTItMjFUMTM6NTM6MDgtMDU6MDALwv4fAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE2LTEyLTIxVDEzOjUzOjA4LTA1OjAwep9GowAAAABJRU5ErkJggg==';
+                var windowsImg = 'data:image/png;base64,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';
+
+                var analysisImg = 'data:image/png;base64,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';
+                var pieChartImg = 'data:image/png;base64,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';
+                var compareImg = 'data:image/png;base64,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';
+                var recomImg = 'data:image/png;base64,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';
+                var stopWatchImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4QwNDSUVq6DwBAAABIxJREFUSMedlc9vG0UUx79vZtfe+HfTuK6TqAW16g+hBA6lJygSFRJQpIpLhYQ4cOLfgAOcuHPgABIIiV6Qqh6QuFYg9QcV/ZmaNm0TnNjrOvGvXe96Z+ZxiJOUNusSj+aw2nkzn/fed94beucnzwCEZwcbbRif8OWPzFUD4SHxuTyzIGYkMXYzhAGYYZ6bTNII+66YiUTSEpQXg9dolbFtoHfa9fwUNAIOc49Kj2iSwASc5MdZDnkz2hwCCfPiCEasEdCBc5leAsCgfWKt5KwwsQHNc/VLc+FD/ovA4wMYSELVkPOQMMDVvDNduOOkXAvmPb59nGtnzK0SugY0JkCAz5k/PzOXktAtS0rmd9faObs1QeEMWgpyCr3jXOPxAAyagvc23yvAt2AiQUtO4vx0Ois7AG8caUO/wqujlRgBwB72cwgMBAMJwwAmWBUQhLCrKBCYQYfQSCPkMQAANIQBCSctc8W8Nnsj3RfizX69yL2byYIBMVDi7hR7I7I0CtCkdAMZmXDAuitES1KPBCz/mP347j5/JWkTKIOwjPYIgBUnwCS8j82VAvrKj0ip5Xy2f3ju9ET25qRbrTfblGxSahZtG3oa7RFexgFwiu9/wLcYMIrImKOzR+dfft0m6hUPfe/c+HXBaoUe0CKgxF0R3z92TpGEOcr1DRl9Qf3STPrwHLReWVnJWIlz5eMHp1RVOhs9bBLeiIu0M4CABDQAIWTXSfVOvEW5yUEYLi4uMvO+RPpUudBytGEBIIvAht4dQEPUkYW0rD37y8IuC3sIpqGY8/m9qbRvwAxKIbKheVcAA7pOs4GYYDXgQZ+UesaglEynM5YGA0iwsrBjy48HCJh7tP+hzppOA9IiZ2IoPg8dzQgxZ0hsCibG0CCAXeOMMVrvP0CZPIB2u12pVKIoAmC1mkdqq2LTeGTPj0nRHFdP8FIgZKM8CyEBWJaVy+WGBv88YL8HIgAM7LrQAMxzNW9DiVSx3dr4UywWz549a9s2tDLuCsAbriuSercAAmcRyHSBtaInNagIlk1Etm0D4EHIXmcrMSEsBYmYlye2VbQopQNPh30liFRkW/b2soqgBluu+EhEkHEhiDjAbZR7QUhGL+mgEvy32zCDt/1tw4nim+aIa1paoJIEIxpcchcDs12rXZjgKYddZPVuAQR4SH5Lb/wgThYGVmLp74vu/YHRANZV+HO94qpQEAlCH/ZNlMe5RQR+QFPLtOeIcd9vLH9Xufa11yw52Ydt9/CN2+W1LuVSS53++YXmtYOenI7TOB4AQIBDyCt04IR6/Gm1/ntjra7M6bXuydq6L+UvS63zd2uL634uU03NzI8D2MjVNTpQR7akumeCgXjSDdv+H63wx+XW9XZfGRZsTMcF77JVPB1EFYXf6BiIjCVv2YmvVoMvHvWudkLDEEQAdMeFVnEnvCACAAy6IF5Ne65buXxxcb3RV4JgCaGNAQAi7TU5CiiZ2VGHFwMI3BGpb9wp706DeVhRJLZCJ+O3TdCVTvbp4vi/KRqewcxOHtLafG9AJLa+eNA3fitu779w6mKXksfFswAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNy0xMi0xM1QxMzozNzoyMS0wNTowMP4zzK8AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTctMTItMTNUMTM6Mzc6MjEtMDU6MDCPbnQTAAAAAElFTkSuQmCC';
+
+                for (k = 0; k < json.Transactions.length; k++)
+                {
+                        doc.setFontSize(25);
+                        doc.setTextColor(0, 0, 153);
+                        doc.text(json.Transactions[k].name, 14, 25);
+                        doc.setTextColor(0, 0, 0);
+                        doc.setDrawColor(0, 0, 153);
+                        doc.line(14, 26, 285, 26);
+                        doc.setFontSize(15);
+                        doc.text(doc.splitTextToSize('URL - ' + json.Transactions[k].url, 260), 14, 33);
+                        doc.text('Device : ', 14, 43);
+                        if (json.Transactions[k].device.match('Tablet')) {
+                            doc.addImage(tabletImg, 'JPEG', 40, 38, 6, 6);
+                        } else if (json.Transactions[k].device.match('Phone')) {
+                            doc.addImage(phoneImg, 'JPEG', 40, 38, 6, 6);
+                        } else {
+                            doc.addImage(desktopImg, 'JPEG', 40, 38, 6, 6);
+                        }
+                        doc.text('OS : ', 55, 43);
+                        if (json.Transactions[k].platform.match('Window')) {
+                            doc.addImage(windowsImg, 'JPEG', 70, 38, 6, 6);
+                        } else if (json.Transactions[k].platform.match('Android')) {
+                            doc.addImage(androidImg, 'JPEG', 70, 38, 6, 6);
+                        } else {
+                            doc.addImage(linuxImg, 'JPEG', 70, 38, 6, 6);
+                        }
+
+                        doc.text(' (' + json.Transactions[k].platform + ')', 77, 43);
+                        //doc.text('Browser : ' + json.Transactions[k].browser, 130, 43);
+                        doc.text('Browser : ', 130, 43);
+                        if (json.Transactions[k].browser.match('Chrome')) {
+                            doc.addImage(chromeImg, 'JPEG', 155, 38, 6, 6);
+                        } else if (json.Transactions[k].browser.match('Firefox')) {
+                            doc.addImage(firefoxImg, 'JPEG', 155, 38, 6, 6);
+                        } else if (json.Transactions[k].browser.match('Safari')) {
+                            doc.addImage(safariImg, 'JPEG', 155, 38, 6, 6);
+                        } else {
+                            doc.addImage(ieImg, 'JPEG', 155, 38, 6, 6);
+                        }
+
+                        doc.text('SLA : ' + json.Transactions[k].sla + ' (ms)', 180, 43);
+                        //doc.text('Version : ' + json.Transactions[k].device, 200, 30);
+                        if (json.Transactions[k].restime > json.Transactions[k].sla) {
+                            doc.setDrawColor(204, 0, 0);
+                            doc.setFillColor(204, 0, 0);
+                            doc.rect(14, 50, 36, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(14, 55, 'Exceeding SLA');
+                        } else {
+                            doc.setDrawColor(0, 153, 0);
+                            doc.setFillColor(0, 153, 0);
+                            doc.rect(14, 50, 36, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(14, 55, 'Meeting SLA');
+                        }
+
+                        if (json.Transactions[k].deviation > 5) {
+                            doc.setDrawColor(204, 0, 0);
+                            doc.setFillColor(204, 0, 0);
+                            doc.rect(55, 50, 38, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(55, 55, 'Degraded');
+                        } else {
+                            doc.setDrawColor(0, 153, 0);
+                            doc.setFillColor(0, 153, 0);
+                            doc.rect(55, 50, 38, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(55, 55, 'No Degradation');
+                        }
+
+                        if (json.Transactions[k].score >= 75) {
+                            doc.setDrawColor(0, 153, 0);
+                            doc.setFillColor(0, 153, 0);
+                            doc.rect(100, 50, 38, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(100, 55, json.Transactions[k].score.toString() + '(Grade A)');
+                        } else if (json.Transactions[k].score >= 60 && json.Transactions[k].score < 75) {
+                            doc.setDrawColor(153, 255, 51);
+                            doc.setFillColor(153, 255, 51);
+                            doc.rect(100, 50, 38, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(100, 55, json.Transactions[k].score.toString() + '(Grade B)');
+                        } else if (json.Transactions[k].score >= 40 && json.Transactions[k].score < 60) {
+                            doc.setDrawColor(255, 204, 0);
+                            doc.setFillColor(255, 204, 0);
+                            doc.rect(100, 50, 38, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(100, 55, json.Transactions[k].score.toString() + '(Grade C)');
+                        } else {
+                            doc.setDrawColor(204, 0, 0);
+                            doc.setFillColor(204, 0, 0);
+                            doc.rect(100, 50, 38, 7, 'FD');
+                            doc.setTextColor(255, 255, 255);
+                            doc.text(100, 55, json.Transactions[k].score.toString() + '(Grade D)');
+                        }
+                        doc.setTextColor(0, 0, 0);
+                        if (json.Transactions[k].speedIndex === undefined) {
+                            doc.text('SpeedIndex : NA', 14, 70);
+                            doc.text('TTFB : NA', 80, 70);
+                            doc.text('DOMInterative : NA', 150, 70);
+                            doc.text('TTFP : NA', 14, 80);
+                        } else {
+                            doc.text('SpeedIndex : ' + json.Transactions[k].speedIndex + ' (ms)', 14, 70);
+                            doc.text('TTFB : ' + json.Transactions[k].ttfbUser + ' (ms)', 80, 70);
+                            doc.text('DOMInterative : ' + json.Transactions[k].domInteractive + ' (ms)', 150, 70);
+                            doc.text('TTFP : ' + json.Transactions[k].ttfpUser + ' (ms)', 14, 80);
+                        }
+
+                        doc.text('OnLoad : ' + json.Transactions[k].restime + ' (ms)', 215, 70);
+                        doc.text('TotalPageLoad : ' + json.Transactions[k].visuallyComplete + ' (ms)', 80, 80);
+                        doc.text('Server Time : ' + json.Transactions[k].serverTime + ' (ms)', 150, 80);
+                        doc.text('Client Time : ' + json.Transactions[k].clientProcessing + ' (ms)', 215, 80);
+
+                        doc.setFontSize(18);
+                        doc.addImage(stopWatchImg, 'JPEG', 14, 94, 8, 8);
+                        doc.setDrawColor(45, 100, 245);
+                        doc.setFillColor(45, 100, 245);
+                        doc.rect(25, 94, 52, 9, 'FD');
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Navigation Timing', 25, 100);
+                        doc.setTextColor(0, 0, 0);
+                        //doc.setDrawColor(0,0,153);
+                        //doc.line(24,102,80,102);
+                        doc.setFontSize(15);
+                        if (json.Transactions[k].speedIndex === undefined) {
+                            doc.text('Redirect Time : NA', 14, 110);
+                            doc.text('Cache Time : NA', 14, 120);
+                            doc.text('DNS Time : NA', 14, 130);
+                            doc.text('Connect Time : NA', 14, 140);
+                            doc.text('Download Time : NA', 14, 150);
+                            doc.text('DOM Time : NA', 14, 160);
+                            doc.text('OnLoad Time : NA', 14, 170);
+                            doc.text('Total Resources : ' + json.Transactions[k].resourceCount, 14, 180);
+                            doc.text('Resource Time : ' + json.Transactions[k].resourceLoadTime + ' (ms)', 14, 190);
+                        } else {
+                            doc.text('Redirect Time : ' + json.Transactions[k].redirectTime + ' (ms)', 14, 110);
+                            doc.text('Cache Time : ' + json.Transactions[k].cacheFetchTime + ' (ms)', 14, 120);
+                            doc.text('DNS Time : ' + json.Transactions[k].dnsLookupTime + ' (ms)', 14, 130);
+                            doc.text('Connect Time : ' + json.Transactions[k].tcpConnectTime + ' (ms)', 14, 140);
+                            doc.text('Download Time : ' + json.Transactions[k].downloadTime + ' (ms)', 14, 150);
+                            doc.text('DOM Time : ' + json.Transactions[k].domProcessingTime + ' (ms)', 14, 160);
+                            doc.text('OnLoad Time : ' + json.Transactions[k].onloadTime + ' (ms)', 14, 170);
+                            doc.text('Total Resources : ' + json.Transactions[k].resourceCount, 14, 180);
+                            doc.text('Resource Time : ' + json.Transactions[k].resourceLoadTime + ' (ms)', 14, 190);
+
+                        }
+                        doc.setFontSize(18);
+                        doc.setDrawColor(45, 100, 245);
+                        doc.setFillColor(45, 100, 245);
+                        doc.rect(110, 94, 56, 9, 'FD');
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Domain Distribution', 110, 100);
+                        doc.setTextColor(0, 0, 0);
+                        //doc.setDrawColor(0,0,153);
+                        //doc.line(110,102,173,102);
+                        doc.addImage(pieChartImg, 'JPEG', 100, 94, 8, 8);
+                        doc.setFontSize(15);
+                        //doc.text('Domain Distribution', 100, 100);
+                        var cnt = 100;
+                        for (i = 0; i < json.Transactions[k].backendAnalysis.length; i++) {
+                            cnt = cnt + 10;
+                            doc.text(json.Transactions[k].backendAnalysis[i].domain + ' : ' + json.Transactions[k].backendAnalysis[i].timetaken + ' (ms)', 100, cnt);
+                        }
+
+                        doc.setFontSize(18);
+                        doc.addImage(compareImg, 'JPEG', 210, 94, 8, 8);
+                        doc.setDrawColor(45, 100, 245);
+                        doc.setFillColor(45, 100, 245);
+                        doc.rect(220, 94, 36, 9, 'FD');
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Comparison', 220, 100);
+                        doc.setTextColor(0, 0, 0);
+                        //doc.setDrawColor(0,0,153);
+                        //doc.line(220,102,259,102);
+                        doc.setFontSize(15);
+
+                        doc.text('Baseline : ' + json.Transactions[k].baselineRT + ' (ms)', 210, 110);
+                        doc.text('Current : ' + json.Transactions[k].currentRT + ' (ms)', 210, 120);
+                        doc.text('Deviation : ' + json.Transactions[k].deviation + ' (%)', 210, 130);
+
+                        doc.addPage();
+                        doc.setFontSize(20);
+                        cnt = 22;
+                        doc.addImage(analysisImg, 'JPEG', 14, cnt - 8, 10, 10);
+                        doc.setDrawColor(45, 100, 245);
+                        doc.setFillColor(45, 100, 245);
+                        doc.rect(26, cnt - 7, 70, 9, 'FD');
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Comparative Analysis', 26, cnt);
+                        doc.setTextColor(0, 0, 0);
+                        //doc.setDrawColor(0,0,153);
+                        cnt = cnt + 2;
+                        //doc.line(26,cnt,94,cnt);
+                        doc.setFontSize(15);
+                        if (json.Transactions[k].comparativeAnalysis.match('</li></ul>')) {
+                            var comAnal = json.Transactions[k].comparativeAnalysis.split('</li></ul>')
+                            for (i = 0; i < comAnal.length; i++) {
+                                doc.setFontSize(15);
+                                var finalStr = comAnal[i].replace('<ul><li>', '');
+                                if (finalStr.match('</li><ul><li>')) {
+                                    var inAnal = finalStr.replace('</li><ul><li>', '</li><li>').replace('</li><ul></ul>', '</li><li>').split('</li><li>');
+                                    for (j = 0; j < inAnal.length; j++) {
+                                        cnt = cnt + 10;
+                                        doc.setLineWidth(0);
+                                        doc.setDrawColor(1);
+                                        doc.setFillColor(0, 0, 0);
+                                        doc.circle(30, cnt - 1, 1, 'FD');
+                                        doc.text(33, cnt, inAnal[j].replace('</ul><ul><li>', '').replace('</li>', '').replace('</ul>', ''));
+
+                                    }
+
+                                } else {
+                                    cnt = cnt + 10;
+                                    doc.setLineWidth(0);
+                                    doc.setDrawColor(1);
+                                    doc.setFillColor(0, 0, 0);
+                                    doc.circle(30, cnt - 1, 1, 'FD');
+                                    doc.text(33, cnt, finalStr.replace('</li>', '').replace('</ul>', ''));
+
+                                }
+                            }
+                        } else {
+                            cnt = cnt + 10;
+                            doc.setLineWidth(0);
+                            doc.setDrawColor(1);
+                            doc.setFillColor(0, 0, 0);
+                            doc.circle(30, cnt - 1, 1, 'FD');
+                            doc.text(json.Transactions[k].comparativeAnalysis, 33, cnt);
+                        }
+
+                        doc.setFontSize(20);
+                        cnt = cnt + 10;
+                        doc.addImage(recomImg, 'JPEG', 14, cnt - 8, 10, 10);
+                        doc.setDrawColor(45, 100, 245);
+                        doc.setFillColor(45, 100, 245);
+                        doc.rect(25, cnt - 7, 58, 9, 'FD');
+                        doc.setTextColor(255, 255, 255)
+                        doc.text('Recommendation', 25, cnt);
+                        doc.setTextColor(0, 0, 0);
+                        cnt = cnt + 2;
+                        cnt = cnt + 10;
+                        doc.setFontSize(15)
+                        var pageHeight = doc.internal.pageSize.height;
+                        for (i = 0; i < json.Transactions[k].recommendations.length; i++) {
+                            if (json.Transactions[k].recommendations[i].desc.match('<ul><li>')) {
+                                if (json.Transactions[k].recommendations[i].canvPriority.match('high')) {
+                                    doc.setDrawColor(204, 0, 0);
+                                    doc.setFillColor(204, 0, 0);
+                                    doc.rect(24, cnt - 3, 22, 8, 'FD');
+                                    doc.setTextColor(255, 255, 255);
+                                    doc.setFontSize(15);
+                                    doc.text(29, cnt + 2, 'HIGH');
+
+                                } else if (json.Transactions[k].recommendations[i].canvPriority.match('medium')) {
+                                    doc.setDrawColor(255, 204, 0);
+                                    doc.setFillColor(255, 204, 0);
+                                    doc.rect(24, cnt - 3, 20, 8, 'FD');
+                                    doc.setTextColor(255, 255, 255);
+                                    doc.setFontSize(15);
+                                    doc.text(24, cnt + 2, 'MEDIUM');
+                                } else {
+                                    doc.setDrawColor(0, 153, 0);
+                                    doc.setFillColor(0, 153, 0);
+                                    doc.rect(24, cnt - 3, 22, 8, 'FD');
+                                    doc.setTextColor(255, 255, 255);
+                                    doc.setFontSize(15);
+                                    doc.text(29, cnt + 2, 'LOW');
+
+                                }
+                                doc.setTextColor(0, 0, 0);
+                                var res = json.Transactions[k].recommendations[i].desc.replace('<ul><li>', '</li><li>').replace('</li></ul>', '').split('</li><li>');
+                                for (j = 0; j < res.length; j++) {
+                                    pageHeight = doc.internal.pageSize.height;
+                                    if (cnt >= pageHeight - 20) {
+                                        doc.addPage();
+                                        cnt = 22;
+                                    }
+                                    var strArr = doc.splitTextToSize(res[j], 215);
+                                    if (j === 0) {
+                                        doc.setFontSize(15);
+                                        doc.text(strArr, 50, cnt);
+                                        cnt = cnt + 10;
+                                    } else {
+                                        doc.setTextColor(0, 102, 204);
+                                        doc.setFontSize(10);
+                                        doc.setLineWidth(0);
+                                        doc.setDrawColor(1);
+                                        doc.setFillColor(0, 0, 0);
+                                        doc.circle(51, cnt - 1, 1, 'FD');
+                                        if (strArr.toString().match('li>') || strArr.toString().match('ul>')) {
+                                            var inRes = strArr.toString().replace('</li></ul>', '').replace('<ul>', '<li>').split('<li>')
+                                            for (a = 0; a < inRes.length; a++) {
+                                                doc.setLineWidth(0);
+                                                doc.setDrawColor(1);
+                                                doc.setFillColor(0, 0, 0);
+                                                doc.circle(51, cnt - 1, 1, 'FD');
+                                                doc.text(inRes[a], 55, cnt);
+                                                if (a != inRes.length - 1) {
+                                                    cnt = cnt + 10;
+
+                                                }
+                                                cnt = cnt + 10;
+                                            }
+                                        } else {
+                                            doc.text(doc.splitTextToSize(strArr,215), 55, cnt);
+                                            if(strArr.length > 2)
+                                            {
+                                                cnt = cnt + (7 * (Math.round(strArr.length/2)));
+                                            }
+
+
+                                            cnt = cnt + 10;
+                                        }
+
+                                    }
+                                }
+                            } else {
+                                pageHeight = doc.internal.pageSize.height;
+                                if (cnt >= pageHeight - 20) {
+                                    doc.addPage();
+                                    cnt = 22;
+                                }
+                                doc.setFontSize(15);
+                                var strArr = doc.splitTextToSize(json.Transactions[k].recommendations[i].desc, 215);
+                                if (json.Transactions[k].recommendations[i].canvPriority.match('high')) {
+                                    doc.setDrawColor(204, 0, 0);
+                                    doc.setFillColor(204, 0, 0);
+                                    doc.rect(24, cnt - 3, 22, 8, 'FD');
+                                    doc.setTextColor(255, 255, 255);
+                                    doc.text(29, cnt + 2, 'HIGH');
+
+                                } else if (json.Transactions[k].recommendations[i].canvPriority.match('medium')) {
+                                    doc.setDrawColor(255, 204, 0);
+                                    doc.setFillColor(255, 204, 0);
+                                    doc.rect(24, cnt - 3, 22, 8, 'FD');
+                                    doc.setTextColor(255, 255, 255);
+                                    doc.text(24, cnt + 2, 'MEDIUM');
+                                } else {
+                                    doc.setDrawColor(0, 153, 0);
+                                    doc.setFillColor(0, 153, 0);
+                                    doc.rect(24, cnt - 3, 22, 8, 'FD');
+                                    doc.setTextColor(255, 255, 255);
+                                    doc.text(29, cnt + 2, 'LOW');
+
+                                }
+
+
+                                doc.setTextColor(0, 0, 0);
+                                doc.text(strArr, 50, cnt);
+                                cnt = cnt + 15;
+                            }
+
+                        }
+                        doc.addPage();
+                    }
+
+                    var pdfName = 'CXOptimizeReport_' + json.header.ClientName + '_' + json.header.ProjectName + '_' + json.header.ScenarioName + '_'  + json.header.CurrentRunDuration + '.pdf';
+
+                	doc.save(pdfName);
+});
+}
+
+function orderDesc(a, b) {
+    if (a[1] === b[1]) {
+        return 0;
+    }
+    else {
+        return (a[1] > b[1]) ? -1 : 1;
+    }
+};
+
+
+function orderAsc(a, b) {
+    if (a[1] === b[1]) {
+        return 0;
+    }
+    else {
+        return (a[1] < b[1]) ? -1 : 1;
+    }
+};
+
+function order3Asc(a, b) {
+    if (a[2] === b[2]) {
+        return 0;
+    }
+    else {
+        return (a[2] < b[2]) ? -1 : 1;
+    }
+};
+
+function order3Desc(a, b) {
+    if (a[2] === b[2]) {
+        return 0;
+    }
+    else {
+        return (a[2] > b[2]) ? -1 : 1;
+    }
+};
+
+    /*]]>*/
+
+
+    </script>
+</head>
+<body class="bg-primary p-0">
+<div class="p-0">
+    <div class="container py-4">
+        <div th:replace="fragments/headerdashboard :: headerdashboard"/>
+        <div class="row bg-dashboard">
+            <div class="col-md-12">
+                <input id="clientName" type="hidden" th:value="${CXOptimiseInput.clientName}"/>
+                <input id="projectName" type="hidden" th:value="${CXOptimiseInput.projectName}"/>
+                <input id="scenarioName" type="hidden" th:value="${CXOptimiseInput.scenarioName}"/>
+                <input id="analysisType" type="hidden" th:value="${CXOptimiseInput.analysisType}"/>
+                <input id="currentRun" type="hidden" th:value="${CXOptimiseInput.currentRun}"/>
+                <input id="baselineRun" type="hidden" th:value="${CXOptimiseInput.baselineRun}"/>
+                <input id="Override" type="hidden" th:value="${CXOptimiseInput.Override}"/>
+                <input id="scale" type="hidden" th:value="${CXOptimiseInput.scale}"/>
+                <input id="bsStart" type="hidden" th:value="${CXOptimiseInput.baselineStartDate}"/>
+                <input id="bsEnd" type="hidden" th:value="${CXOptimiseInput.baselineEndDate}"/>
+                <input id="crStart" type="hidden" th:value="${CXOptimiseInput.currentStartDate}"/>
+                <input id="crEnd" type="hidden" th:value="${CXOptimiseInput.currentEndDate}"/>
+                <ol class="cd-tabs1" style="padding-left:0">
+                    <nav>
+                        <ol class="cd-tabs-navigation">
+                            <ol><a data-content="summary" id="summaryTab" class="selected" href="#0"
+                                   onClick="resizeSummaryContent()">Summary</a>
+                            </ol>
+                            <ol><a data-content="responsetime" href="#0" onClick="captureSummaryContent()">Response
+                                Time</a>
+                            </ol>
+                            <ol><a data-content="comparisonreport" href="#0" onClick="captureSummaryContent()">Comparison</a>
+                            </ol>
+                            <ol><a data-content="recommendation" id="recommendTab" href="#0"
+                                   onClick="captureSummaryContent()">Recommendations</a>
+                            </ol>
+                            <ol><a data-content="kibana" id="kibanaTab" href="#0" onClick="reloadKibana()">Kibana</a>
+                            </ol>
+                        </ol>
+                    </nav>
+                    <ol id="mainContent" class="cd-tabs-content">
+                        <div style="overflow:hidden" height="100%" width="100%">
+                            <div style="width:96%;margin-left:3%;margin-right:auto;margin-top:24px;margin-bottom:0px;">
+                                <div class="rounded_border">
+                                    <div style="height:100%;width:100%;padding-right:1%;padding-left:1%">
+                                        <table class="header"
+                                               style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.99vw;"
+                                               border="0">
+                                            <tr>
+                                                <td align="left" id="client"></td>
+                                                <td align="left" id="project"></td>
+                                                <td align="left" id="scenario"></td>
+                                                <td align="left" colspan="2" id="platform"></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" colspan="2" id="baseline"></td>
+                                                <td align="left" colspan="2" id="current"></td>
+                                                <td align="left" id="useragent"></td>
+
+                                            </tr>
+                                            <tr>
+                                                <td align="left" colspan="2" id="blineid">
+                                                </td>
+                                                <td align="left" colspan="2" id="currid">
+
+                                                </td>
+                                                <td><button  type="submit" id="downloadPdf" name="settings" class="btn btn-success" onclick="generatePDF()">PDFReport</button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ol data-content="summary" id="summaryContent" class="selected">
+                            <div height="100%" width="100%">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%"
+                                       align="center">
+                                    <tr>
+                                        <td width="76.6%" height="100%" align="left">
+                                            <div Style="width:100%;float:left;height:100%">
+                                                <div class="rounded_border">
+                                                    <div Style="height:100%;width:100%">
+                                                        <p style="font-weight:bold;">Executive Summary</p>
+                                                        <p id="ExecSummary"
+                                                           style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:1.09vw;"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width="22.7%" height="100%" align="center">
+                                            <div Style="width:100%;float:left;height:100%">
+                                                <div class="rounded_border">
+                                                    <div Style="height:100%;width:100%;align-content:center;">
+                                                        <br></br>
+                                                        <div id="g1"
+                                                             Style="height:81.5%;width:81.5%;align-content:center;"></div>
+                                                        <br></br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width="1%"></td>
+                                    </tr>
+                                </table>
+                                <div Style="overflow: hidden;">
+                                    <div Style="width:100%;float:left;">
+                                        <div class="rounded_border">
+                                            <p style="font-weight:bold;">Recommendation Summary</p>
+                                            <div Style="min-height:225px;padding-left:6%">
+                                                <table id="Recommendation_Summary" class="tablesorter">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Priority</th>
+                                                        <th>Recommendation</th>
+                                                        <th>Impact Count</th>
+                                                        <th>Transaction List</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="rulesSummaryRows">
+                                                    <div id="divOverlay">
+                                                        <dialog id="window" class="ui-content">
+                                                            <button id="exit"
+                                                                    class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">
+                                                                Close Dialog
+                                                            </button>
+                                                            <div id="txtcontent"
+                                                                 style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.89vw;"></div>
+                                                        </dialog>
+                                                    </div>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <br></br>
+                                            <div id="Recommendation_Summary_pager" Style="width:100%;">
+                                                <div Style="width:100%;float:right;padding-left:40%">
+                                                    <img src="images/first.png" class="first"/>
+                                                    <img src="images/prev.png" class="prev"/>
+                                                    <input type="text" class="pagedisplay"
+                                                           Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.89vw;"/>
+                                                    <img src="images/next.png" class="next"/>
+                                                    <img src="images/last.png" class="last"/>
+                                                    <select class="pagesize">
+                                                        <option value="5">5 per page</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <br></br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div Style="overflow: hidden;">
+                                <div Style="width:59%;float:left;height:350px;" class="rounded_border">
+                                    <p style="font-weight:bold;">Top 5 Transaction exceeding SLA</p>
+                                    <div Style="min-height:225px;padding-left:6%">
+                                        <table id="Transactions_Above_SLA" class="tablesorter">
+                                            <thead>
+                                            <tr>
+                                                <th>Transaction</th>
+                                                <th>SLA</th>
+                                                <th>Time</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="slaRows">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br></br>
+                                    <div id="Transactions_Above_SLA_pager">
+                                        <div Style="width:100%;float:right;padding-left:32%">
+                                            <img src="images/first.png" class="first"/>
+                                            <img src="images/prev.png" class="prev"/>
+                                            <input type="text" class="pagedisplay"
+                                                   Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.89vw;"/>
+                                            <img src="images/next.png" class="next"/>
+                                            <img src="images/last.png" class="last"/>
+                                            <select class="pagesize">
+                                                <option value="5">5 per page</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div Style="width:39%;float:right;height:350px;" class="rounded_border">
+                                    <p style="font-weight:bold;">Top 5 Transaction with Worst Score</p>
+                                    <div Style="min-height:225px;padding-left:6%">
+                                        <table id="Transactions_Worst_Score" class="tablesorter">
+                                            <thead>
+                                            <tr>
+                                                <th>Transaction</th>
+                                                <th>Score</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="scoreRows">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br></br>
+                                    <div id="Transactions_Worst_Score_pager">
+                                        <div Style="width:100%;float:right;padding-left:23%">
+                                            <img src="images/first.png" class="first"/>
+                                            <img src="images/prev.png" class="prev"/>
+                                            <input type="text" class="pagedisplay"
+                                                   Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.89vw;"/>
+                                            <img src="images/next.png" class="next"/>
+                                            <img src="images/last.png" class="last"/>
+                                            <select class="pagesize">
+                                                <option value="5">5 per page</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div Style="overflow: hidden;">
+                                <div Style="width:59%;float:left;height:350px;" class="rounded_border">
+                                    <p style="font-weight:bold;">Top 5 Transaction having higher client processing
+                                        time</p>
+                                    <div Style="min-height:225px;padding-left:6%">
+                                        <table id="Transactions_ProcessingTime" class="tablesorter">
+                                            <thead>
+                                            <tr>
+                                                <th>Transaction</th>
+                                                <th>ResourceTime</th>
+                                                <th>ClientTime</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="timeRows">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br></br>
+                                    <div id="Transactions_ProcessingTime_pager">
+                                        <div Style="width:100%;float:right;padding-left:32%">
+                                            <img src="images/first.png" class="first"/>
+                                            <img src="images/prev.png" class="prev"/>
+                                            <input type="text" class="pagedisplay"
+                                                   Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.89vw;"/>
+                                            <img src="images/next.png" class="next"/>
+                                            <img src="images/last.png" class="last"/>
+                                            <select class="pagesize">
+                                                <option value="5">5 per page</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div Style="width:39%;float:right;height:350px;" class="rounded_border">
+                                    <p style="font-weight:bold;">Top 5 degraded transaction</p>
+                                    <div Style="min-height:225px;padding-left:6%">
+                                        <table id="Transactions_degraded" class="tablesorter">
+                                            <thead>
+                                            <tr>
+                                                <th>Transaction</th>
+                                                <th>Deviation</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="degradedRows">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br></br>
+                                    <div id="Transactions_degraded_pager">
+                                        <div Style="width:100%;float:right;padding-left:23%">
+                                            <img src="images/first.png" class="first"/>
+                                            <img src="images/prev.png" class="prev"/>
+                                            <input type="text" class="pagedisplay"
+                                                   Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.89vw;"/>
+                                            <img src="images/next.png" class="next"/>
+                                            <img src="images/last.png" class="last"/>
+                                            <select class="pagesize">
+                                                <option value="5">5 per page</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br></br>
+                        </ol>
+                        <ol data-content="responsetime" id="responsetimeContent" class="cd-tabs-temp">
+                            <br></br>
+                            <div Style="min-height:525px;">
+                                <table id="ResponseTime" class="tablesorter">
+                                    <thead>
+                                    <tr>
+                                        <th>Transaction</th>
+                                        <th>SLA
+                                            <div class="help-tip"><p>Threshold configured</p></div>
+                                        </th>
+                                        <th>PageLoadTime
+                                            <div class="help-tip"><p>total time to load page(loadEventEnd -
+                                                navigationStart)</p></div>
+                                        </th>
+                                        <th>SpeedIndex
+                                            <div class="help-tip"><p>average time at which visible parts of the page are
+                                                displayed</p></div>
+                                        </th>
+                                        <th>TimeToFirstByte
+                                            <div class="help-tip"><p>time to get first byte from server(responseStart -
+                                                navigationStart)</p></div>
+                                        </th>
+                                        <th>TimeToFirstPaint
+                                            <div class="help-tip"><p>time to when browser paints first
+                                                pixel(msFirstPaint - navigationStart)</p></div>
+                                        </th>
+                                        <th>ServerTime
+                                            <div class="help-tip"><p>time taken in server for main document(responseEnd
+                                                - requestStart)</p></div>
+                                        </th>
+                                        <th>ClientProcessing
+                                            <div class="help-tip"><p>time taken for client processing(loadEventEnd -
+                                                responseEnd)</p></div>
+                                        </th>
+                                        <th>BackendTime
+                                            <div class="help-tip"><p>sum of non overlapping resource calls</p></div>
+                                        </th>
+                                        <th>TotalLoadTime
+                                            <div class="help-tip"><p>time taken to download page until last resource
+                                                download complete(resource[last].responseEnd - navigationStart)</p>
+                                            </div>
+                                        </th>
+                                        <th>ResourceCount
+                                            <div class="help-tip"><p>total number of resources called</p></div>
+                                        </th>
+                                        <th>Total Payload (bytes)
+                                            <div class="help-tip"><p>total size of all resources called.incase of IE the size represents only static resources</p></div>
+                                        </th>
+                                        <th>Count
+                                            <div class="help-tip"><p>number of iterations</p></div>
+                                        </th>
+                                        <th>View HAR</th>
+                                        <th>TimeDistribution
+                                            <div class="help-tip"><p>time contribution by different domains</p></div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="responseTimeRows">
+                                    <div id="respdivOverlay">
+                                        <dialog id="respwindow" class="ui-content">
+                                            <button id="respexit"
+                                                    class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">
+                                                Close Dialog
+                                            </button>
+                                            <div id="resptxtcontent"
+                                                 style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"></div>
+                                        </dialog>
+                                    </div>
+                                    </tbody>
+                                </table>
+                                <br></br>
+                                <div id="ResponseTime_pager" Style="width:100%;">
+                                    <div Style="width:30%;float:right;">
+                                        <img src="images/first.png" class="first"/>
+                                        <img src="images/prev.png" class="prev"/>
+                                        <input type="text" class="pagedisplay"
+                                               Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"/>
+                                        <img src="images/next.png" class="next"/>
+                                        <img src="images/last.png" class="last"/>
+                                        <select class="pagesize">
+                                            <option value="15">15 per page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br></br>
+                            </div>
+                            <br></br>
+                            <br></br>
+                        </ol>
+                        <ol data-content="comparisonreport" class="cd-tabs-temp">
+                            <br></br>
+                            <div Style="min-height:525px;">
+                                <table id="Comparison" class="tablesorter">
+                                    <thead>
+                                    <tr>
+                                        <th>Transaction</th>
+                                        <th>Baseline RT</th>
+                                        <th>Current RT</th>
+                                        <th>%Deviation</th>
+                                        <th> Analysis</th>
+                                        <th>Resource Comparison</th>
+                                        <th>Browser Comparison</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="comparisonRows">
+                                    <div id="cdivOverlay">
+                                        <dialog id="cwindow" class="ui-content">
+                                            <button id="cexit"
+                                                    class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">
+                                                Close Dialog
+                                            </button>
+                                            <div id="ctxtcontent"
+                                                 style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"></div>
+                                        </dialog>
+                                    </div>
+                                    </tbody>
+                                </table>
+                                <br></br>
+                                <div id="Comparison_pager" Style="width:100%;">
+                                    <div Style="width:30%;float:right;">
+                                        <img src="images/first.png" class="first"/>
+                                        <img src="images/prev.png" class="prev"/>
+                                        <input type="text" class="pagedisplay"
+                                               Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"/>
+                                        <img src="images/next.png" class="next"/>
+                                        <img src="images/last.png" class="last"/>
+                                        <select class="pagesize">
+                                            <option value="15">15 per page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br></br>
+                        </ol>
+                        <ol data-content="recommendation" id="recommendContent" class="cd-tabs-temp">
+                            <div Style="min-height:535px;">
+                                <table id="Recommendations_new" class="tablesorter">
+                                    <thead>
+                                    <tr>
+                                        <th>Transaction</th>
+                                        <th>Score (S)</th>
+                                        <th>Recommendations</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="recommendationRows">
+                                    <div id="rdivOverlay">
+                                        <dialog id="rwindow" class="ui-content">
+                                            <button id="rexit"
+                                                    class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">
+                                                Close Dialog
+                                            </button>
+                                            <div style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;">
+                                                <b>Recommendation:<br></br></b>
+                                            </div>
+                                            <div id="rtxtcontent"
+                                                 style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;text-align:left"></div>
+                                        </dialog>
+                                    </div>
+                                    </tbody>
+                                </table>
+                                <br></br>
+                                <div id="Recommendations_pager" Style="width:100%">
+                                    <div Style="width:30%;float:right">
+                                        <img src="images/first.png" class="first"/>
+                                        <img src="images/prev.png" class="prev"/>
+                                        <input type="text" class="pagedisplay"
+                                               Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"/>
+                                        <img src="images/next.png" class="next"/>
+                                        <img src="images/last.png" class="last"/>
+                                        <select class="pagesize">
+                                            <option value="15">15 per page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br></br>
+                        </ol>
+                        <ol data-content="tnxrecommendation" id="tnxrecommendContent" class="cd-tabs-temp">
+                            <div Style="min-height:175px;">
+                                <div id="show-all" align="right" Style="width: 100%; padding-right: 62px"><img
+                                        src="images/view_all.png" Style="cursor: pointer;"
+                                        onClick="captureSummaryContent()"/>
+                                </div>
+                                <table id="tnxRecommendations" class="tablesorter">
+                                    <thead>
+                                    <tr><img style="display: block;margin-left: auto;margin-right: auto"
+                                             src="images/score.png"/>
+                                    </tr>
+                                    <tr>
+                                        <th>Transaction</th>
+                                        <th>Score (S)</th>
+                                        <th>Recommendations</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tnxrecommendationRows">
+                                    <div id="tnxrdivOverlay">
+                                        <dialog id="tnxrwindow" class="ui-content">
+                                            <button id="tnxrexit"
+                                                    class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">
+                                                Close Dialog
+                                            </button>
+                                            <div style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;">
+                                                <b>Recommendation:<br></br></b>
+                                            </div>
+                                            <div id="tnxrtxtcontent"
+                                                 style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"></div>
+                                        </dialog>
+                                    </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br></br>
+                        </ol>
+                        <ol data-content="kibana">
+                            <div Style="min-height:800px;padding-left:3px">
+                                <div style="min-height:900px;">
+                                    <div class="rounded_border">
+                                        <iframe allowfullscreen="" frameborder="0" height="700px" id="kibanaiframe"
+                                                name="kibanaiframe" width="99%"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                            <br></br>
+                            <br></br>
+                        </ol>
+                    </ol>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                </ol>
+                <script src="js/jquery-2.2.3.js"></script>
+                <script src="js/main.js"></script>
+                <script src="js/justgage.js"></script>
+                <script src="js/raphael1-2.1.4.min.js"></script>
+                <script th:inline="javascript">
+/*<![CDATA[*/
+    function load_chart(val) {
+      var dataPoints = [];
+      var bgColor = [];
+      var highest = 0;
+      var maxIndex = 0;
+      var total = 0;
+
+      var txnName = val;
+      for (var i = 0; i < tnxData.Transactions.length; i++) {
+        if (txnName == tnxData.Transactions[i].name) {
+          for (var k = 0; k < tnxData.Transactions[i].backendAnalysis.length; k++) {
+            total += parseInt(tnxData.Transactions[i].backendAnalysis[k].timetaken);
+          }
+          for (var j = 0; j < tnxData.Transactions[i].backendAnalysis.length; j++) {
+            if (parseInt(tnxData.Transactions[i].backendAnalysis[j].timetaken) > highest) {
+              highest = parseInt(tnxData.Transactions[i].backendAnalysis[j].timetaken);
+              maxIndex = j;
+            }
+            bgColor[j] = getRandomColor();
+            dataPoints.push({
+              value: Math.round(parseInt(tnxData.Transactions[i].backendAnalysis[j].timetaken) / total * 100),
+              label: tnxData.Transactions[i].backendAnalysis[j].domain,
+              color: bgColor[j]
+            });
+          }
+        }
+      }
+      var optionsPie = {
+        tooltipEvents: [],
+        showTooltips: true,
+        responsive: true,
+        scaleBeginAtZero: true,
+        maintainAspectRatio: true,
+        tooltipTemplate: "<%= value %>%",
+        onAnimationComplete: function() {
+          this.showTooltip(this.segments, true);
+        },
+        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%> - <%=segments[i].value%>%<%}%></li><%}%></ul>"
+      }
+      var context = document.getElementById('skills').getContext('2d');
+      var skillsChart = new Chart(context).Pie(dataPoints, optionsPie);
+      $("#pie_legend").html(skillsChart.generateLegend());
+    }
+    /*]]>*/
+
+
+
+                </script>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

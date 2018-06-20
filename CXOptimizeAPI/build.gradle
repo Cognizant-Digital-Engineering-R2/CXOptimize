@@ -1,0 +1,138 @@
+group 'com.cognizant.pace.CXOptimize.api'
+version '2.0.3'
+
+buildscript {
+    ext {
+        springBootVersion 		= '1.5.6.RELEASE'
+
+    }
+    repositories {
+        maven {
+            mavenCentral()
+			jcenter()
+            url "https://plugins.gradle.org/m2/"
+        }
+
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'com.github.jacobono:gradle-jaxb-plugin:1.3.6'
+        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
+apply plugin: 'org.sonarqube'
+apply plugin: 'com.github.jacobono.jaxb'
+
+jar {
+    baseName = 'CXOptimizeAPI'
+    version =  '2.0.3'
+}
+
+ext {
+    springfoxSwagger2Version   = '2.6.1'
+    springfoxSwagger2UIVersion = '2.6.1'
+}
+
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMdd')
+    return formattedDate
+}
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    deployerJars
+    packaged
+    compile {
+        extendsFrom packaged
+    }
+}
+
+dependencies {
+
+    //compile("org.springframework.boot:spring-boot-devtools")
+
+    //Analysis Engine
+
+    packaged 'org.codehaus.groovy:groovy-all:2.4.6'
+    packaged 'org.apache.ivy:ivy:2.4.0-rc1'
+    packaged 'commons-collections:commons-collections:3.2.2'
+    packaged 'xml-resolver:xml-resolver:1.2'
+    packaged 'nekohtml:nekohtml:1.9.6.2'
+    packaged 'org.apache.httpcomponents:httpcore:4.4.4'
+    packaged 'org.apache.httpcomponents:httpclient:4.5.2'
+    packaged 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    packaged 'net.sf.json-lib:json-lib:2.4:jdk15'
+    packaged 'commons-codec:commons-codec:1.9'
+    packaged 'commons-logging:commons-logging:1.2'
+    packaged 'org.jsoup:jsoup:1.9.1'
+    packaged 'org.apache.ant:ant:1.9.6'
+    packaged 'org.json:json:20090211'
+    packaged 'org.codehaus.gpars:gpars:1.1.0'
+    packaged 'com.googlecode.htmlcompressor:htmlcompressor:1.5.2'
+    packaged 'com.yahoo.platform.yui:yuicompressor:2.4.8'
+    packaged 'org.mozilla:rhino:1.7R4'
+    packaged 'log4j:log4j:1.2.17'
+    packaged 'javax.xml.bind:jaxb-api:2.1'
+    compile group: 'javax.mail', name: 'mail', version: '1.4.7'
+
+
+    //API
+    packaged 'org.springframework.boot:spring-boot-starter-web'
+    packaged 'org.springframework.boot:spring-boot-starter-actuator'
+    packaged 'org.springframework.boot:spring-boot-starter-security'
+    compile("io.jsonwebtoken:jjwt:0.7.0")
+    compile group: 'org.elasticsearch', name: 'elasticsearch', version: '2.2.0'
+    compile group: 'org.json', name: 'json', version: '20131018'
+    compile group: 'com.google.code.gson', name: 'gson', version: '1.7.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.5.0'
+    compile group: 'org.influxdb', name: 'influxdb-java', version:'2.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.3.3'
+    compile group: 'commons-validator', name: 'commons-validator', version:'1.4.0'
+    compile group: 'net.sf.uadetector', name: 'uadetector-core', version: '0.9.22'
+    compile group: 'net.sf.uadetector', name: 'uadetector-resources', version: '2014.10'
+    compile group: 'org.springframework', name: 'spring-context-support', version: '4.2.4.RELEASE'
+    compile("io.springfox:springfox-swagger2:2.6.1")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("junit:junit"){
+        exclude group: 'org.hamcrest'
+    }
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile("org.apache.directory.studio:org.apache.commons.io:2.4")
+}
+
+
+test {
+    exclude 'com/cognizant/pace/CXOptimize/api/**'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}
+
+sourceSets.main.java.srcDirs = []
+sourceSets.main.groovy.srcDirs += ["src/main/java"]
+//sourceSets.test.java.srcDirs += ["src/test/java"]
+
+sonarqube {
+    properties  {
+        property "sonar.exclusions", "**/model/**,**/configuration/**,**/controllers/**,**/response/**,**/request/**,**/test/**,**/constants/*.java"
+    }
+}
+test {
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+    }
+}

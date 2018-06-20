@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Login</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="css/typica-login.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css" />
+    <style>
+    #usernameError,
+    #passwordError {
+      color: #999;
+      max-height: 0;
+      transition: 0.28s;
+      overflow: hidden;
+      color: red;
+      font-style: italic;
+    }
+  </style>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    function handleinput() {
+      if (document.getElementById("username").value == "") {
+        document.getElementById("usernameError").innerHTML = "You must enter a username";
+        return false;
+      } else if (document.getElementById("password").value == "") {
+        document.getElementById("usernameError").innerHTML = "";
+        document.getElementById("passwordError").innerHTML = "You must enter a password";
+        return false;
+      } else {
+        document.getElementById("usernameError").innerHTML = "";
+        document.getElementById("passwordError").innerHTML = "";
+        return true;
+      }
+    }
+    /*]]>*/
+  </script>
+</head>
+
+<body class="bg-primary p-0">
+<div class="p-0">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-12">
+                <img class="center-block img-fluid d-block rounded" src="images/header1.png"></img>
+            </div>
+        </div>
+        <div class="row py-4">
+        </div>
+        <div class="row py-4">
+        </div>
+        <div class="row py-2 ">
+            <div class="col-md-4">
+             </div>
+            <div class="col-md-4" >
+                <div id="login-wraper" >
+                    <form class="login-form" th:action="@{/login}" th:object="${login}" method="post" autocomplete="off">
+                        <legend><p class="blue" align="center">Enter Details</p></legend>
+                        <div class="body">
+                            <div align="left" >
+                                <label ><b>Username</b></label>
+                            </div>
+                            <div align="left">
+                                <input type="text" name="username" id="username" placeholder="Enter username"/><span id="usernameError"></span></div>
+
+                            <div align="left">
+                                <label ><b>Password</b></label>
+                            </div>
+                            <div align="left">
+                                <input type="password" name="password" id="password" placeholder="Enter password" /><span id="passwordError"></span></div>
+                        </div>
+                        <div class="footer"  Style="margin-top:4%">
+                            <button type="submit" onclick="javascript:handleinput();">Sign In</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

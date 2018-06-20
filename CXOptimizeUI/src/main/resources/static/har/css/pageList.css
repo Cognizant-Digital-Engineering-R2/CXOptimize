@@ -1,0 +1,66 @@
+/* See license.txt for terms of usage */
+
+.pageList {
+    width: 100%;
+}
+
+.pageTable {
+    width: 100%;
+    font-family: Lucida Grande, Tahoma, sans-serif;
+    font-size: 19px;
+	padding-right: 40px;
+}
+
+.pageCol {
+    white-space: nowrap;
+    border-bottom: 1px solid #EEEEEE;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.pageRow {
+    font-weight: bold;
+    height: 17px;
+    background-color: white;
+}
+
+.pageRow:hover {
+    background: #FFFFFF;
+}
+
+.opened > .pageCol > .pageName {
+    
+}
+
+.pageName {
+    
+}
+
+.pageID {
+    color: gray;
+}
+
+.pageInfoCol {
+}
+
+/*************************************************************************************************/
+/* Column Customization */
+
+.pageRow:hover > .netOptionsCol > .netOptionsLabel {
+    display: block;
+}
+
+.pageRow > .netOptionsCol {
+    padding-right: 2px;
+}
+
+/*************************************************************************************************/
+/* Print support */
+
+@media print {
+
+.pageInfoCol {
+    background: none;
+}
+
+}

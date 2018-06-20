@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<div th:fragment="header">
+    <!-- this is header -->
+    <div class="row">
+        <div class="col-md-12">
+            <img class="center-block img-fluid d-block rounded" src="images/header2.png"></img>
+        </div>
+    </div>
+    <div class="row py-2">
+
+
+        <div class="col-md-11" align="right">
+            <span style="color : white" sec:authorize="isAuthenticated()">
+                | Logged user:  <span sec:authentication="name"></span> |
+                <!--Roles: <span sec:authentication="principal.authorities"></span> | -->
+
+            </span>
+        </div>
+        <div class="col-md-1" align="left">
+            <form th:action="@{/logout}" method="post">
+                <input type="submit"    value="Sign Out"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "name": "CXOptimizePlugin",
+  "description": "Captures Client Side Metrics",
+  "version": "2.3",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": {
+		"16":"plugin16.png",
+		"48":"plugin48.png",
+		"128":"plugin128.png"
+		},
+    "default_popup": "popup.html"
+  },
+  "icons": {
+		"16":"plugin16.png",
+		"48":"plugin48.png",
+		"128":"plugin128.png"
+ },
+  "background": {
+    "persistent": true,
+    "scripts": [
+      "config.js","background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.org/*"
+      ],
+      "js": [
+        "myscript.js","rum-speedindex.js"
+      ],
+     "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "webNavigation",
+    "tabs",
+	"<all_urls>",
+    "storage",
+    "http://*/*",
+    "https://*/*",
+	"webRequest",
+	"webRequestBlocking"
+  ]
+}
+/*content_scripts": [
+    {"matches" : ["<all_urls>"],
+*/
+/*
+ "run_at":  
+Controls when the files in js are injected. Can be "document_start", "document_end", or "document_idle". Defaults to "document_idle". 
+In the case of "document_start", the files are injected after any files from css, but before any other DOM is constructed or any other script is run. 
+In the case of "document_end", the files are injected immediately after the DOM is complete, but before subresources like images and frames have loaded. 
+In the case of "document_idle", the browser chooses a time to inject scripts between "document_end" and immediately after the window.onload event fires. The exact moment of injection depends on how complex the document is and how long it is taking to load, and is optimized for page load speed. 
+Note: With "document_idle", content scripts may not necessarily receive the window.onload event, because they may run after it has already fired. In most cases, listening for the onload event is unnecessary for content scripts running at "document_idle" because they are guaranteed to run after the DOM is complete. If your script definitely needs to run after window.onload, you can check if onload has already fired by using the document.readyState property.
+*/

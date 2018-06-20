@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8"/>
+    <title>CrossBrowserComparisonReport</title>
+    <link rel="stylesheet" href="css/style_br.css" type="text/css" />
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css"></link>
+    <style>
+    body {
+      font-family: Lucida Grande, Tahoma, sans-serif;
+      background-color: #29324e;
+      line-height: 1.3;
+    }
+    .cd-tabs {
+      position: relative;
+      width: 90%;
+      height: 100%;
+      margin: 0.5em auto;
+      background-color: #ffffff;
+      font-size: 12px;
+    }
+    header {
+      position: relative;
+      height: 160px;
+      line-height: 180px;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    header h1 {
+      font-size: 100%;
+    }
+    #leftcol {
+      background-color: white;
+      width: 5px;
+    }
+    table.display {
+      table-layout: fixed;
+    }
+    table.display td {
+      overflow: hidden;
+    }
+    div.rounded_border {
+      padding: 1%;
+      border-top-left-radius: 4px 4px;
+      border-bottom-left-radius: 4px 4px;
+      border-top-right-radius: 4px 4px;
+      border-bottom-right-radius: 4px 4px;
+      border-color: gray;
+      border-width: 1px;
+      border-style: solid;
+      margin-right: 1%;
+      margin-bottom: 1%;
+      -moz-box-shadow: inset 0 0 8px #4d94ff;
+      -webkit-box-shadow: inset 0 0 8px #4d94ff;
+      box-shadow: inset 0 0 8px #4d94ff;
+    }
+  </style>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript"  src="js/jquery-migrate-3.0.0.js"></script>
+    <script type="text/javascript"  src="js/jquery-migrate-1.2.1.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.pager.js"></script>
+    <script type="text/javascript" src="js/jscookie.js"></script>
+    <script th:inline="javascript">
+     /*<![CDATA[*/
+    function getQueryVariable(variable) {
+        var blank = "";
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+                return unescape(pair[1]);
+            }
+        }
+        return blank;
+    }
+
+    function valAlphaNumeric(value) {
+        if (value.match(/[^a-zA-Z0-9]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function valAlphabets(value) {
+        if (value.match(/[^a-zA-Z]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function valAlphaNumericUnderScore(value) {
+        if (value.match(/[^a-zA-Z0-9|^_|^\-|^\s]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    function valNumeric(value) {
+        if (value.match(/[^0-9]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /*]]>*/
+  </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    (function($) {
+        $(document).ready(function() {
+            if (valAlphaNumeric(getQueryVariable('ClientName')) && valAlphaNumeric(getQueryVariable('ProjectName')) && valAlphaNumeric(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('AnalysisType')) && valNumeric(getQueryVariable("RunID")) && valNumeric(getQueryVariable("BaselineRunID")) && valAlphaNumericUnderScore(getQueryVariable("TransactionName"))) {
+                var clientname = getQueryVariable("ClientName");
+                $('#client').html('<b>Client Name :</b>' + clientname);
+                var projectname = getQueryVariable("ProjectName");
+                $('#project').html('<b>Project Name :</b>' + projectname);
+                var scenarioname = getQueryVariable("Scenario");
+                $('#scenario').html('<b>Scenario Name :</b>' + scenarioname);
+                var runID = getQueryVariable("RunID");
+                var baselineRunID = getQueryVariable("BaselineRunID");
+                var txnName = getQueryVariable("TransactionName");
+                $('#transaction').html('<b>Transaction :</b>' + txnName);
+                $('#currid').html('<b>Current RunID :</b> ' + runID);
+                $('#blineid').html('<b>Baseline RunID :</b> ' + baselineRunID);
+                $('#header').html('Browser Comparison');
+                var jServices = jQuery.noConflict();
+                jServices.ajaxSetup({
+                    contentType: "application/jsonp; charset=UTF-8",
+                    headers:{"Authorization" : "Bearer " + Cookies.get('token')}
+                });
+                var hostName = (window.location.origin).split(":");
+                var APIPort = '80';
+                if (!isNaN(hostName[2])) {
+                    APIPort = hostName[2];
+                } else {
+                    if (hostName[0] === 'https') {
+                        APIPort = '443';
+                    }
+                }
+                var apiURL = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getCBAnalysis' + window.location.search.substring(0);
+                //var apiURL = "http://localhost:8085" + '/getCBAnalysis' + window.location.search.substring(0);
+                var content = '';
+                var imageVal = '';
+                jServices.getJSON(apiURL, function(json) {
+                    //Adding Headers
+                    var content = '';
+                    for (var i = 0; i < json.UA.length; i++) {
+                        content += '<th>' + getImage(json.UA[i], "header") + '</th>';
+                    }
+                    var headerContent = '<tr><th>Transaction</th><th>Metrics</th>' + content + '<th>Indv Best Fit</th><th>Best Fit</th>';
+                    $('#brComparisonHeaders').html(headerContent);
+
+                    //Adding Row Content
+
+                    if (json.Transaction[0].Metrics[0].pageRenderingTime === undefined) {
+                        content = '<tr><td rowspan="11">' + json.Transaction[0].Name + '</td><td>ClientTime(ms)</td>';
+                        for (var i = 0; i < json.UA.length; i++) {
+                            content += '<td>' + json.Transaction[0].Metrics[i].clientTime + '</td>';
+                        }
+                        content += '<td>' + getImage(json.Transaction[0].Verdict.clientTime[0], "individual") + '</td><td rowspan="11">' + getImage(json.Transaction[0].Verdict.finalVerdict, "final") + '</td></tr>';
+                    } else {
+                        content = '<tr><td rowspan="15">' + json.Transaction[0].Name + '</td><td>ClientTime(ms)</td>';
+                        for (var i = 0; i < json.UA.length; i++) {
+                            content += '<td>' + json.Transaction[0].Metrics[i].clientTime + '</td>';
+                        }
+                        content += '<td>' + getImage(json.Transaction[0].Verdict.clientTime[0], "individual") + '</td><td rowspan="15">' + getImage(json.Transaction[0].Verdict.finalVerdict, "final") + '</td></tr>';
+                    }
+                    content += '<tr><td>Total Time(ms)</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].totalPageLoadTime + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.totalPageLoadTime[0], "individual") + '</td></tr>';
+                    if (json.Transaction[0].Metrics[0].pageRenderingTime === undefined) {} else {
+                        content += '<tr><td>Rendering Time(ms)</td>';
+                        for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                            content += '<td>' + json.Transaction[0].Metrics[i].pageRenderingTime + '</td>';
+                        }
+                        content += '<td>' + getImage(json.Transaction[0].Verdict.pageRenderingTime[0], "individual") + '</td></tr>';
+                        content += '<tr><td>Network Time(ms)</td>';
+                        for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                            content += '<td>' + json.Transaction[0].Metrics[i].pagenetworkTime + '</td>';
+                        }
+                        content += '<td>' + getImage(json.Transaction[0].Verdict.pagenetworkTime[0], "individual") + '</td></tr>';
+                        content += '<tr><td>DOM Processing Time(ms)</td>';
+                        for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                            content += '<td>' + json.Transaction[0].Metrics[i].pageDomProcessingTime + '</td>';
+                        }
+                        content += '<td>' + getImage(json.Transaction[0].Verdict.pageDomProcessingTime[0], "individual") + '</td></tr>';
+                        content += '<tr><td>Speed Index(ms)</td>';
+                        for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                            content += '<td>' + json.Transaction[0].Metrics[i].speedIndex + '</td>';
+                        }
+                        content += '<td>' + getImage(json.Transaction[0].Verdict.speedIndex[0], "individual") + '</td></tr>';
+                    }
+                    content += '<tr><td>Backend Time(ms)</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].resourceLoadTime + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.resourceLoadTime[0], "individual") + '</td></tr>';
+                    content += '<tr><td>First Resource Start</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].firstResStartTime + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.firstResStartTime[0], "individual") + '</td></tr>';
+                    content += '<tr><td>Last Resource Start</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].lastResStartTime + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.lastResStartTime[0], "individual") + '</td></tr>';
+                    content += '<tr><td>Total DNS Time(ms)</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].aggResdnsLookupTime + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.aggResdnsLookupTime[0], "individual") + '</td></tr>';
+                    content += '<tr><td>Total TCP Time(ms)</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].aggRestcpConnectTime + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.aggRestcpConnectTime[0], "individual") + '</td></tr>';
+                    content += '<tr><td>%Cache Header</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].pcntResourcesCached + ' %</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.pcntResourcesCached[0], "individual") + '</td></tr>';
+                    content += '<tr><td>%Cache Validator</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].pcntResourcesCacheValidated + ' %</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.pcntResourcesCacheValidated[0], "individual") + '</td></tr>';
+                    content += '<tr><td>%Compressed</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].pcntResourcesCompressed + ' %</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.pcntResourcesCompressed[0], "individual") + '</td></tr>';
+                    content += '<tr><td>Resource Count</td>';
+                    for (var i = 0; i < json.Transaction[0].Metrics.length; i++) {
+                        content += '<td>' + json.Transaction[0].Metrics[i].resrcCount + '</td>';
+                    }
+                    content += '<td>' + getImage(json.Transaction[0].Verdict.resrcCount[0], "individual") + '</td></tr>';
+                    $('#brComparisonRows').html(content);
+                });
+            }
+        });
+    })(jQuery);
+
+    function getImage(str, col) {
+        var temp = str.split('|');
+        var imgReturn = '';
+        if (col == "final") {
+            switch (temp[0]) {
+                case "Personal computer":
+                    imgReturn = '<img src="images/desktop.PNG"><\img>';
+                    break;
+                case "Tablet":
+                    imgReturn = '<img src="images/tablet.png"><\img>';
+                    break;
+                case "Mobile":
+                    imgReturn = '<img src="images/mobile.PNG"><\img>';
+            }
+            switch (temp[1]) {
+                case "Windows":
+                    imgReturn += '<img src="images/windows.PNG"><\img>';
+                    break;
+                case "Windows 7":
+                    imgReturn += '<img src="images/windows.PNG"><\img>';
+                    break;
+                case "Android":
+                    imgReturn += '<img src="images/androidos.png"><\img>';
+                    break;
+                case "iOS":
+                    imgReturn += '<img src="images/apple.PNG"><\img>';
+            }
+        }
+        switch (temp[2]) {
+            case "Chrome":
+                imgReturn += '<img src="images/chrome.PNG"><\img>';
+                break;
+            case "Chromium":
+                imgReturn += '<img src="images/chromium.png"><\img>';
+                break;
+            case "IE":
+                imgReturn += '<img src="images/ie.PNG"><\img>';
+                break;
+            case "Firefox":
+                imgReturn += '<img src="images/firefox.PNG"><\img>';
+                break;
+            case "Opera":
+                imgReturn += '<img src="images/opera.PNG"><\img>';
+                break;
+            case "Safari":
+                imgReturn += '<img src="images/safari.PNG"><\img>';
+                break;
+            case "Android":
+                imgReturn += '<img src="images/android.PNG"><\img>';
+        }
+        imgReturn += temp[3];
+        return imgReturn;
+    }
+
+    function isNumber(InString) {
+        if (InString == null) return (false);
+        if (InString.length == 0) return (false);
+        var RefString = "1234567890.";
+        for (Count = 0; Count < InString.length; Count++) {
+            TempChar = InString.substring(Count, Count + 1);
+            if (RefString.indexOf(TempChar, 0) == -1)
+                return (false);
+        }
+        return (true);
+    }
+    /*]]>*/
+  </script>
+</head>
+<body class="bg-primary p-0">
+<div class="p-0">
+    <div class="container py-4">
+        <div th:replace="fragments/header :: header"/>
+        <div class="row">
+            <ol class="cd-tabs">
+                <div id="temp" Style="margin-bottom: 1em;margin-right: 3em;">
+                    <div style="overflow: hidden;margin-bottom:0px">
+                        <div style="width:100%;margin-left:auto;margin-right:auto;margin-top:40px;margin-bottom:0px">
+                            <div class="rounded_border">
+                                <div style="height:40px">
+                                    <table id="example2" class="displays" cellspacing="0" width="90%">
+                                        <tr>
+                                            <td align="left" id="client" style="color: black;"></td>
+                                            <td align="left" id="project" style="color: black;"></td>
+                                            <td align="left" id="scenario" style="color: black;"></td>
+                                            <td align="right" id="transaction" style="color: black;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" colspan="2" id="blineid" style="color: black;">
+                                            </td>
+                                            <td align="left" colspan="2" id="currid" style="color: black;">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rounded_border">
+                        <br></br>
+                        <table id="Comparison" class="tablesorter">
+                            <thead id="brComparisonHeaders">
+                            </thead>
+                            <tbody id="brComparisonRows">
+                            </tbody>
+                        </table>
+                        <br></br>
+                    </div>
+                    <br></br>
+                </div>
+            </ol>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

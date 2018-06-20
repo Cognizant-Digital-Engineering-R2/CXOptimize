@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css"></link>
+</head>
+<body class="bg-primary p-0">
+<div class="p-0">
+    <div class="container py-4">
+        <div th:replace="fragments/headerdashboard :: headerdashboard"/>
+        <div class="row">
+                   <div class="col-md-12" >
+                            <div class="container">
+
+                                <div class="starter-template">
+                                    <h1>403 - Access is denied</h1>
+                                    <div th:inline="text">Hello '[[${#httpServletRequest.remoteUser}]]', you do not have permission to access this page.</div>
+                                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

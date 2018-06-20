@@ -1,0 +1,1231 @@
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Settings</title>
+        <link rel="stylesheet" href="css/style.css" type="text/css"></link>
+        <link href="css/bootstrap.min.css" rel="stylesheet"></link>
+        <link href="css/bootstrap-responsive.min.css" rel="stylesheet"></link>
+        <link rel="stylesheet" type="text/css" href="css/tooltip_style.css"></link>
+        <link href="css/bootstrap_toggle.min.css" rel="stylesheet"></link>
+        <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css"></link>
+        <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+        <style>
+        body {
+          font-size: 0.99vw;
+          font-family:sans-serif;
+          line-height: 1.3;
+        }
+        td {
+          white-space: nowrap;
+        }
+        .cd-tabs1 {
+          position: relative;
+          width: 95%;
+          height: 90%;
+          margin: 5em auto;
+        }
+        header {
+          position: relative;
+          height: 80px;
+          line-height: 180px;
+          text-align: left;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        header h1 {
+          font-size: 2em;
+          font-size: 1.25rem;
+        }
+        #leftcol {
+          background-color: white;
+          width: 5px;
+        }
+        #login-wrapper {
+          -webkit-border-radius: 15px;
+          -moz-border-radius: 15px;
+          -ms-border-radius: 15px;
+          -o-border-radius: 15px;
+          border-radius: 15px;
+          -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+          -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+          position: absolute;
+          top: 48.5%;
+          left: 50%;
+          display: block;
+          margin-top: -220px;
+          margin-left: -365px;
+          margin-bottom: 50px;
+          padding-top: 25px;
+          padding-left: 25px;
+          padding-right: 25px;
+          width: 720px;
+          height: auto;
+          background: white;
+          text-align: left;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 30px;
+          height: 15px;
+        }
+        .switch input {
+          display: none;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 12px;
+          width: 12px;
+          left: 4px;
+          bottom: 2px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+        input:checked + .slider {
+          background-color: #5bb75b;
+        }
+        input:focus + .slider {
+          box-shadow: 0 0 1px #2196F3;
+        }
+        input:checked + .slider:before {
+          -webkit-transform: translateX(11px);
+          -ms-transform: translateX(11px);
+          transform: translateX(11px);
+        }
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 34px;
+        }
+        .slider.round:before {
+          border-radius: 50%;
+        }
+        p {
+          font-size: 0.90vw;
+          line-height: 18px;
+        }
+        label{
+            font-size: 0.90vw;
+
+        }
+        input[type="radio"] {
+          vertical-align: top;
+        }
+        input[type=radio],
+        input[type=checkbox] {
+          display: none;
+        }
+        input[type=radio] + label:before {
+          content: "";
+          display: inline-block;
+          width: 15px;
+          height: 15px;
+          vertical-align: middle;
+          margin-right: 8px;
+          background-color: #aaa;
+          box-shadow: inset 0px 2px 2px rgba(0, 0, 0, .3);
+          border-radius: 8px;
+        }
+        input[type=checkbox] + label:before {
+          content: "";
+          display: inline-block;
+          width: 15px;
+          height: 15px;
+          vertical-align: middle;
+          margin-right: 8px;
+          background-color: #aaa;
+          box-shadow: inset 0px 2px 2px rgba(0, 0, 0, .3);
+          border-radius: 4px;
+        }
+        input[type=radio]:checked + label:before {
+          content: "\2022";
+          color: white;
+          background-color: #666;
+          font-size: 1.8em;
+          text-align: center;
+          line-height: 14px;
+          text-shadow: 0px 0px 3px #eee;
+        }
+        input[type=checkbox]:checked + label:before {
+          content: "\2714";
+          color: white;
+          background-color: #666;
+          text-align: center;
+          line-height: 15px;
+          text-shadow: 0px 0px 3px #eee;
+        }
+        .accordion-toggle:hover {
+          text-decoration: none;
+        }
+        tr.spaceUnder > td {
+          padding-bottom: 0.1em;
+        }
+      </style>
+        <script type="text/javascript" language="javascript" src="js/jquery-1.12.3.min.js"></script>
+        <script type='text/javascript' src="js/bootstrap_toggle.min.js"></script>
+        <script type='text/javascript' src="js/bootstrap-multiselect.js"></script>
+        <script type="text/javascript" src="js/jscookie.js"></script>
+        <script th:inline="javascript">
+         /*<![CDATA[*/
+        function getQueryVariable(variable) {
+            var blank = "";
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return unescape(pair[1]);
+                }
+            }
+            return blank;
+        }
+
+        function valAlphaNumeric(value) {
+            if (value.match(/[^a-zA-Z0-9]/g) == null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function valAlphabets(value) {
+            if (value.match(/[^a-zA-Z]/g) == null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function valAlphaNumericUnderScore(value) {
+            if (value.match(/[^a-zA-Z0-9|^_|^\-|^\s]/g) == null) {
+                if(value=='' || value.indexOf(' ') >= 0){
+                  return false;
+                } else {
+                     return true;
+                     }
+            } else {
+                return false;
+            }
+
+        }
+        function valPassword(value) {
+            var Regex = new RegExp("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            return Regex.test(value);
+        }
+        function valNumeric(value) {
+            if (value.match(/[^0-9]/g) == null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        /*]]>*/
+      </script>
+        <script th:inline="javascript">
+         /*<![CDATA[*/
+            var clientname = '';
+            var projectname = '';
+            var scenarioname = '';
+            var analysisType = '';
+            (function($) {
+                $(document).ready(function() {
+
+                    if (valAlphaNumeric(getQueryVariable('ClientName')) && valAlphaNumeric(getQueryVariable('ProjectName')) && valAlphaNumeric(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('analysisType'))) {
+                        clientname = getQueryVariable('ClientName');
+                        $('#client').html('<b>Client Name :  </b>' + clientname);
+                        $('#client_tranSLA').html('<b>Client Name :  </b>' + clientname);
+                        $('#client_genericRule').html('<b>Client Name :  </b>' + clientname);
+                         $('#client_softNavigationRules').html('<b>Client Name :  </b>' + clientname);
+                          $('#client_delete').html('<b>Client Name :  </b>' + clientname);
+
+                        projectname = getQueryVariable('ProjectName');
+                        $('#project').html('<b>Project Name :  </b>' + projectname);
+                        $('#project_tranSLA').html('<b>Project Name :  </b>' + projectname);
+                        $('#project_genericRule').html('<b>Project Name :  </b>' + projectname);
+                        $('#project_softNavigationRules').html('<b>Project Name :  </b>' + projectname);
+                        $('#project_delete').html('<b>Project Name :  </b>' + projectname);
+
+                        scenarioname = getQueryVariable('Scenario');
+                        $('#scenario').html('<b>Scenario Name :  </b>' + scenarioname);
+                        $('#scenario_tranSLA').html('<b>Scenario Name :  </b>' + scenarioname);
+                        $('#scenario_genericRule').html('<b>Scenario Name :  </b>' + scenarioname);
+                        $('#scenario_softNavigationRules').html('<b>Scenario Name :  </b>' + scenarioname);
+                        $('#scenario_delete').html('<b>Scenario Name :  </b>' + scenarioname);
+                        var filter = '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname;
+                        analysisType = getQueryVariable('analysisType');
+                        if (analysisType == undefined || analysisType == "") {
+                            analysisType = 'Run';
+                        }
+
+                        var jServices = jQuery.noConflict();
+                        jServices.ajaxSetup({
+                            contentType: "application/json; charset=UTF-8",
+                            headers:{"Authorization" : "Bearer " + Cookies.get('token')}
+                        });
+                        var hostName = (window.location.origin).split(":");
+                        var APIPort = '80';
+                        if (!isNaN(hostName[2])) {
+                            APIPort = hostName[2];
+                        } else {
+                            if (hostName[0] === 'https') {
+                                APIPort = '443';
+                            }
+                        }
+
+                        var baseUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api';
+                        SLA_html = '';
+                        var tranNum = 0;
+                        if(clientname != '' && projectname != '' && scenarioname != '')
+                        {
+                            var apiURL_SLA = baseUrl +  '/getTransactionsSLA' + filter;
+
+                            jServices.getJSON(apiURL_SLA, function(json_SLA)
+                            {
+                                 if (!json_SLA["Status"])
+                                 {
+                                     for(key in json_SLA)
+                                     {
+                                        SLA_html = SLA_html + '<div class="row  p-2 text-justify" ><div class="col-md-6"> <label style="text-align: left;vertical-align: middle;" id ="transName'+tranNum+'">'+ key +'</label></div><div class="col-md-5 w-75"> <input class="form-control" type="number" id="transactionSLA'+tranNum+'" value="'+json_SLA[key]+'" min="0" oninput="validity.valid||(value=\'\');"/></div><div class="col-md-1"> <div class="help-tip"><p>Enter SLA</p></div></div></div>' ;
+                                        tranNum++ ;
+                                     }
+                                     SLA_html= SLA_html + '<input type="hidden" id="tranSLAlength" value="' + tranNum + '">';
+                                     $("#tranSLA").append(SLA_html);
+                                 }
+                            });
+                        }
+                        else
+                        {
+                            $("#editconfigtab").hide();
+                            $("#editslatab").hide();
+                            $("#editgrulestab").hide();
+                            $("#editsrulestab").hide();
+                            $("#deletedata").hide();
+                        }
+
+
+                        var apiURL_client = baseUrl + '/getClientList';
+                        var selectClient_html='<select id="selectClient" multiple="multiple">';
+                        var selectClientManage_html='<select id="selectClientManage" multiple="multiple">';
+                        jServices.getJSON(apiURL_client, function(json_client) {
+                        for ( i=0;i<json_client.length ;i++){
+
+                                selectClient_html= selectClient_html + '<option value="'+json_client[i]+'">'+json_client[i]+'</option>';
+                                selectClientManage_html= selectClientManage_html + '<option value="'+json_client[i]+'">'+json_client[i]+'</option>';
+
+                        }
+                         selectClient_html = selectClient_html + '</select>';
+                         selectClientManage_html = selectClientManage_html + '</select>';
+
+                         $( "#clientSelect" ).append(selectClient_html);
+                         $( "#clientSelectManage" ).append(selectClientManage_html);
+
+                         $('#selectClient').multiselect({
+                             enableClickableOptGroups: true
+                         });
+                         $('#selectClientManage').multiselect({
+                             enableClickableOptGroups: true
+                         });
+
+                        });
+
+
+                        var genericRules_html='';
+                        var softNavigationRules_html='';
+                        if(clientname != '' && projectname != '' && scenarioname != '')
+                        {
+                            var apiURL = baseUrl + '/getConfig' + filter + '&updateRunID=false';
+                            jServices.getJSON(apiURL, function(json)
+                            {
+                                $('#clientName').val(clientname);
+                                $('#projectName').val(projectname);
+                                $('#scenarioName').val(scenarioname);
+                                $('#analysisType').val(analysisType);
+                                $('#currentRun').val(json.RunID);
+                                $('#baselineRun').val(json.BaselineRunID);
+                                $('#is_resource_crawl').attr('checked', json.isResourceCrawlingEnabled);
+                                $('#image_resource_extension').val(json.imageResourceExtension);
+                                $('#baseline_runid').val(json.BaselineRunID);
+                                $('#excluded_generic_rules').val(json.excludedGeneriRules);
+                                $('#excluded_soft_rules').val(json.excludedSoftNavigationRules);
+                                $('#dom_count_thresold').val(json.domCountThreshold);
+                                $('#run_interval_in_minutes').val(json.runIntervalInMinutes);
+                                $('#default_transaction_threshold').val(json.defaultTransactionThreshold);
+                                $('#excluded_cbt_rules').val(json.excludedCBTRules);
+                                $('#excluded_mobile_rules').val(json.excludedMobileRules);
+                                $('#runid').val(json.RunID);
+                                $('#static_resource_extension').val(json.staticResourceExtension);
+                                $('#compare_deviation_threshold').val(json.devThreshold);
+                                $('#slaComplianceThreshold').val(json.slaComplianceThreshold);
+                                $('#indvScoreComplianceThreshold').val(json.indvScoreComplianceThreshold);
+                                $('#totalScoreThreshold').val(json.totalScoreThreshold);
+                                $('#individualScoreThreshold').val(json.individualScoreThreshold);
+                                $('#compareComplianceThreshold').val(json.compareComplianceThreshold);
+                                $('#http_calls_threshold').val(json.httpCallsThreshold);
+                                $('#slaComplianceWeight').val(json.slaComplianceWeight);
+                                $('#indvScoreComplianceWeight').val(json.indvScoreComplianceWeight);
+                                $('#compareComplianceWeight').val(json.compareComplianceWeight);
+                                $('#totalScoreComplianceWeight').val(json.totalScoreComplianceWeight);
+
+
+                                for ( i=0;i<json.Rules.genericRules.length ;i++)
+                                {
+                                        genericRules_html = genericRules_html + '<div class="row my-1" ><div class="col-md-4"><input type="checkbox" name="genericRules" id="genericRules'+(i+1)+'" value="'+json.Rules.genericRules[i].id+'" onclick="fun_getRules()"/><label for="genericRules'+(i+1)+'" id ="genericRules'+(i+1)+'_name">'+json.Rules.genericRules[i].description+'</label></div><div class="col-md-4"><select class="selectpicker" id="genericRules'+ i + '_priority">';
+                                       if (json.Rules.genericRules[i].priority == 'Low'){
+                                            genericRules_html = genericRules_html + '<option value="Low" selected>Low</option><option value="Medium">Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.genericRules[i].weight +'" min="0" max="100" step="1" id="genericRules'+i+'_weight"/></div></div>';
+                                       } else if (json.Rules.genericRules[i].priority == 'Medium'){
+                                            genericRules_html = genericRules_html + '<option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.genericRules[i].weight +'" min="0" max="100" step="1" id="genericRules'+i+'_weight"/></div></div>';
+                                       } else {
+                                            genericRules_html = genericRules_html + '<option value="Low">Low</option><option value="Medium" >Medium</option><option value="High" selected>High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.genericRules[i].weight +'" min="0" max="100" step="1" id="genericRules'+i+'_weight"/></div></div>';
+                                       }
+                                }
+                                genericRules_html = genericRules_html + '<input type="hidden" id="genericRules_length" value="' + json.Rules.genericRules.length + '">';
+
+                                for ( i=0;i<json.Rules.softNavigationRules.length ;i++) {
+                                        softNavigationRules_html = softNavigationRules_html + '<div class="row my-1" ><div class="col-md-4"><input type="checkbox" name="softNavigationRules" id="softNavigationRules'+(i+1)+'" value="'+json.Rules.softNavigationRules[i].id+'" onclick="fun_getSoftRules()"/><label for="softNavigationRules'+(i+1)+'" id ="softNavigationRules'+(i+1)+'_name">'+json.Rules.softNavigationRules[i].description+'</label></div><div class="col-md-4"><select class="selectpicker" id="softNavigationRules'+ i + '_priority">';
+                                       if (json.Rules.softNavigationRules[i].priority == 'Low'){
+                                            softNavigationRules_html = softNavigationRules_html + '<option value="Low" selected>Low</option><option value="Medium">Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.softNavigationRules[i].weight +'" min="0" max="100" step="1" id="softNavigationRules'+i+'_weight"/></div></div>';
+                                       } else if (json.Rules.softNavigationRules[i].priority == 'Medium'){
+                                            softNavigationRules_html = softNavigationRules_html + '<option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.softNavigationRules[i].weight +'" min="0" max="100" step="1" id="softNavigationRules'+i+'_weight"/></div></div>';
+                                       } else {
+                                            softNavigationRules_html = softNavigationRules_html + '<option value="Low">Low</option><option value="Medium" >Medium</option><option value="High" selected>High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.softNavigationRules[i].weight +'" min="0" max="100" step="1" id="softNavigationRules'+i+'_weight"/></div></div>';
+                                       }
+                                }
+                                genericRules_html = genericRules_html + '<input type="hidden" id="softNavigationRules_length" value="' + json.Rules.softNavigationRules.length + '">';
+                                $( "#genericRules" ).append(genericRules_html);
+                                $( "#softNavigationRules").append(softNavigationRules_html);
+                                if (json.samplesCount === undefined) {
+                                    $('#max_samples_threshold').val(10);
+                                } else {
+                                    $('#max_samples_threshold').val(json.samplesCount);
+                                }
+                                if (json.samplePercentile === undefined || json.samplePercentile == 'Pcnt95') {
+                                    document.getElementById("Pcnt95").checked = true;
+                                } else if (json.samplePercentile == 'Pcnt90') {
+                                    document.getElementById("Pcnt90").checked = true;
+                                } else {
+                                    document.getElementById("Average").checked = true;
+                                }
+
+                            });
+                        }
+                        $('button').bind('click', function()
+                        {
+                            var btnId = $(this).attr('id');
+                            if (btnId == 'create_config')
+                            {
+                                if (valAlphaNumericUnderScore($('#clientID').val()) && valAlphaNumericUnderScore($('#projectID').val()) && valAlphaNumericUnderScore($('#scenarioID').val())) {
+
+                                     var getUrl =  baseUrl + '/createConfig?ProjectName='+$('#projectID').val()+'&Scenario='+$('#scenarioID').val()+'&ClientName='+$('#clientID').val()+'&isLoadTest='+$('#is_load_test').prop('checked')+'&isMarkEnabled='+$('#is_mark_enabled').prop('checked');
+
+                                     $.ajax({
+                                    method: "GET",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: getUrl
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (response["Status"]){
+                                                alert(response.Reason);
+                                            } else {
+                                                alert("Configuration created Successfully !!!");
+
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+                                }
+                                else {
+                                alert('Client Name , Project Name , Scenario Name cannot contain special characters or spaces \r \n Only Alphanumeric value and _ allowed ');
+
+                               }
+                            }
+                            if (btnId == 'deletestats')
+                            {
+                                 var deleteUrl =  baseUrl + '/deleteStats?ProjectName='+projectname+'&Scenario='+scenarioname+'&ClientName='+clientname;
+                                       if($('#delete_runid').val() != '')
+                                       {
+                                         deleteUrl = deleteUrl + '&RunID='+$('#delete_runid').val()
+                                       }
+
+                                     $.ajax({
+                                    method: "GET",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: deleteUrl
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (response["Status"]){
+                                                alert(response.Reason);
+                                            } else {
+                                                alert("Configuration created Successfully !!!");
+
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+
+                            }
+
+                            if (btnId == 'config_update')
+                            {
+                                var updateJSON = '{' + '"isResourceCrawlingEnabled": ' + $('#is_resource_crawl').prop('checked') + ',' + '"ProjectName": "' + projectname + '",' + '"imageResourceExtension": "' + $('#image_resource_extension').val() + '",' + '"BaselineRunID": ' + $('#baseline_runid').val() + ',' +  '"domCountThreshold": ' + $('#dom_count_thresold').val() + ',' + '"devThreshold": ' + $('#compare_deviation_threshold').val() + ',' + '"httpCallsThreshold": ' + $('#http_calls_threshold').val() + ',' + '"samplesCount": ' + $('#max_samples_threshold').val() + ',' + '"samplePercentile": "' + $('input[name="percentile"]:checked').val() + '",' + '"ClientName": "' + clientname + '",' + '"Scenario": "' + scenarioname + '",' + '"runIntervalInMinutes": ' + $('#run_interval_in_minutes').val() + ',' + '"defaultTransactionThreshold": ' + $('#default_transaction_threshold').val() + ',' +  '"staticResourceExtension": "' + $('#static_resource_extension').val() + '",' + '"slaComplianceThreshold": ' + $('#slaComplianceThreshold').val() + ',' + '"indvScoreComplianceThreshold": ' + $('#indvScoreComplianceThreshold').val() + ',' + '"individualScoreThreshold": ' + $('#individualScoreThreshold').val() + ',' + '"totalScoreThreshold": ' + $('#totalScoreThreshold').val() + ',' + '"compareComplianceThreshold": ' + $('#compareComplianceThreshold').val() + ',' + '"totalScoreComplianceWeight": ' + $('#totalScoreComplianceWeight').val() + ',' + '"compareComplianceWeight": ' + $('#compareComplianceWeight').val() + ',' + '"indvScoreComplianceWeight": ' + $('#indvScoreComplianceWeight').val() + ',' + '"slaComplianceWeight": ' + $('#slaComplianceWeight').val() + ',' + '"configUpdated":true}';
+                                
+                                var postUrl = baseUrl + '/updateConfig';
+                                //location.reload();
+                                $.ajax({
+                                    method: "POST",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: postUrl,
+                                    data: JSON.stringify(updateJSON)
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (response.Status != 'Success'){
+                                                alert(response.Reason);
+                                            } else {
+                                                alert("Configuration Updated Successfully !!!");
+
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+                            }
+                             if (btnId == 'config_update_sla')
+                            {
+                                var nTrans = $('#tranSLAlength').val() ;
+                                var updateJSON = '{ "configUpdated":true,"ProjectName": "'+ projectname +'","ClientName": "' + clientname +'","Scenario": "'+ scenarioname + '","transactionSLA": {';
+                                var postUrl = baseUrl + '/updateConfig';
+                               // var postUrl = "http://localhost:9001" + '/updateConfig';
+                                for(i=0;i<nTrans;i++){
+                                    var name = '#transName' + i;
+                                    var sla = '#transactionSLA' + i ;
+                                    if( $(sla).val() == '') {
+                                        alert('SLA cannot be empty');
+                                        break;
+                                    } else {
+                                        updateJSON = updateJSON + '"' +  $(name).text() + '":' +  $(sla).val();
+                                    }
+
+                                    if( i != nTrans-1) {
+                                        updateJSON = updateJSON +',';
+                                    } else {
+                                        updateJSON = updateJSON + '}}';
+                                    }
+
+                                }
+
+                                $.ajax({
+                                    method: "POST",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: postUrl,
+                                    data: JSON.stringify(updateJSON)
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (response.Status != 'Success'){
+                                                alert(response.Reason);
+                                            } else {
+                                                alert("SLA Updated Successfully !!!");
+
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+
+                            }
+
+                            if (btnId == 'config_update_genericRules')
+                            {
+                                var ngenericRules = $('#genericRules_length').val() ;
+                                var updateJSON = '{"configUpdated":true, "ProjectName": "'+ projectname +'","ClientName": "' + clientname +'","Scenario": "'+ scenarioname + '","Rules": { "genericRules": [';
+                                var postUrl = baseUrl + '/updateConfig';
+                               // var postUrl = "http://localhost:9001" + '/updateConfig';
+                                var weight_sum = 0;
+                                for(i=0;i<ngenericRules;i++){
+                                    var name = '#genericRules' + (i+1)+'_name';
+                                    var id = '#genericRules' + (i+1) ;
+                                    var priority = '#genericRules' + i + '_priority';
+                                    var weight = '#genericRules' + i + '_weight';
+                                    if( Number.isInteger(parseInt($(weight).val()))){
+                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight":' + $(weight).val() + '}';
+                                        weight_sum = weight_sum + parseInt($(weight).val()) ;
+                                    } else {
+                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight": 0}';
+                                    }
+                                    if( i != ngenericRules-1) {
+                                        updateJSON = updateJSON +',';
+                                    } else {
+                                        updateJSON = updateJSON + ']},"excludedGeneriRules":"' +$('#excluded_generic_rules').val()+'"}';
+                                    }
+
+                                }
+
+                                if(weight_sum != 100) {
+                                   alert("Weightage should sum to 100! Current weightage : " + weight_sum );
+                                }else {
+                                    $.ajax({
+                                    method: "POST",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: postUrl,
+                                    data: JSON.stringify(updateJSON)
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (response.Status != 'Success'){
+                                                alert(response.Reason);
+                                            } else {
+                                                alert("Generic Rules Updated Successfully !!!");
+
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+                                }
+                            }
+                             if (btnId == 'config_update_softRules')
+                            {
+                                var nsoftNavigationRules = $('#softNavigationRules_length').val() ;
+                                var updateJSON = '{"configUpdated":true, "ProjectName": "'+ projectname +'","ClientName": "' + clientname +'","Scenario": "'+ scenarioname + '","Rules": { "softNavigationRules": [';
+                                var postUrl = baseUrl + '/updateConfig';
+                               // var postUrl = "http://localhost:9001" + '/updateConfig';
+                                var weight_sum = 0;
+                                for(i=0;i<nsoftNavigationRules;i++){
+                                    var name = '#softNavigationRules' + (i+1)+'_name';
+                                    var id = '#softNavigationRules' + (i+1) ;
+                                    var priority = '#softNavigationRules' + i + '_priority';
+                                    var weight = '#softNavigationRules' + i + '_weight';
+                                    if( Number.isInteger(parseInt($(weight).val()))){
+                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight":' + $(weight).val() + '}';
+                                        weight_sum = weight_sum + parseInt($(weight).val()) ;
+                                    } else {
+                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight": 0 }';
+                                    }
+                                    if( i != nsoftNavigationRules-1) {
+                                        updateJSON = updateJSON +',';
+                                    } else {
+                                        updateJSON = updateJSON + ']},"excludedSoftNavigationRules":"' +$('#excluded_soft_rules').val()+'"}';
+                                    }
+
+                                }
+
+                                if(weight_sum != 100) {
+                                   alert("Weightage should sum to 100! Current weightage : " + weight_sum );
+                                }else {
+                                    $.ajax({
+                                    method: "POST",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: postUrl,
+                                    data: JSON.stringify(updateJSON)
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (!response.Status != 'Success'){
+                                                alert(response.Reason);
+                                            } else {
+                                                alert("Soft Navigation Rules Updated Successfully !!!");
+
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+                                }
+                            }
+                            if (btnId == 'create_user')
+                            {
+
+                                if (valAlphaNumericUnderScore($('#Username').val()) &&  valPassword($('#Password').val())) {
+
+                                        var postUrl = baseUrl + '/createUser';
+                                       // var postUrl = "http://localhost:9001" + '/createUser';
+                                        var Regex = new RegExp("^(?=.*[a-z0-9])(?=.{1,})");
+                                        var updateJSON = '{ "UserName": "'+ $('#Username').val()  +'","Password": "' + $('#Password').val() +'","Role": "'+ $('input[name="role"]:checked').val() + '","SecurityQuestions": { "q1": "' ;
+                                        if ( $('#question1').val()!= '') {
+                                            if( Regex.test($('#question1').val()) && Regex.test($('#answer1').val())){
+                                               updateJSON = updateJSON + $('#question1').val() + '","a1" : "' +  $('#answer1').val()+ '","q2" : "';
+                                            } else {
+                                                alert ("Question / Answer should atleast contain an alphabet or number");
+                                                return;
+                                            }
+                                        } else {
+                                            updateJSON = updateJSON + '","a1" : "","q2" : "';
+                                        }
+                                        if ( $('#question2').val()!= '') {
+                                            if(Regex.test($('#question2').val()) && Regex.test($('#answer2').val())){
+                                               updateJSON = updateJSON + $('#question2').val() + '","a2" : "' +  $('#answer2').val()+ '","q3" : "';
+                                            } else {
+                                                alert ("Question / Answer should atleast contain an alphabet or number");
+                                                return;
+                                            }
+                                        } else {
+                                            updateJSON = updateJSON + '","a2" : "","q3" : "';
+                                        }
+                                        if ( $('#question3').val()!= '') {
+                                            if(Regex.test($('#question3').val()) && Regex.test($('#answer3').val())){
+                                               updateJSON = updateJSON + $('#question3').val() + '","a3" : "' +  $('#answer3').val()+ '" },"Clients" : "' + $('#selectClient').val() + '"}';
+                                            } else {
+                                                alert ("Question / Answer should atleast contain an alphabet or number");
+                                                return;
+                                            }
+                                        } else {
+                                            updateJSON = updateJSON + '","a3" : "' + '" },"Clients" : "';
+                                        }
+                                        if ( $('#selectClient').val() != null ) {
+                                             updateJSON = updateJSON + $('#selectClient').val() + '"}';
+
+                                        } else {
+                                            updateJSON = updateJSON + '"}'
+                                        }
+                                   $.ajax({
+                                    method: "POST",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: postUrl,
+                                    data: JSON.stringify(updateJSON)
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (!response.status){
+                                                alert(response.reason);
+                                            } else {
+                                                alert("User Created Successfully !!!");
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+
+                                }
+                                else {
+                                    alert ("Only Alphanumeric and _ allowed in Username (or) \r\n Password should be atleast 8 character length and have one Uppercase letter , one Number and one special character (!@#$%^&*) ");
+                                }
+                            }
+
+                            if (btnId == 'manage_user')
+                            {
+
+                                if (valAlphaNumericUnderScore($('#UsernameManage').val()))
+                                {
+
+                                        var postUrl = baseUrl + '/manageClientAccess';
+                                       // var postUrl = "http://localhost:9001" + '/createUser';
+                                        var Regex = new RegExp("^(?=.*[a-z0-9])(?=.{1,})");
+                                        var updateJSON = '{ "UserName": "'+ $('#UsernameManage').val()  + '"' ;
+
+                                        if ( $('#selectClientManage').val() != null ) {
+                                             updateJSON = updateJSON + ',"Clients" : "' + $('#selectClientManage').val() + '"}';
+
+                                        } else {
+                                            updateJSON = updateJSON + '}'
+                                        }
+                                   $.ajax({
+                                    method: "POST",
+                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
+                                    url: postUrl,
+                                    data: JSON.stringify(updateJSON)
+                                    }).always(function(data, textStatus, jqXHR){
+                                        if (textStatus == 'success'){
+                                            var response = JSON.parse(jqXHR.responseText);
+                                            if (!response.status){
+                                                alert(response.reason);
+                                            } else {
+                                                alert("User Created Successfully !!!");
+                                            }
+                                        } else {
+                                            alert("An error occured while creating User. Please try again later !!");
+                                        }
+                                        location.reload();
+                                       });
+
+                                }
+                                else {
+                                    alert ("Only Alphanumeric and _ allowed in Username");
+                                }
+                            }
+
+                        });
+                    }
+                });
+            })(jQuery);
+        /*]]>*/
+      </script>
+    </head>
+    <body class="bg-primary p-0"  >
+    <div class="p-0">
+
+        <div class="container py-4" >
+            <div th:replace="fragments/headerdashboard :: headerdashboard"/>
+            <div class ="bg-even">
+                <div class="row px-4">
+                    <div class=" bhoechie-tab-container">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 bhoechie-tab-menu">
+                            <div class="list-group">
+                                <a href="#" class="list-group-item active text-center">
+                                    <h4 class="glyphicon glyphicon-user"></h4><br/>Create User
+                                </a>
+                                <a href="#" class="list-group-item text-center">
+                                    <h4 class="glyphicon glyphicon-user"></h4><br/>Manage User
+                                </a>
+                                <a href="#" class="list-group-item text-center">
+                                    <h4 class="glyphicon glyphicon-pencil"></h4><br/>Create Config
+                                </a>
+                                <a href="#" class="list-group-item text-center">
+                                    <h4 class="glyphicon glyphicon-edit"></h4><br/>Edit Config
+                                </a>
+                                <a href="#" class="list-group-item text-center" id="editTransactionTab">
+                                    <h4 class="glyphicon glyphicon-edit"></h4><br/>Edit Transaction SLA
+                                </a>
+                                <a href="#" class="list-group-item text-center">
+                                    <h4 class="glyphicon glyphicon-wrench"></h4><br/>Edit Generic Rules
+                                </a>
+                                <a href="#" class="list-group-item text-center">
+                                    <h4 class="glyphicon glyphicon-wrench"></h4><br/>Edit Soft Rules
+                                </a>
+                                <a href="#" class="list-group-item text-center">
+                                    <h4 class="glyphicon glyphicon-wrench"></h4><br/>Delete Data
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 bhoechie-tab">
+                            <!-- flight section -->
+                            <div class="bhoechie-tab-content active" >
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Username :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="Username" name="Username"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Username</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Password :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="password" id="Password" name="Password"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Password</p></div></div>
+
+                                    </div>
+                                    <div class="row  p-2 text-justify" >
+                                        <div class="col-md-2"> <p style="text-align: left;vertical-align: middle;"><b>Role :  </b></p></div>
+                                        <div class="col-md-2"> <input type="radio" id="user" name="role" value="USER" checked="checked"/>
+                                            <label for="user">User</label>
+                                            <input type="radio" id="admin" name="role" value="ADMIN"/>
+                                            <label for="admin">Admin</label></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Choose any role</p></div></div>
+
+                                        <div class="col-md-2"> <p style="text-align: left;vertical-align: middle;"><b>Clients (optional):  </b></p></div>
+                                        <div class="col-md-4 ">
+                                            <div id="clientSelect"></div>
+                                        </div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Select Clients</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Security Questions (optional):  </b></p></div>
+                                        <div class="col-md-9">
+                                            <div class="row my-1" >
+                                                <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Question 1 :  </b></p></div>
+                                                <div class="col-md-8"> <input class="form-control" type="text" id="question1" name="question1"/></div>
+                                                <div class="col-md-1"> <div class="help-tip"><p>Enter First question</p></div></div>
+                                            </div>
+                                            <div class="row my-1" >
+                                                <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Answer 1 :  </b></p></div>
+                                                <div class="col-md-6 "> <input class="form-control" type="text" id="answer1" name="answer1"/></div>
+                                                <div class="col-md-1"> <div class="help-tip"><p>Enter your answer</p></div></div>
+                                            </div>
+                                            <div class="row my-1" >
+                                                <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Question 2 :  </b></p></div>
+                                                <div class="col-md-8"> <input class="form-control" type="text" id="question2" name="question2"/></div>
+                                                <div class="col-md-1"> <div class="help-tip"><p>Enter Second question</p></div></div>
+                                            </div>
+                                            <div class="row my-1" >
+                                                <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Answer 2 :  </b></p></div>
+                                                <div class="col-md-6 "> <input class="form-control" type="text" id="answer2" name="answer2"/></div>
+                                                <div class="col-md-1"> <div class="help-tip"><p>Enter your answer</p></div></div>
+                                            </div>
+                                            <div class="row my-1" >
+                                                <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Question 3 :  </b></p></div>
+                                                <div class="col-md-8"> <input class="form-control" type="text" id="question3" name="question3"/></div>
+                                                <div class="col-md-1"> <div class="help-tip"><p>Enter Second question</p></div></div>
+                                            </div>
+                                            <div class="row my-1" >
+                                                <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Answer 3 :  </b></p></div>
+                                                <div class="col-md-6"> <input class="form-control" type="text" id="answer3" name="answer3"/></div>
+                                                <div class="col-md-1"> <div class="help-tip"><p>Enter your answer</p></div></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row   p-2 text-center" >
+
+                                        <div class="col-md-12"><button id="create_user" type="submit" class="btn btn-success">Create User</button></div>
+
+                                    </div>
+                                </div></div>
+                            <div class="bhoechie-tab-content">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Username :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="UsernameManage" name="Username"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter User Name</p></div></div>
+
+                                    </div>
+                                    <div class="row  p-2 text-justify" >
+                                        <div class="col-md-2"> <p style="text-align: left;vertical-align: middle;"><b>Clients:  </b></p></div>
+                                        <div class="col-md-4 ">
+                                            <div id="clientSelectManage"></div>
+                                        </div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Select Clients</p></div></div>
+                                    </div>
+
+                                    <div class="row   p-2 text-center" >
+
+                                        <div class="col-md-12"><button id="manage_user" type="submit" class="btn btn-success">Update User</button></div>
+
+                                    </div>
+                                </div></div>
+                            <div class="bhoechie-tab-content">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Client Name :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" maxlength="30" id="clientID" name="clientID"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Clientname</p></div></div>
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Performance Mark :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <label class="switch"><input type="checkbox" id="is_mark_enabled" name="is_mark_enabled"/><div class="slider round"></div></label></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Select - If Performance Mark enabled</p></div></div>
+
+                                    </div>
+                                    <div class="row  p-2 text-justify" >
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Project Name :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" maxlength="30" id="projectID" name="projectID"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Projectname</p></div></div>
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Is LoadTest :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <label class="switch"><input type="checkbox" id="is_load_test" name="is_load_test"/><div class="slider round"></div></label></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Select - Is Load Test</p></div></div>
+                                    </div>
+                                    <div class="row  p-2 text-justify" >
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Scenario Name :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" maxlength="30" id="scenarioID" name="scenarioID"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Scenarioname</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-center" >
+
+                                        <div class="col-md-12"><button id="create_config" type="submit" class="btn btn-success">Create Config</button></div>
+
+                                    </div>
+                                </div></div>
+                            <div class="bhoechie-tab-content" id="editconfigtab">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row my-3 text-justify ">
+                                        <div class="col-md-4 " ><p id="client" ></p></div>
+                                        <div class="col-md-4 " ><p id="project"></p></div>
+                                        <div class="col-md-4 " ><p id="scenario"></p></div>
+
+                                    </div>
+
+
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Current RunID :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="runid" name="runid" disabled="disabled"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Current RunID</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Baseline RunID :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="number" id="baseline_runid" name="baseline_runid"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Baseline RunID</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Run Interval in Minutes :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="number" id="run_interval_in_minutes" name="run_interval_in_minutes"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Run Interval in Minutes</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Maximum Samples :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="number" id="max_samples_threshold" name="max_samples_threshold"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Maximum Samples</p></div></div>
+                                    </div>
+                                    <div class="row  p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Is Resource Crawl Enabled :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <label class="switch"><input type="checkbox" id="is_resource_crawl" name="is_resource_crawl"/><div class="slider round"></div></label></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Select - Is Resource Crawl Enabled</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Analysis Percentile :  </b></p></div>
+                                        <div class="col-md-2"> <input type="radio" id="Pcnt95" name="percentile" value="Pcnt95" checked="checked"/>
+                                            <label for="Pcnt95">95 Percentile</label>
+                                            <input type="radio" id="Pcnt90" name="percentile" value="Pcnt90"/>
+                                            <label for="Pcnt90">90 Percentile</label>
+                                            <input type="radio" id="Average" name="percentile" value="Average"/>
+                                            <label for="Average">Average</label></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Choose anyone of Analysis Percentile</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Default Transaction Threshold :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="default_transaction_threshold" name="default_transaction_threshold"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Default Transaction Threshold</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Compare Deviation Threshold :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="compare_deviation_threshold" name="compare_deviation_threshold"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Compare Deviation Threshold</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>HTTP Calls Threshold :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="http_calls_threshold" name="http_calls_threshold"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter HTTP Calls Threshold</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>DOM Count Threshold :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="dom_count_thresold" name="dom_count_thresold"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter DOM Count Threshold</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>SLA Compliance Threshold :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="slaComplianceThreshold" name="slaComplianceThreshold"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter % of transactions that should be less SLA</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Individual Score Compliance Threshold :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="indvScoreComplianceThreshold" name="indvScoreComplianceThreshold"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter % of transactions score that should be less than individual transaction score threshold </p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Individual Score Threshold :   </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="individualScoreThreshold" name="individualScoreThreshold"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Individual Score Threshold</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Total Score Threshold :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="totalScoreThreshold" name="totalScoreThreshold"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Total Score Threshold</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Static Resource Extension :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="static_resource_extension" name="static_resource_extension"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Static Resource Extensions in comma separated</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Image Resource Extension :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="image_resource_extension" name="image_resource_extension"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter Image Resource Extensions in comma separated</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Compare Compliance Threshold :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="compareComplianceThreshold" name="compareComplianceThreshold"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter compare Compliance Threshold</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Total Score Weight :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="totalScoreComplianceWeight" name="totalScoreComplianceWeight"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter weight used to calculate run status in executive summary for total score</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Compare Compliance Weight :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="compareComplianceWeight" name="compareComplianceWeight"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter weight used to calculate run status in executive summary for comparison</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>Individual  Score Weight :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="indvScoreComplianceWeight" name="indvScoreComplianceWeight"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Enter weight used to calculate run status in executive summary for individual score</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>SLA Compliance Weight :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="slaComplianceWeight" name="slaComplianceWeight"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter weight used to calculate run status in executive summary for SLA check</p></div></div>
+                                    </div>
+
+                                    <div class="row   p-2 text-center" >
+
+                                        <div class="col-md-12"><button id="config_update" type="submit" class="btn btn-success">Update</button></div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bhoechie-tab-content" id="editslatab">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row my-3 text-justify ">
+                                        <div class="col-md-4 " ><p id="client_tranSLA"  ></p></div>
+                                        <div class="col-md-4 " ><p id="project_tranSLA" ></p></div>
+                                        <div class="col-md-4 " ><p id="scenario_tranSLA"></p></div>
+
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-12"><div class="row my-1" >
+                                            <div class="col-md-6"> <p style="text-align: center;vertical-align: middle;"><b>Transaction</b></p></div>
+                                            <div class="col-md-5"> <p style="text-align: center;vertical-align: middle;"><b>SLA (ms)</b></p></div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-12" id="tranSLA">
+                                        </div>
+                                    </div>
+                                    <div class="row   p-2 text-center" >
+
+                                        <div class="col-md-12"><button id="config_update_sla" type="submit" class="btn btn-success">Update</button></div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bhoechie-tab-content" id="editgrulestab">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row my-3 text-justify ">
+                                        <div class="col-md-4 " ><p id="client_genericRule"  ></p></div>
+                                        <div class="col-md-4 " ><p id="project_genericRule" ></p></div>
+                                        <div class="col-md-4 " ><p id="scenario_genericRule"></p></div>
+
+                                    </div>
+
+
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Excluded Generic Rules :  </b></p></div>
+                                        <div class="col-md-4"><input type="text" value="Exclude Rule1" ReadOnly="true" id="excluded_generic_rules" name="excluded_generic_rules" style="width:100%"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Excluded Generic Rules in comma separated</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                      <div class="col-md-12"><div class="row my-1" >
+                                        <div class="col-md-4"> <p style="text-align: center;vertical-align: middle;"><b>Rule</b></p></div>
+                                        <div class="col-md-4"> <p style="text-align: center;vertical-align: middle;"><b>Priority</b></p></div>
+                                        <div class="col-md-4"> <p style="text-align: center;vertical-align: middle;"><b>Weightage</b></p></div>
+                                      </div>
+                                     </div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-12" id="genericRules">
+                                        </div>
+                                    </div>
+                                    <div class="row   p-2 text-center" >
+                                        <div class="col-md-12"><button id="config_update_genericRules" type="submit" class="btn btn-success">Update</button></div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bhoechie-tab-content" id="editsrulestab">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row my-3 text-justify ">
+                                        <div class="col-md-4 " ><p id="client_softNavigationRules"  ></p></div>
+                                        <div class="col-md-4 " ><p id="project_softNavigationRules" ></p></div>
+                                        <div class="col-md-4 " ><p id="scenario_softNavigationRules"></p></div>
+
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>Excluded Soft Rules :  </b></p></div>
+                                        <div class="col-md-4"><input type="text" value="Exclude Rule1" ReadOnly="true" id="excluded_soft_rules" name="excluded_soft_rules" style="width:100%"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter Excluded Soft Navigation Rules in comma separated</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-12"><div class="row my-1" >
+                                            <div class="col-md-4"> <p style="text-align: center;vertical-align: middle;"><b>Rule</b></p></div>
+                                            <div class="col-md-4"> <p style="text-align: center;vertical-align: middle;"><b>Priority</b></p></div>
+                                            <div class="col-md-4"> <p style="text-align: center;vertical-align: middle;"><b>Weightage</b></p></div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="row   p-2 text-justify" >
+                                        <div class="col-md-12" id="softNavigationRules">
+                                        </div>
+                                    </div>
+                                    <div class="row   p-2 text-center" >
+
+                                        <div class="col-md-12"><button id="config_update_softRules" type="submit" class="btn btn-success">Update</button></div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bhoechie-tab-content" id="deletedata">
+                                <div class="m-4" style="color: #333333">
+
+                                    <div class="row my-3 text-justify ">
+                                        <div class="col-md-4 " ><p id="client_delete"  ></p></div>
+                                        <div class="col-md-4 " ><p id="project_delete" ></p></div>
+                                        <div class="col-md-4 " ><p id="scenario_delete"></p></div>
+
+                                    </div>
+
+
+                                    <div class="row   p-2 text-justify" >
+
+                                        <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>RunID :  </b></p></div>
+                                        <div class="col-md-4"><input type="text" value="" id="delete_runid" name="delete_runid" style="width:100%"/></div>
+                                        <div class="col-md-1"><div class="help-tip"><p>Enter RunID to be deleted</p></div></div>
+                                    </div>
+                                    <div class="row   p-2 text-center" >
+                                        <div class="col-md-12"><button id="deletestats" type="submit" class="btn btn-success">Delete</button></div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!---->
+                    </div>
+                    <div class="bhoechie-tab-container col-md-12 text-right"><form class="form" id="dashboard" th:action="@{/Dashboard}" th:object="${cxop}" method="post">
+                        <input id="clientName" type="hidden" th:field="*{clientName}"/>
+                        <input id="projectName" type="hidden" th:field="*{projectName}"/>
+                        <input id="scenarioName" type="hidden" th:field="*{scenarioName}"/>
+                        <input id="analysisType" type="hidden" th:field="*{analysisType}"/>
+                        <input id="currentRun" type="hidden" th:field="*{currentRun}"/>
+                        <input id="baselineRun" type="hidden" th:field="*{baselineRun}"/>
+                        <button id="login_dashboard" type="submit" class="btn btn-success" >Go to Dashboard</button>
+                    </form></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function fun_getRules() {
+            var ele = jQuery('input[name=genericRules]:checked').map(function() {
+                return this.value;
+            }).get().join();
+            document.getElementById("excluded_generic_rules").value = ele;
+            return ele;
+        }
+        /*]]>*/
+      </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function fun_getSoftRules() {
+            var ele = jQuery('input[name=softNavigationRules]:checked').map(function() {
+                return this.value;
+            }).get().join();
+            document.getElementById("excluded_soft_rules").value = ele;
+            return ele;
+        }
+        /*]]>*/
+      </script>
+    <script>
+      jQuery(document).ready(function($){
+
+      $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+            e.preventDefault();
+            $(this).siblings('a.active').removeClass("active");
+            $(this).addClass("active");
+            var index = $(this).index();
+            $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+            $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+        });
+
+
+    });
+      </script>
+    </body>
+    </html>

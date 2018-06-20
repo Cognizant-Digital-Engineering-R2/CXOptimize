@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>TransactionSamples</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="css/bootstrap-4.0.0-alpha.6.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+    <style type="text/css">
+        #divOverlay {
+            resize: both;
+            height: auto;
+            width: auto;
+            background-color: Silver;
+            text-align: left;
+            position: absolute;
+            left: 680px;
+            top: 525px;
+            z-index: 10000;
+            opacity: 1.5;
+        }
+        #txtcontent {
+            resize: both;
+            height: auto;
+            width: 250px;
+            margin-left: 5px;
+            margin-right: 30px;
+            word-wrap: break-word;
+            font-family: Lucida Grande, Tahoma, sans-serif;
+        }
+        #window {
+            border-radius: 15px;
+            background: #f5f5f0;
+            border: 2px solid #ebebe0;
+        }
+        #cdivOverlay {
+            resize: both;
+            height: auto;
+            width: auto;
+            background-color: Silver;
+            text-align: left;
+            position: absolute;
+            left: 550px;
+            top: 260px;
+            z-index: 10000;
+            opacity: 1.5;
+        }
+        #ctxtcontent {
+            resize: both;
+            height: auto;
+            width: 300px;
+            margin-left: 5px;
+            margin-right: 30px;
+            word-wrap: break-word;
+            font-family: Lucida Grande, Tahoma, sans-serif;
+        }
+        #cwindow {
+            border-radius: 15px;
+            background: #f5f5f0;
+            border: 2px solid #ebebe0;
+        }
+        #rdivOverlay {
+            resize: both;
+            height: auto;
+            width: auto;
+            background-color: Silver;
+            text-align: left;
+            position: absolute;
+            left: 210px;
+            top: 220px;
+            z-index: 10000;
+            opacity: 1.5;
+        }
+        #rtxtcontent {
+            resize: both;
+            height: auto;
+            width: 700px;
+            margin-left: 25px;
+            margin-right: 30px;
+            word-wrap: break-word;
+            font-family: Lucida Grande, Tahoma, sans-serif;
+        }
+        #rwindow {
+            border-radius: 15px;
+            background: #f5f5f0;
+            border: 2px solid #ebebe0;
+        }
+        #tnxrdivOverlay {
+            resize: both;
+            height: auto;
+            width: auto;
+            background-color: Silver;
+            text-align: left;
+            position: absolute;
+            left: 210px;
+            top: 220px;
+            z-index: 10000;
+            opacity: 1.5;
+        }
+        #tnxrtxtcontent {
+            resize: both;
+            height: auto;
+            width: 700px;
+            margin-left: 25px;
+            margin-right: 30px;
+            word-wrap: break-word;
+            font-family: Lucida Grande, Tahoma, sans-serif;
+        }
+        #tnxrwindow {
+            border-radius: 15px;
+            background: #f5f5f0;
+            border: 2px solid #ebebe0;
+        }
+        select {
+            font-family: Lucida Grande, Tahoma, sans-serif;
+            font-size: 12px;
+        }
+    </style>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript"  src="js/jquery-migrate-3.0.0.js"></script>
+    <script type="text/javascript"  src="js/jquery-migrate-1.2.1.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.pager.js"></script>
+    <script type="text/javascript" src="js/jscookie.js"></script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        function drawShape() {
+            for (var l = document.getElementsByTagName("Canvas"), t = l.length, e = 0; t > e; e++) {
+                var i = document.getElementById(l[e].id),
+                    f = i.getContext("2d");
+                l[e].id.includes("medium") && (f.fillStyle = "orange", f.fillRect(0, 0, 40, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText("Medium", 0, 10)), l[e].id.includes("high") && (f.fillStyle = "red", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText("High", 0, 10)), l[e].id.includes("low") && (f.fillStyle = "green", f.fillRect(0, 0, 22, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText("Low", 0, 10)), "A" == l[e].id.charAt(0) && (f.fillStyle = "#009900", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", "1" == l[e].id.charAt(1) ? f.fillText(l[e].id.substring(1, 4).concat("%"), 0, 10) : f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "B" == l[e].id.charAt(0) && (f.fillStyle = "#99ff33", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "C" == l[e].id.charAt(0) && (f.fillStyle = "#ffcc00", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "D" == l[e].id.charAt(0) && (f.fillStyle = "#ff751a", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "E" == l[e].id.charAt(0) && (f.fillStyle = "#ff3333", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10)), "F" == l[e].id.charAt(0) && (f.fillStyle = "#cc0000", f.fillRect(0, 0, 25, 12), f.fillStyle = "white", f.font = "8pt sans-serif", f.textAlign = "left", "0" == l[e].id.charAt(1) ? f.fillText(l[e].id.substring(2, 3).concat("%"), 0, 10) : f.fillText(l[e].id.substring(1, 3).concat("%"), 0, 10))
+            }
+        }
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        function getQueryVariable(variable) {
+        var blank = "";
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+                return unescape(pair[1]);
+            }
+        }
+        return blank;
+    }
+
+    function valAlphaNumeric(value) {
+        if (value.match(/[^a-zA-Z0-9]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function valAlphabets(value) {
+        if (value.match(/[^a-zA-Z]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function valAlphaNumericUnderScore(value) {
+        if (value.match(/[^a-zA-Z0-9|^_|^\-|^\s]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    function valNumeric(value) {
+        if (value.match(/[^0-9]/g) == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+        function reply_click(id, val) {
+            var dialog = document.getElementById('window');
+            dialog.show();
+            $('#txtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px\">' + '<b>Transactions:<br><br></b>' + val + '</p>');
+        }
+
+        function comparison_click(id, val) {
+            var cdialog = document.getElementById('cwindow');
+            cdialog.show();
+            $('#ctxtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px\">' + '<b>Analysis:<br><br></b>' + val + '</p>');
+        }
+
+        function recommendation_click(id, val) {
+            var rdialog = document.getElementById('rwindow');
+            rdialog.show();
+            $('#rtxtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px\">' + val + '</p>');
+            drawShape();
+        }
+
+        function tnxrecommendation_click(id, val) {
+            var tnxrdialog = document.getElementById('tnxrwindow');
+            tnxrdialog.show();
+            $('#tnxrtxtcontent').html('<p style=\"font-family: \"Georgia\", Times, \"Times New Roman\", serif;font-size:12px;margin-top:0px\">' + val + '</p>');
+            drawShape();
+        }
+
+        window.onload = function() {
+
+            var rdialog = document.getElementById('rwindow');
+            document.getElementById('rexit').onclick = function() {
+                rdialog.close();
+            };
+
+        };
+
+        $(function() {
+            $('#txtcontent').on('click', 'a', function() {
+                var text = $(this).text();
+                var flag = false;
+                var sdialog = document.getElementById('window');
+                sdialog.close();
+                document.getElementById("summaryTab").className = "";
+                document.getElementById("recommendTab").className = "selected";
+                document.getElementById("summaryContent").className = "";
+                document.getElementById("tnxrecommendContent").className = "selected";
+                document.getElementById("mainContent").style.height = "auto";
+                var splitdata = recommendationTableContent.split("<tr>");
+                text = "<td>" + text + "</td>";
+                var tempRecommend = "";
+                for (var i = 0; i < splitdata.length; i++) {
+                    if (splitdata[i].indexOf(text) != -1) {
+                        tempRecommend = "<tr>" + splitdata[i];
+                        break;
+                    }
+                }
+                tempRecommend = tempRecommend.replace("recommendation_click", "tnxrecommendation_click");
+                tempRecommend = tempRecommend.replace("rshow", "tnxrshow");
+
+                // Transactions Recommendations
+                $('#tnxrecommendationRows').html(tempRecommend);
+
+            });
+        });
+
+        $(function() {
+            $('#show-all').on('click', 'img', function() {
+                document.getElementById("tnxrecommendContent").className = "";
+                document.getElementById("recommendContent").className = "selected";
+                document.getElementById("mainContent").style.height = "auto";
+            });
+        });
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+var recommendationTableContent = '';
+(function($) {
+
+    $(document).ready(function() {
+        if (valAlphaNumeric(getQueryVariable('ClientName')) && valAlphaNumeric(getQueryVariable('ProjectName')) && valAlphaNumeric(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('AnalysisType')) && valNumeric(getQueryVariable("RunID")) && valAlphaNumericUnderScore(getQueryVariable("TransactionName"))) {
+
+            var clientname = getQueryVariable("ClientName");
+            $('#client').html('<b>Client Name :</b>' + clientname);
+
+            var projectname = getQueryVariable("ProjectName");
+            $('#project').html('<b>Project Name :</b>' + projectname);
+
+            var scenarioname = getQueryVariable("Scenario");
+            $('#scenario').html('<b>Scenario Name :</b>' + scenarioname);
+            var analysisType = getQueryVariable("AnalysisType");
+            if (analysisType == undefined || analysisType == "") {
+                analysisType = 'Run';
+            }
+            var transactionName = getQueryVariable("TransactionName");
+            $('#recommendTab').html(transactionName);
+            var runID = getQueryVariable("RunID");
+            var filter = '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname + '&TransactionName=' + transactionName + '&AnalysisType=' + analysisType;
+            if (runID == null || runID == '') {} else {
+                filter += '&RunID=' + runID;
+            }
+            var jServices = jQuery.noConflict();
+            jServices.ajaxSetup({
+                contentType: "application/jsonp; charset=UTF-8",
+                headers:{"Authorization" : "Bearer " + Cookies.get('token')}
+            });
+            var hostName = (window.location.origin).split(":");
+            var APIPort = '80';
+            if (!isNaN(hostName[2])) {
+                APIPort = hostName[2];
+            } else {
+                if (hostName[0] === 'https') {
+                    APIPort = '443';
+                }
+            }
+
+            var apiURL = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getAllTransactionSamples' + filter;
+           //var apiURL = "http://localhost:8085" +  '/getAllTransactionSamples' + filter;
+            jServices.getJSON(apiURL, function(json) {
+                //RunID
+                var runID = json.CurrentRunID;
+                $('#currid').html('<b>Current RunID :</b> ' + runID + ' (' + json.Duration + ')');
+                //header
+                var platform = '<b>Platform :</b> ' + json.TransactionMetrics[0].Platform;
+                $('#platform').html(platform);
+                var useragent = '<b>User Agent :</b> ' + json.TransactionMetrics[0].UserAgent;
+                $('#useragent').html(useragent);
+                var sla = '<b>SLA :</b> ' + json.SLA;
+                $('#sla').html(sla);
+                //executive summary
+                var content = '';
+                //recommendation
+                var canvasProperties;
+                var propArray;
+                var recommLength = 0;
+                var recommContent = '';
+                var tableHeader = '';
+                if (json.TransactionMetrics[0].userPerceivedTime === undefined) {
+                    if (json.TransactionMetrics[0].speedIndex === undefined) {
+                        tableHeader = '<th>Time</th><th>PageLoadTime</th><th>ClientProcessing</th><th>BackendTime</th><th>FullLoadTime</th><th>ResourceCount</th><th>Total Payload(bytes)</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
+                    } else {
+                        tableHeader = '<th>Time</th><th>PageLoadTime</th><th>SpeedIndex</th><th>FirstByte</th><th>FirstPaint</th><th>ServerTime</th><th>ClientProcessing</th><th>BackendTime</th><th>FullLoadTime</th><th>ResourceCount</th><th>Total Payload(bytes)</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
+                    }
+                } else {
+                    tableHeader = '<th>Time</th><th>TotalPage Time</th><th>User Perceived Time</th><th>Backend Time</th><th>Resource Count</th><th>Payload</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
+                }
+                $('#chgTableStructure').html(tableHeader);
+                for (var i = 0; i < json.TransactionMetrics.length; i++) {
+                    if (json.TransactionMetrics[0].userPerceivedTime === undefined) {
+                        if (json.TransactionMetrics[i].speedIndex === undefined) {
+                            content += '<tr><td>' + json.TransactionMetrics[i].Time + '</td><td>' + json.TransactionMetrics[i].totalPageLoadTime + '</td><td>' + json.TransactionMetrics[i].clientProcessing + '</td><td>'+ Math.round(json.TransactionMetrics[i].resourceLoadTime) + '</td><td>' + json.TransactionMetrics[i].visuallyComplete + '</td><td>' + json.TransactionMetrics[i].resrCount + '</td><td>' + json.TransactionMetrics[i].resrSize + '</td><td>' + json.TransactionMetrics[i].score;
+                        } else {
+                            content += '<tr><td>' + json.TransactionMetrics[i].Time + '</td><td>' + json.TransactionMetrics[i].totalPageLoadTime + '</td><td>' + Math.round(json.TransactionMetrics[i].speedIndex) + '</td><td>' + json.TransactionMetrics[i].ttfbUser + '</td><td>' + json.TransactionMetrics[i].ttfpUser + '</td><td>' + json.TransactionMetrics[i].serverTime + '</td><td>' + json.TransactionMetrics[i].clientProcessing + '</td><td>' + json.TransactionMetrics[i].resourceLoadTime + '</td><td>' + json.TransactionMetrics[i].visuallyComplete +  '</td><td>' + json.TransactionMetrics[i].resrCount +  '</td><td>' + json.TransactionMetrics[i].resrSize + '</td><td>' + json.TransactionMetrics[i].score;
+                        }
+                    } else {
+                        content += '<tr><td>' + json.TransactionMetrics[i].Time + '</td><td>' + json.TransactionMetrics[i].totalPageLoadTime + '</td><td>' + json.TransactionMetrics[i].userPerceivedTime + '</td><td>' + json.TransactionMetrics[i].resourceLoadTime + '</td><td>' + json.TransactionMetrics[i].resrCount + '</td><td>' + json.TransactionMetrics[i].totalSize + '</td><td>' + json.TransactionMetrics[i].score;
+                    }
+                    recommContent = '';
+                    for (var j = 0; j < json.TransactionMetrics[i].genericRulesRecommendations.length; j++) {
+                        canvasProperties = json.TransactionMetrics[i].genericRulesRecommendations[j].canvPriority;
+                        propArray = canvasProperties.split(",");
+                        recommContent += '<li><canvas id=\'' + propArray[0] + '\' width=\'' + propArray[1] + '\' height=\'' + propArray[2] + '\'></canvas>';
+                        canvasProperties = json.TransactionMetrics[i].genericRulesRecommendations[j].canvScore;
+                        propArray = canvasProperties.split(",");
+                        recommContent += '<canvas id=\'' + propArray[0] + '\' width=\'' + propArray[1] + '\' height=\'' + propArray[2] + '\'></canvas>';
+                        recommContent += ' ';
+                        recommContent += json.TransactionMetrics[i].genericRulesRecommendations[j].comment + '</li>';
+                    }
+                    content += '</td><td><img src=\"images/view_icon.png\" id=\"rshow' + i + '\" alt=\"' + recommContent + '\" onClick="recommendation_click(this.id, this.alt)\" Style=\"cursor: pointer;\"/></td>';
+                    content += '<td><a href="har/HarViewer.html' + filter + '&SampleValue=' + json.TransactionMetrics[i].totalPageLoadTime + '" target="_blank" rel="noopener noreferrer">View HAR</a></td></tr>';
+                }
+                $('#recommendationRows').html(content);
+                recommendationTableContent = content;
+                $("#Recommendations_new").tablesorter({
+                    widthFixed: false,
+                    sortList: [
+                        [1, 1]
+                    ]
+                }).tablesorterPager({
+                    container: $("#Recommendations_pager"),
+                    size: 5,
+                    positionFixed: false
+                });
+
+            });
+        }
+    });
+})(jQuery);
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var contLength = 0;
+        function resizeSummaryContent() {
+            document.getElementById("summaryContent").style.height = contLength + "px";
+        }
+
+        function captureSummaryContent() {
+            if (document.getElementById("summaryContent").scrollHeight != 0 && contLength == 0)
+                contLength = document.getElementById("mainContent").scrollHeight;
+        }
+        /*]]>*/
+    </script>
+</head>
+<body class="bg-primary p-0">
+<div class="p-0">
+    <div class="container py-4">
+        <div th:replace="fragments/header :: header"/>
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="cd-tabs1">
+                    <nav>
+                        <ol class="cd-tabs-navigation ">
+                            <ol><a data-content="recommendation" id="recommendTab" href="#0" class="selected"></a></ol>
+                        </ol>
+                    </nav>
+                    <ol id="mainContent" class="cd-tabs-content">
+                        <div style="overflow:hidden" height="100%" width="100%">
+                            <div style="width:95%;margin-left:3.1%;margin-right:auto;margin-top:24px;margin-bottom:0px;">
+                                <div class="rounded_border">
+                                    <div style="height:100%;width:100%;padding-right:1%;padding-left:1%">
+                                        <table class="header" style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:0.99vw;" border="0">
+                                            <tr>
+                                                <td align="left" id="client"></td>
+                                                <td align="left" id="project"></td>
+                                                <td align="left" colspan="2" id="scenario"></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" colspan="2" id="currid">
+                                                </td>
+                                                <td align="left"  colspan="2" id="sla">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ol data-content="recommendation" id="recommendContent" class="selected">
+                            <div Style="min-height:425px;">
+                                <table id="Recommendations_new" class="tablesorter">
+                                    <thead>
+                                    <tr id="chgTableStructure">
+                                        <!-- <th>Time</th>
+                                         <th>TotalPage Time</th>
+                                         <th id="chgTableHeader"></th>
+                                         <th>Fetch Start Time</th>
+                                         <th>Redirect Time</th>
+                                         <th>CacheFetch Time</th>
+                                         <th>DNSLookUp Time</th>
+                                         <th>TCPConnect Time</th>
+                                         <th>Server Time</th>
+                                         <th>Download Time</th>
+                                         <th>DomProcessing Time</th>
+                                         <th>OnLoad Time</th>
+                                         <th>Resource Count</th>
+                                         <th>Score (S)</th>
+                                         <th>Recommendations</th>
+                                         <th>View HAR</th>-->
+                                    </tr>
+                                    </thead>
+                                    <tbody id="recommendationRows">
+                                    <div id="rdivOverlay">
+                                        <dialog id="rwindow" class="ui-content">
+                                            <button id="rexit" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close Dialog</button>
+                                            <div style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;"><b>Recommendation:<br></br></b>
+                                            </div>
+                                            <div id="rtxtcontent" style="font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;text-align:left"></div>
+                                        </dialog>
+                                    </div>
+                                    </tbody>
+                                </table>
+                                <br></br>
+                                <div id="Recommendations_pager" Style="width:100%">
+                                    <div Style="width:30%;float:right">
+                                        <img src="images/first.png" class="first" />
+                                        <img src="images/prev.png" class="prev" />
+                                        <input type="text" class="pagedisplay" Style="width:50px;font-family: Lucida Grande, Tahoma, sans-serif;font-size:12px;" />
+                                        <img src="images/next.png" class="next" />
+                                        <img src="images/last.png" class="last" />
+                                        <select class="pagesize">
+                                            <option value="5">5 per page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br></br>
+                        </ol>
+                    </ol>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                </ol>
+                <script src="js/jquery-2.2.3.js"></script>
+                <script src="js/main.js"></script>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

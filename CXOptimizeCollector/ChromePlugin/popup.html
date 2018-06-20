@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<style>
+	border-width:5px;	
+    border-style:groove; 
+	</style>
+	 
+<head>
+<style type="text/css">
+
+    .rTable { display: table; 
+			background-color: #4CAF50;
+			min-width:300px;}
+    .rTableRow { display: table-row; }
+    .rTableHeading { display: table-header-group; }
+    .rTableBody { display: table-row-group; } 
+    .rTableFoot { display: table-footer-group; }
+    .rTableCell, .rTableHead { display: table-cell;    
+                            border: solid;
+                            border-width: thin;
+                            padding-left: 5px;
+                            padding-right: 5px;    
+    }
+body {   
+	background: #CCCCCC;
+	color: #2B2B2B;
+	margin:2	px !important;
+	border-radius: 5px
+	}
+  
+</style>    
+</head>
+<!-- background-color: #ffd699;	-->
+    
+<body>
+    <script src="popup.js"></script>
+	<b>ClientName :  </b> <span id="ClientName"></span>
+    <br><b>ProjectName : </b> <span id="ProjectName"></span>
+	<br><b>RunID :</b><span id="RunID"></span>
+	<hr>
+	<label for="cb_transactionName"><input type="checkbox" id="cb_transactionName" />Custom transaction name</label>
+	<hr>
+    <div class="rTable">
+		<div class="rTableRow"> 
+            <div class="rTableCell">Domain</div> 
+            <div class="rTableCell" id="ResourceDetails"></div>             
+        </div>
+		<div class="rTableRow"> 
+            <div class="rTableCell">Status</div> 
+            <div class="rTableCell" id="Status"></div>             
+        </div>
+		
+		 <div class="rTableRow"> 
+            <div class="rTableCell">TrasactionName</div> 
+           <!-- <div class="rTableCell" id="TransactionName"></div> -->
+			<a href='' id="TransactionName" target="_blank"></a>
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">OnContentLoad</div> 
+            <div class="rTableCell" id="OnContentLoad"></div>             
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">OnLoad</div> 
+            <div class="rTableCell" id="OnLoad"></div>    
+        </div>
+		
+        <!-- 
+		<div class="rTableRow"> 
+            <div class="rTableCell">userAgent</div> 
+            <div class="rTableCell" id="userAgent"></div>  
+        </div> -->
+		 <div class="rTableRow"> 
+            <div class="rTableCell">TotalPageLoadTime</div> 
+            <div class="rTableCell" id="TotalPageLoadTime"></div>             
+        </div>
+		
+		<div class="rTableRow"> 
+            <div class="rTableCell">SpeedIndex</div> 
+            <div class="rTableCell" id="SpeedIndex"></div>             
+        </div>
+		
+		<br>
+        <div class="rTableRow">
+            <div class="rTableHead"><strong>Detail API #</strong></div>
+            <div class="rTableHead"><span style="font-weight: bold;">Value (ms)</span></div>
+        </div>
+		 <div class="rTableRow"> 
+            <div class="rTableCell">DownloadTime</div> 
+            <div class="rTableCell" id="DownloadTime"></div>             
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">DomProcessingTime</div> 
+            <div class="rTableCell" id="DomProcessingTime"></div>             
+        </div>
+       <!-- <div class="rTableRow"> 
+            <div class="rTableCell">OnLoadTime</div> 
+            <div class="rTableCell" id="OnLoadTime"></div>             
+        </div>  -->  
+       
+		<div class="rTableRow"> 
+            <div class="rTableCell">NetworkLatency</div> 
+            <div class="rTableCell" id="NetworkLatency"></div>
+		</div>	
+        <div class="rTableRow"> 
+            <div class="rTableCell">ClientTime</div> 
+            <div class="rTableCell" id="ClientTime"></div>             
+        </div>  
+          
+        <div class="rTableRow"> 
+            <div class="rTableCell">RedirectTime</div> 
+            <div class="rTableCell" id="redirectTime"></div>             
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">CacheFetchTime</div> 
+            <div class="rTableCell" id="CacheFetchTime"></div>             
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">DNSLookupTime</div> 
+            <div class="rTableCell" id="dnsLookupTime"></div>             
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">ServerTime_ttfb</div> 
+            <div class="rTableCell" id="ServerTime_ttfb"></div>             
+        </div>        
+        <div class="rTableRow"> 
+            <div class="rTableCell">ServerTime_ttlb</div> 
+            <div class="rTableCell" id="ServerTime_ttlb"></div>             
+        </div>
+       
+         <div class="rTableRow"> 
+            <div class="rTableCell">TotalJSHeapSize</div> 
+            <div class="rTableCell" id="TotalJSHeapSize"></div> <!--            
+        </div>        
+        <div class="rTableRow"> 
+            <div class="rTableCell">pageSource</div> 
+            <div class="rTableCell" id="pageSource"></div>             
+        </div>
+        <div class="rTableRow"> 
+            <div class="rTableCell">JsonString</div> 
+            <div class="rTableCell" id="JsonString"></div>             
+        </div>
+         -->
+    </div>

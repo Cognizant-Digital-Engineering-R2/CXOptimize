@@ -1,0 +1,189 @@
+.har .method {
+    text-align: left;
+    text-transform: uppercase;
+    max-width: 1em;
+}
+
+.har .url {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 1px solid grey;
+    width: 35em;
+    white-space: nowrap;
+}
+
+.har .status {
+    max-width: 3em;
+    text-align: right;
+}
+
+.har .bodySize {
+    text-align: right;
+    width: 0.2em;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.har .spaceSize {
+    text-align: right;
+    width: 24em;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+
+.har pre {
+    white-space: pre-wrap;
+}
+
+.har p.title {
+    border-bottom: 2px solid #a9a9a9;
+}
+
+.har .request {
+    border-bottom: 1px solid #efefef;
+    font-family: Lucida Grande, Tahoma, sans-serif;
+    font-size: 10pt;
+}
+
+.har .timelineBar {
+    white-space: nowrap;
+    width: 400px;
+    display: inline-block;
+}
+
+.har .timelinePad {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.har .timelineSlice {
+    
+	width:1em;
+	margin-left:1.4rem;
+	height:.5em;
+}
+
+.har .timelineWaiting {
+    background:url(images/timeline-sprites.png) repeat-x scroll 0 -64px #FFFFFF;
+}
+
+.har .timelineBlocked {
+   	background:url(images/timeline-sprites.png) repeat-x scroll 0 -48px #FFFFFF;
+}
+
+.har .timelineDns {
+   background:url(images/timeline-sprites.png) repeat-x scroll 0 -32px #FFFFFF;
+}
+
+.har .timelineSsl {
+   background:url(images/timeline-sprites.png) repeat-x scroll 0 -96px #FFFFFF;
+}
+
+.har .timelineConnect {
+    background:url(images/timeline-sprites.png) repeat-x scroll 0 -16px #FFFFFF;
+}
+
+.har .timelineSend {
+	background:url(images/timeline-sprites.png) repeat-x scroll 0 0px #FFFFFF;
+}
+
+.har .timelineWait {
+	background:url(images/timeline-sprites.png) repeat-x scroll 0 -64px #FFFFFF;
+}
+
+.har .timelineReceive {
+	background:url(images/timeline-sprites.png) repeat-x scroll 0 -80px #FFFFFF;
+}
+
+.har .timelineReminder {
+    background-color: red;
+    border: 1px solid red;
+    display: block;
+}
+
+.har span.timelineSlice {
+    margin: 0;
+    height: 10pt;
+    display: inline-block;
+}
+
+.har .plus {
+    background-image: url(twisty-sprites.png);
+    background-repeat: no-repeat;
+    background-position: 3px 3px;
+    cursor: pointer;
+    max-width: 3em;
+}
+
+.har .minus {
+    background-image: url(twisty-sprites.png);
+    background-repeat: no-repeat;
+    background-position: 3px -16px;
+    cursor: pointer;
+}
+
+.har .header {
+    margin: 0;
+    font-weight: bold;
+    color: #565656;
+}
+
+.har .body {
+    margin: 2px 0;
+}
+
+.har span.time {
+    width: 8em;
+    text-align: right;
+}
+
+.har .ui-widget {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.har .ui-tabs .ui-tabs-nav {
+    padding: 0;
+}
+
+.har .ui-widget-header {
+    background: none;
+}
+
+.har .ui-tabs .ui-tabs-nav li {
+    margin: 0;
+}
+
+.har .ui-widget-header {
+    border: none;
+    border-bottom: 1px solid #AAA;
+}
+
+.har .ui-tabs .ui-tabs-nav li a {
+    padding: 2px;
+}
+
+.har .ui-tabs .ui-tabs-panel {
+    padding-left: 4px;
+}
+
+.har .ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -khtml-border-radius: 0px;
+    border-radius: 0px;
+}
+
+.har .ui-widget-content {
+    border: 1px solid #efefef;
+}
+
+.har .ui-widget {
+    font-family: Lucida Grande, Tahoma, sans-serif;
+}
+
+.har .summary {
+    padding-top: 8px;
+    font-weight: bold;
+}
