@@ -130,7 +130,7 @@ The test project with in this workspace requires connection to Elastic Search to
 
 ### Documentation
 
-[CXOptimize API Documentation found here](/Documents/CXOptimize-API User Guide.docx)
+[CXOptimize API Documentation found here](../Documents/CXOptimize-API User Guide.docx)
 
 [Installation](../INSTALLATION.md) document found here
 
