@@ -190,9 +190,9 @@ For Single Page Applications like AngularJS,React etc in addition to above follo
 
 CXOptimize API is heart/brain of the entire system which provides RESTful API for the Collector and UI to function properly.In addition to that entire business logic is part of the API tier.There are multiple APIs as part of this which can be used to consume the data from CXOptimize with lot of other systems.
 
-[CXOptimize API properties found here] (../CXOptimizeAPI/README.md)
+[CXOptimize API properties found here] (/CXOptimizeAPI/README.md)
 
-[CXOptimize API Documentation found here](../Documents/CXOptimize-API User Guide.docx)
+[CXOptimize API Documentation found here](/Documents/CXOptimize-API User Guide.docx)
 
 
 ## CXOptimize UI
@@ -273,7 +273,7 @@ This page displays analysis data for the given run.
 	![](/Documents/images/resourcecomparisonview.png "Resource Time Comparison")
 	![](/Documents/images/resourcecomparisonview2.png "Resource Size Comparison")
 
-4.	 Cross Browser Comparison - if a given transaction is executed across multiple browser then we can compare their perofrmance as well (Transaction Name across the different browser/device/platform needs to be same for using this report)
+4.	 Cross Browser Comparison - if a given transaction is executed across multiple browser then we can compare their performance as well.Transaction Name across the different browser,device,platform needs to be same for using to work
 
 	![](/Documents/images/xbrowsercomparison.png "Cross Browser Comparison View")
 
