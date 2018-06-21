@@ -5,7 +5,7 @@
 
 # Step 1 - Installation
 
-Install CXOptimize as per the steps from [INSTALLATION.md](../INSTALLATION.md)
+Install CXOptimize as per the steps from [INSTALLATION.md](INSTALLATION.md)
     
 # Step 2 - Create Configuration
 
