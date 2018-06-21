@@ -15,6 +15,8 @@ Create configuration first using CXOptimizeUI by logging into it as ADMIN (refer
 
 The configuration created in the above step will be used in the collector.
 
+[Download CXOptimize Collector Executables from here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3)
+
 ##	1.  UI Automation Script (Selenium Java/Selenium C#/Selenium VB.Net/CodedUI)
 
 CXOptimize supports 3 different types of collectors and they support different set of features as given below.Please select your collector based on the support matrix provided below.

@@ -6,6 +6,8 @@ We have re-used boomerang library created and maintained by SOASTA Inc and Open 
 
 https://github.com/SOASTA/boomerang
 
+Please look into the [PRODUCTDETAILS.md](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/PRODUCTDETAILS.md) for plugin constraints and capability of chrome plug in [USERGUIDE.md](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/USERGUIDE.md)
+
 ## Steps to configure Javascript based collector
 
 The following is the simplest way to add cxoptimize javascript collector to your web page as inline script.There are other ways to inject this script into the web page which is given in the github SOASTA.

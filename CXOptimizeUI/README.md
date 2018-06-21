@@ -17,7 +17,10 @@ OS:           Windows 7 6.1 amd64
 ```
 
 
-## Documentation
+## Executable
+
+[Download CXOptimize Server Executables from here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3)
+
 
 ### API Properties
 
@@ -49,13 +52,11 @@ server.compression.mime-types=application/xml,text/html,text/xml,text/plain,text
 ```
 
 
-
 ### Documentation
 
+[Installation](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/INSTALLATION.md) document found here
 
-Installation details found here
-
-Userguide is found here
+[User Guide](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/USERGUIDE.md) document found here
 
 ## Development / Contribution
 

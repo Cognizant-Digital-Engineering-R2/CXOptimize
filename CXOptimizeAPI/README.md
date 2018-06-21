@@ -17,7 +17,9 @@ OS:           Windows 7 6.1 amd64
 ```
 
 
-## Documentation
+## Executable
+
+[Download CXOptimize Server Executables from here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3)
 
 ### API Properties
 
@@ -130,11 +132,11 @@ The test project with in this workspace requires connection to Elastic Search to
 
 ### Documentation
 
-[CXOptimize API Documentation found here](../Documents/CXOptimize-API User Guide.docx)
+[CXOptimize API Documentation found here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/tree/master/Documents)
 
-[Installation](../INSTALLATION.md) document found here
+[Installation](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/INSTALLATION.md) document found here
 
-[User Guide](../USERGUIDE.md) document found here
+[User Guide](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/USERGUIDE.md) document found here
 
 ## Development / Contribution
 

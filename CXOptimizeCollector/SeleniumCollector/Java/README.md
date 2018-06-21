@@ -2,6 +2,10 @@
 
 Collector Module is java executable which is responsible for collecting performance and other metrics from the Web Driver when included into Selenium scripts.This module is also responsible for transforming collected data into required format needed by the centralized engine. 
 
+## Executable
+
+[Download CXOptimize Server Executables from here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3)
+
 ## Build
 
 ``` gradlew clean build```
@@ -17,9 +21,9 @@ OS:           Windows 7 6.1 amd64
 ```
 
 
-## Documentation
+### Documentation
 
-Details about properties are detailed in [User Guide](../USERGUIDE.md)
+[User Guide](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/USERGUIDE.md) document found here
 
 ## Development / Contribution
 

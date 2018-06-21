@@ -1,5 +1,7 @@
 # Installation Guide
 
+#	CXOptimize Server Components
+
 CXOptimize componenets can be installed as scaled-in or scaled-out mode
 
 ##	Pre-Requisities
@@ -11,12 +13,12 @@ CXOptimize componenets can be installed as scaled-in or scaled-out mode
 	
 ##	Scaled In mode
 
-In order to install the server side components, copy the executables for windows or linux from the [Releases](../../Releases/latest/executables/cxoptimizecomponents) folder.
+In order to install the server side components, download the cxoptimize_window.rar or cxoptimize_linux.rar from the [Releases](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3) folder.After extracting the files the folder will looks like this
 	
 ![](/Documents/images/installpackage.png "CXOptimize components")
 
 ###	Windows
-1.  Once copied,run installer.bat file from command prompt (not by double-clicking it). Make sure the command prompt is opened as Administrator.
+1.  Once extracted,run installer.bat file from command prompt (not by double-clicking it). Make sure the command prompt is opened as Administrator.
 2.  This will configure all required properties and install all the component’s necessary.
 3.  It is important not to close any of the opened command prompt. The installer.bat automatically validates if all components are up and running.
 4.  Use the urls.txt file if you want to manually validate all components.
@@ -31,7 +33,7 @@ In order to install the server side components, copy the executables for windows
 5.	Navigate to \caddy and execute ./caddy Caddyfile
 	
 ##	Scaled Out mode
-In order to install the server side components, copy the executables for windows or linux from the [Releases](../../Releases/latest/executables/cxoptimizecomponents) folder.
+In order to install the server side components, download the cxoptimize_window.rar or cxoptimize_linux.rar from the [Releases](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3) folder.After extracting the files the folder will looks like this
 
 ![](/Documents/images/installpackage.png "CXOptimize components") 
  

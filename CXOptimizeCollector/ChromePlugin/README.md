@@ -1,6 +1,6 @@
 ## CXOptimize Collector - Chrome Plugin
 
-Please look into the [PRODUCTDETAILS.md](../PRODUCTDETAILS.md) for plugin constraints and capability of chrome plug in [USERGUIDE.md](../USERGUIDE.md)
+Please look into the [PRODUCTDETAILS.md](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/PRODUCTDETAILS.md) for plugin constraints and capability of chrome plug in [USERGUIDE.md](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/USERGUIDE.md)
 
 Contributions for other browser plugins are welcomed.Please find resources at for developing the plugins for other industry leading browsers.
 
