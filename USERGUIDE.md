@@ -190,7 +190,7 @@ For Single Page Applications like AngularJS,React etc in addition to above follo
 
 CXOptimize API is heart/brain of the entire system which provides RESTful API for the Collector and UI to function properly.In addition to that entire business logic is part of the API tier.There are multiple APIs as part of this which can be used to consume the data from CXOptimize with lot of other systems.
 
-[CXOptimize API properties found here] (https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/CXOptimizeAPI/README.md)
+[CXOptimize API properties found here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/master/CXOptimizeAPI/README.md)
 
 [CXOptimize API Documentation found here](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/tree/master/Documents)
 
