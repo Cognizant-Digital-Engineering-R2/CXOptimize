@@ -21,11 +21,11 @@ Thank you for trying out our solution please provide your valuable feedback to i
 
 ## Download
 
-Download the latest version from the [Releases](../../Releases/latest). After extracting the zip, follow the steps from [INSTALLATION.md](../INSTALLATION.md)
+Download the latest version from the [Releases](../../Releases/latest). After extracting the zip, follow the steps from [INSTALLATION.md](INSTALLATION.md)
 
 ## Documentation
 
-You can check the Help Documentation from [HelpDoc](../USERGUIDE.md)
+You can check the Help Documentation from [HelpDoc](USERGUIDE.md)
 
 ## Development / Contribution
 

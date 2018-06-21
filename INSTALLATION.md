@@ -77,7 +77,7 @@ In order to install the server side components, copy the executables for windows
 3.   Just Update MACHINEIP & PORT for each component
 4.   Navigate to /caddy in command prompt
 5.   Run caddy.exe or ./caddy Caddyfile (This will start Caddy Web Server Proxy from which all the components can be accessed and this ties all components together)
-6.   Test if UI is up by http://caddyurl:caddyport/cxoptimize/login (admin/password)
+6.   Test if UI is up by http://caddyurl:caddyport/cxoptimize/login (cxopadmin/qwertyuiop)
 
 ### Step 6 - Install Optional Components (freegeoip & Grafana):
 1.	(Optional) Manually naviage to freegeoip folder and excute freegeoip.exe.This is used to get geo location data for a given IP.It uses open source version of the IP database from MaxMind.More details will be found [here](https://github.com/fiorix/freegeoip)
