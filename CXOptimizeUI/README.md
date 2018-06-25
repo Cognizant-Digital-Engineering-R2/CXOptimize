@@ -35,7 +35,7 @@ logging.level.org.springframework.web=ERROR
 logging.level.org.hibernate=ERROR
 logging.file=logs/UI.log
 //Configure URL for the API to authenticate user
-login.url=http://localhost:9001/
+login.url=http://apihost:apiport/ or http://proxyhost:proxyport/cxoptimize/api/
 //Workaround to get AuthToken for the UI API calls - dont modify it
 auth.request={"username":"cxopuser","password":"zxcvbnm"}
 //Setting Server Path for accessing via reverse proxy
