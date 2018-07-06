@@ -248,7 +248,7 @@ namespace com.cognizant.pace.CXOptimize.Collector.config
 
 
                 Dictionary<string, object> configs = new Dictionary<string, object>();
-                ICXOptimizeService cxOpService = new CXOptimiseServiceImpl();
+                ICXOptimizeService cxOpService = new CXOptimizeServiceImpl();
                 CollectorConstants.setApiToken(cxOpService.getAuthToken());
 
                 log.Debug("Created ApiToken for the session " + CollectorConstants.getApiToken());
