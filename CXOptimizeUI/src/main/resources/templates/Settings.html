@@ -243,7 +243,7 @@
             (function($) {
                 $(document).ready(function() {
 
-                    if (valAlphaNumeric(getQueryVariable('ClientName')) && valAlphaNumeric(getQueryVariable('ProjectName')) && valAlphaNumeric(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('analysisType'))) {
+                    if (valAlphaNumericUnderScore(getQueryVariable('ClientName')) && valAlphaNumericUnderScore(getQueryVariable('ProjectName')) && valAlphaNumericUnderScore(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('analysisType'))) {
                         clientname = getQueryVariable('ClientName');
                         $('#client').html('<b>Client Name :  </b>' + clientname);
                         $('#client_tranSLA').html('<b>Client Name :  </b>' + clientname);

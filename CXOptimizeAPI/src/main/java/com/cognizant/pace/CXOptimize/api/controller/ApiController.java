@@ -348,20 +348,21 @@ public class ApiController
 
 
         Map<String,String> response = new HashMap<>();
-        String ClientName = null;
-        String ProjectName = null;
-        String Scenario = null;
+        String ClientName = "";
+        String ProjectName = "";
+        String Scenario = "";
 
         if(body.has("details"))
         {
             JSONObject details = new JSONObject(body.getString("details").toString());
             ClientName = details.getString("ClientName").toLowerCase().trim();
+            ProjectName = details.getString("ProjectName").toLowerCase().trim();
+            Scenario = details.getString("Scenario").toLowerCase().trim();
             LOGGER.debug("ClientName : {}",ClientName);
             boolean isSubscriptionValid = subscriptionValidator.validateSubscription(ClientName);
             if(isSubscriptionValid)
             {
-                ProjectName = details.getString("ProjectName").toLowerCase().trim();
-                Scenario = details.getString("Scenario").toLowerCase().trim();
+
                 String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
                 LOGGER.debug("XForwarded for : {}",ipAddress);
                 if (ipAddress == null)
@@ -382,7 +383,7 @@ public class ApiController
                 }
                 else
                 {
-                    LOGGER.debug("Insert data failed for ClientName {} ProjectName {} Scenario {} TransactionName {} Reason {}",ClientName,details.getString("ProjectName").toLowerCase().trim(),details.getString("Scenario").toLowerCase().trim(),details.getString("transactionName").toLowerCase().trim(),response.toString());
+                    LOGGER.debug("Insert data failed for ClientName {} ProjectName {} Scenario {} TransactionName {} Reason {}",ClientName,ProjectName,Scenario,details.getString("transactionName").toLowerCase().trim(),response.toString());
                     appUtils.asyncAuditLog(overallStart,"API","insertStats",ClientName,ProjectName,Scenario,"F",response.get("Reason"),"",0,"",0,0,0,0);
                 }
 
@@ -421,21 +422,22 @@ public class ApiController
 
 
         Map<String,String> response = new HashMap<>();
-        String ClientName = null;
-        String ProjectName = null;
-        String Scenario = null;
+        String ClientName = "";
+        String ProjectName = "";
+        String Scenario = "";
 
         if(body.has("cxoptimize"))
         {
             //LOGGER.info("Request : {}",body.get)
             JSONObject details = body.getJSONObject("cxoptimize").getJSONObject("details");
             ClientName = details.getString("client").toLowerCase().trim();
+            ProjectName = details.getString("project").toLowerCase().trim();
+            Scenario = details.getString("scenario").toLowerCase().trim();
             LOGGER.debug("ClientName : {}",ClientName);
             boolean isSubscriptionValid = subscriptionValidator.validateSubscription(ClientName);
             if(isSubscriptionValid)
             {
-                ProjectName = details.getString("project").toLowerCase().trim();
-                Scenario = details.getString("scenario").toLowerCase().trim();
+
                 String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
                 LOGGER.debug("XForwarded for : {}",ipAddress);
                 if (ipAddress == null)
@@ -456,7 +458,7 @@ public class ApiController
                 }
                 else
                 {
-                    LOGGER.debug("Insert data failed for ClientName {} ProjectName {} Scenario {} TransactionName {} Reason {}",ClientName,details.getString("ProjectName").toLowerCase().trim(),details.getString("Scenario").toLowerCase().trim(),details.getString("transactionName").toLowerCase().trim(),response.toString());
+                    LOGGER.debug("Insert data failed for ClientName {} ProjectName {} Scenario {} TransactionName {} Reason {}",ClientName,ProjectName,Scenario,details.getString("transactionName").toLowerCase().trim(),response.toString());
                     appUtils.asyncAuditLog(overallStart,"API","insertBoomerangStats",ClientName,ProjectName,Scenario,"F",response.get("Reason"),"",0,"",0,0,0,0);
                 }
 

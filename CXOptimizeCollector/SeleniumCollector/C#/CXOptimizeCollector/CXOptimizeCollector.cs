@@ -32,6 +32,7 @@ namespace com.cognizant.pace.CXOptimize.Collector
 
         public static int StartTransaction(String txnName, IWebDriver browser)
         {
+            LOGGER.Debug("Cleared Resource Timing API data");
             int rtnValue = 0;
             CollectorConstants.setScriptStartTime(Convert.ToInt64((DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds));
             IJavaScriptExecutor jsExe = (IJavaScriptExecutor)browser;
@@ -42,33 +43,33 @@ namespace com.cognizant.pace.CXOptimize.Collector
 
         public static Dictionary<String, Object> EndTransaction(String txnName, IWebDriver browser, int txnStatus)
         {
-            LOGGER.Debug("Started collecting data for Transaction : " + txnName + " with status " +  txnStatus);
+            LOGGER.Debug("Started collecting data for Transaction : " + txnName.Replace(" ","_") + " with status " +  txnStatus);
             Dictionary<String, Object> rtnValue = new Dictionary<string, object>();
             try
             {
-                rtnValue = CollectorUtils.extractData(txnName, browser.Url, browser, txnStatus);
+                rtnValue = CollectorUtils.extractData(txnName.Replace(" ", "_"), browser.Url, browser, txnStatus);
             }
             catch (Exception e)
             {
-                LOGGER.Error("Exception collecting data for Transaction : " + txnName + " with status " + txnStatus + " at " + e);
+                LOGGER.Error("Exception collecting data for Transaction : " + txnName.Replace(" ", "_") + " with status " + txnStatus + " at " + e);
             }
-            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName + " with status " + txnStatus);
+            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName.Replace(" ", "_") + " with status " + txnStatus);
             return rtnValue;
         }
 
         public static Dictionary<String, Object> EndTransaction(String txnName, IWebDriver browser)
         {
-            LOGGER.Debug("Started collecting data for Transaction : " + txnName + " with status 1");
+            LOGGER.Debug("Started collecting data for Transaction : " + txnName.Replace(" ", "_") + " with status 1");
             Dictionary<String, Object> rtnValue = new Dictionary<string, object>();
             try
             {
-                rtnValue = CollectorUtils.extractData(txnName, browser.Url, browser,1);
+                rtnValue = CollectorUtils.extractData(txnName.Replace(" ", "_"), browser.Url, browser,1);
             }
             catch (Exception e)
             {
-                LOGGER.Error("Exception collecting data for Transaction : " + txnName + " with status 1 at " + e);
+                LOGGER.Error("Exception collecting data for Transaction : " + txnName.Replace(" ", "_") + " with status 1 at " + e);
             }
-            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName + " with status 1");
+            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName.Replace(" ", "_") + " with status 1");
             return rtnValue;
         }
 

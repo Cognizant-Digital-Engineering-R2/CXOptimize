@@ -214,6 +214,7 @@ public class CollectorUtils {
                         while (loadEventEnd <= 0); //Adding the loop to avoid loadEventEnd = 0
 
                         navigationDetails = (Map<String, Object>) jsExe.executeScript(CollectorConstants.getNavigationTime());
+						
                         if (CollectorConstants.getUserAgent().contains("Chrome") && !CollectorConstants.getUserAgent().contains("Edge"))
                         {
                             msFirstPaint = (long) jsExe.executeScript(CollectorConstants.getFirstPaint());
@@ -236,6 +237,17 @@ public class CollectorUtils {
                                 collectedData.put("msFirstPaint", navigationDetails.get("loadEventEnd"));
                             }
                         }
+						/*
+						msFirstPaint = (long) jsExe.executeScript(CollectorConstants.getFirstPaint());
+						if (msFirstPaint!=-9999)
+						{
+							collectedData.put("msFirstPaint", msFirstPaint);
+						}
+						else
+						{
+							collectedData.put("msFirstPaint", navigationDetails.get("loadEventEnd"));
+						}*/
+						
 
                     }
 
@@ -275,7 +287,7 @@ public class CollectorUtils {
                 // Fetch Client-side Resource Details via Resource Timing API
                 if (true == isResourceAPIEnabled)
                 {
-                    //Work around to wait for all resources to download (if no resource is called in 2 seconds it just collects data)
+                    //Work around to wait for all resources to download (if no resource is called in 2 seconds it just collects data).This needs 
 
                     long beforeLength,afterLength = 0;
                     do {

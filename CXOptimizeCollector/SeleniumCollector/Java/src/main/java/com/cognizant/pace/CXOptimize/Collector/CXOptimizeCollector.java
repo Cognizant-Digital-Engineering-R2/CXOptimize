@@ -56,28 +56,28 @@ public class CXOptimizeCollector {
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> EndTransaction(String txnName, WebDriver browser) {
-        LOGGER.debug("Started collecting data for Transaction : {} with status {}", txnName, "1");
+        LOGGER.debug("Started collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), "1");
         Map<String, Object> rtnValue = new HashMap<>();
         try {
 
-            rtnValue = CollectorUtils.extractData(txnName, browser.getCurrentUrl(), browser, 1);
+            rtnValue = CollectorUtils.extractData(txnName.replaceAll(" ","_"), browser.getCurrentUrl(), browser, 1);
         } catch (Exception e) {
-            LOGGER.error("Exception collecting data for Transaction : {} with status {} at {}", txnName, "1",e);
+            LOGGER.error("Exception collecting data for Transaction : {} with status {} at {}", txnName.replaceAll(" ","_"), "1",e);
         }
-        LOGGER.debug("Completed collecting data for Transaction : {} with status {}", txnName, "1");
+        LOGGER.debug("Completed collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), "1");
         return rtnValue;
     }
 
     public static Map<String, Object> EndTransaction(String txnName, WebDriver browser, int txnStatus) {
-        LOGGER.debug("Started collecting data for Transaction : {} with status {}", txnName, txnStatus);
+        LOGGER.debug("Started collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), txnStatus);
         Map<String, Object> rtnValue = new HashMap<>();
         try {
 
-            rtnValue = CollectorUtils.extractData(txnName, browser.getCurrentUrl(), browser, txnStatus);
+            rtnValue = CollectorUtils.extractData(txnName.replaceAll(" ","_"), browser.getCurrentUrl(), browser, txnStatus);
         } catch (Exception e) {
-            LOGGER.error("Exception collecting data for Transaction : {} with status {} at {}", txnName, txnStatus,e);
+            LOGGER.error("Exception collecting data for Transaction : {} with status {} at {}", txnName.replaceAll(" ","_"), txnStatus,e);
         }
-        LOGGER.debug("Completed collecting data for Transaction : {} with status {}", txnName, txnStatus);
+        LOGGER.debug("Completed collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), txnStatus);
         return rtnValue;
     }
 

@@ -45,33 +45,33 @@ namespace com.cognizant.pace.CXOptimize.Collector
         public static Dictionary<String, Object> EndTransaction(String txnName, BrowserWindow browser, int txnStatus)
         {
             
-            LOGGER.Debug("Started collecting data for Transaction : " + txnName + " with status " +  txnStatus);
+            LOGGER.Debug("Started collecting data for Transaction : " + txnName.Replace(" ","_") + " with status " +  txnStatus);
             Dictionary<String, Object> rtnValue = new Dictionary<string, object>();
             try
             {
-                rtnValue = CollectorUtils.extractData(txnName, browser.Uri.ToString(), browser, txnStatus);
+                rtnValue = CollectorUtils.extractData(txnName.Replace(" ", "_"), browser.Uri.ToString(), browser, txnStatus);
             }
             catch (Exception e)
             {
-                LOGGER.Error("Exception collecting data for Transaction : " + txnName + " with status " + txnStatus + " at " + e);
+                LOGGER.Error("Exception collecting data for Transaction : " + txnName.Replace(" ", "_") + " with status " + txnStatus + " at " + e);
             }
-            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName + " with status " + txnStatus);
+            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName.Replace(" ", "_") + " with status " + txnStatus);
             return rtnValue;
         }
 
         public static Dictionary<String, Object> EndTransaction(String txnName, BrowserWindow browser)
         {
-            LOGGER.Debug("Started collecting data for Transaction : " + txnName + " with status 1");
+            LOGGER.Debug("Started collecting data for Transaction : " + txnName.Replace(" ", "_") + " with status 1");
             Dictionary<String, Object> rtnValue = new Dictionary<string, object>();
             try
             {
-                rtnValue = CollectorUtils.extractData(txnName, browser.Uri.ToString(), browser,1);
+                rtnValue = CollectorUtils.extractData(txnName.Replace(" ", "_"), browser.Uri.ToString(), browser, 1);
             }
             catch (Exception e)
             {
-                LOGGER.Error("Exception collecting data for Transaction : " + txnName + " with status 1 at " + e);
+                LOGGER.Error("Exception collecting data for Transaction : " + txnName.Replace(" ", "_") + " with status 1 at " + e);
             }
-            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName + " with status 1");
+            LOGGER.Debug("Completed collecting data for Transaction :  " + txnName.Replace(" ", "_") + " with status 1");
             return rtnValue;
         }
 
