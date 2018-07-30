@@ -29,7 +29,7 @@ public class CXOptimizeServiceImpl implements CXOptimizeService {
 
     public String getAuthToken()
     {
-        LOGGER.debug("Entering  getAuthToken");
+        LOGGER.debug("CXOP - Entering  getAuthToken");
         String url = CollectorConstants.getBeaconURL() + "/authToken";
         String body = "{\"username\":\"" + CollectorConstants.getUserName() + "\",\"password\":\"" + CollectorConstants.getPassword() + "\"}";
         return HttpUtils.callService(url, "POST", body, null).get("authToken").toString();
@@ -38,11 +38,11 @@ public class CXOptimizeServiceImpl implements CXOptimizeService {
 
     public Map<String, Object> getConfiguration()
     {
-        LOGGER.debug("Entering  getConfiguration");
-        LOGGER.debug("Get Configuration {}",CollectorConstants.getBeaconURL());
-        LOGGER.debug("Get Configuration {}",CollectorConstants.getClientName());
-        LOGGER.debug("Get Configuration {}",CollectorConstants.getProjectName());
-        LOGGER.debug("Get Configuration {}",CollectorConstants.getScenarioName());
+        LOGGER.debug("CXOP - Entering  getConfiguration");
+        LOGGER.debug("CXOP - Get Configuration {}",CollectorConstants.getBeaconURL());
+        LOGGER.debug("CXOP - Get Configuration {}",CollectorConstants.getClientName());
+        LOGGER.debug("CXOP - Get Configuration {}",CollectorConstants.getProjectName());
+        LOGGER.debug("CXOP - Get Configuration {}",CollectorConstants.getScenarioName());
         String url = CollectorConstants.getBeaconURL() + "/getConfig?ClientName=" + CollectorConstants.getClientName() + "&ProjectName=" + CollectorConstants.getProjectName() + "&Scenario=" + CollectorConstants.getScenarioName();
         if (CollectorConstants.getLoadTest().equals("true")) {
             url = url + "&isLoadTest=true";
@@ -53,7 +53,7 @@ public class CXOptimizeServiceImpl implements CXOptimizeService {
             JSONObject jsonObj = new JSONObject(HttpUtils.callService(url, "GET", null, CollectorConstants.getApiToken()).get("response").toString());
             return JsonUtils.toMap(jsonObj);
         } catch (Exception e) {
-            LOGGER.error("Exception in parsing configuration : {}",e);
+            LOGGER.error("CXOP - Exception in parsing configuration : {}",e);
             return null;
         }
 
@@ -63,23 +63,23 @@ public class CXOptimizeServiceImpl implements CXOptimizeService {
         String url = CollectorConstants.getBeaconURL() + "/insertStats";
         Map<String, Object> result = HttpUtils.callService(url, "POST", body, CollectorConstants.getApiToken());
         if (result.get("status").equals("pass")) {
-            LOGGER.debug("Data uploaded successfully : {}", result.get("response").toString());
+            //LOGGER.debug("Data uploaded successfully : {}", result.get("response").toString());
             return result.get("response").toString();
         } else {
             if (result.get("reason").equals("JWTExpiry")) {
-                LOGGER.debug("JWT Token expired.Retrying again");
+                LOGGER.debug("CXOP - JWT Token expired.Retrying again");
                 CollectorConstants.setApiToken(getAuthToken());
-                LOGGER.debug("New JWT Token set : {}", CollectorConstants.getApiToken());
+                LOGGER.debug("CXOP - New JWT Token set : {}", CollectorConstants.getApiToken());
                 result = HttpUtils.callService(url, "POST", body, CollectorConstants.getApiToken());
                 if (result.get("status").equals("pass")) {
-                    LOGGER.debug("Data uploaded successfully for retry : {}", result.get("response").toString());
+                    //LOGGER.debug("Data uploaded successfully for retry : {}", result.get("response").toString());
                     return result.get("response").toString();
                 } else {
-                    LOGGER.debug("Data uploaded failed for retry");
+                    LOGGER.debug("CXOP - ata uploaded failed for retry");
                     return null;
                 }
             } else {
-                LOGGER.debug("Data uploaded failed for first try");
+                LOGGER.debug("CXOP - Data uploaded failed for first try");
                 return null;
             }
         }

@@ -18,11 +18,13 @@ package com.cognizant.pace.CXOptimize.Collector;
 
 import com.cognizant.pace.CXOptimize.Collector.constant.CollectorConstants;
 import com.cognizant.pace.CXOptimize.Collector.utils.CollectorUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,39 +47,42 @@ public class CXOptimizeCollector {
 
     @SuppressWarnings("unchecked")
     public static int StartTransaction(String txnName, WebDriver browser) {
-        //LOGGER.info("Started collecting data for Transaction : {}",txnName);
+        LOGGER.debug("CXOP - {} - Started clearing Resource Timing API data",txnName);
         int rtnValue = 0;
         CollectorConstants.setScriptStartTime(System.currentTimeMillis());
         JavascriptExecutor jsExe = (JavascriptExecutor) browser;
         jsExe.executeScript("window.performance.clearResourceTimings();");
-        LOGGER.debug("Cleared Resource Timing API data");
+        LOGGER.debug("CXOP - {} - Cleared Resource Timing API data",txnName);
         return rtnValue;
     }
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> EndTransaction(String txnName, WebDriver browser) {
-        LOGGER.debug("Started collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), "1");
+        LOGGER.debug("CXOP - {} - Started collecting data with status {}", txnName.replaceAll(" ","_"), "1");
         Map<String, Object> rtnValue = new HashMap<>();
-        try {
-
+        try
+        {
             rtnValue = CollectorUtils.extractData(txnName.replaceAll(" ","_"), browser.getCurrentUrl(), browser, 1);
-        } catch (Exception e) {
-            LOGGER.error("Exception collecting data for Transaction : {} with status {} at {}", txnName.replaceAll(" ","_"), "1",e);
+            LOGGER.debug("CXOP - {} - Completed collecting data", txnName.replaceAll(" ","_"));
+        } catch (Exception e)
+        {
+            LOGGER.error("CXOP - {} - Exception collecting data at {}", txnName.replaceAll(" ","_"),e);
         }
-        LOGGER.debug("Completed collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), "1");
+
         return rtnValue;
     }
 
     public static Map<String, Object> EndTransaction(String txnName, WebDriver browser, int txnStatus) {
-        LOGGER.debug("Started collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), txnStatus);
+        LOGGER.debug("CXOP - {} - Started collecting data with status {}", txnName.replaceAll(" ","_"),txnStatus);
         Map<String, Object> rtnValue = new HashMap<>();
-        try {
-
+        try
+        {
             rtnValue = CollectorUtils.extractData(txnName.replaceAll(" ","_"), browser.getCurrentUrl(), browser, txnStatus);
+            LOGGER.debug("CXOP - {} - Completed collecting data with status {}", txnName.replaceAll(" ","_"),txnStatus);
         } catch (Exception e) {
-            LOGGER.error("Exception collecting data for Transaction : {} with status {} at {}", txnName.replaceAll(" ","_"), txnStatus,e);
+            LOGGER.error("CXOP - {} - Exception collecting data at {}", txnName.replaceAll(" ","_"),e);
         }
-        LOGGER.debug("Completed collecting data for Transaction : {} with status {}", txnName.replaceAll(" ","_"), txnStatus);
+
         return rtnValue;
     }
 

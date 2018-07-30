@@ -41,7 +41,7 @@ public class HttpUtils {
 
     public static Map<String, Object> callService(String urlStr, String method, String body, String authToken)
     {
-        LOGGER.debug("Calling service:{} method:{} body:{} token : {}", urlStr,method,body,authToken);
+        LOGGER.debug("CXOP - Calling service:{} method:{} body:{} token : {}", urlStr,method,body,authToken);
         HttpURLConnection conn;
         Map<String, Object> result = new HashMap<String, Object>();
         Map<String, Object> resultToken = new HashMap<String, Object>();
@@ -89,18 +89,18 @@ public class HttpUtils {
                 conn.setRequestProperty("Authorization", authToken);
             }
 
-            LOGGER.debug("Calling service:{} with token:{}", urlStr, authToken);
+            LOGGER.debug("CXOP - Calling service:{} with token:{}", urlStr, authToken);
 
             if (method == "POST")
             {
-                LOGGER.debug("Posted Body:{}", body);
+                //LOGGER.debug("Posted Body:{}", body);
                 conn.setDoOutput(true);
                 conn.setRequestMethod("POST");
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF8"));
                 writer.write(body);
                 writer.close();
             }
-            LOGGER.debug("HTTP Status for url:{} is {}",urlStr,conn.getResponseCode());
+            LOGGER.debug("CXOP - HTTP Status for url:{} is {}",urlStr,conn.getResponseCode());
             int code = conn.getResponseCode();
             if (code == 200)
             {
@@ -112,20 +112,30 @@ public class HttpUtils {
                 }
             } else {
                 result.put("status", "fail");
-                JSONObject jsonObj = new JSONObject(getResponseStream(conn));
-                if (jsonObj.getString("exception").equals("io.jsonwebtoken.ExpiredJwtException")) {
-                    LOGGER.info("Unable to connect to url:{} due to expired Auth Token", urlStr);
-                    result.put("reason", "JWTExpiry");
-                } else {
-                    LOGGER.info("Unable to connect to url:{} due to status code:{}", urlStr, code);
+                LOGGER.debug("CXOP - HTTP Status failed {}",getResponseStream(conn));
+                try
+                {
+                    JSONObject jsonObj = new JSONObject(getResponseStream(conn));
+                    if (jsonObj.getString("exception").equals("io.jsonwebtoken.ExpiredJwtException")) {
+                        LOGGER.error("CXOP - Unable to connect to url:{} due to expired Auth Token : {}", urlStr,getResponseStream(conn));
+                        result.put("reason", "JWTExpiry");
+                    } else {
+                        LOGGER.error("CXOP - Unable to connect to url:{} due to status code:{} {}", urlStr, code,getResponseStream(conn));
+                        result.put("reason", "Other");
+                    }
+
+                } catch (Exception e)
+                {
+                    LOGGER.error("CXOP - Failed to parse error response from url:{} due to status code:{} {}", urlStr, code,getResponseStream(conn));
                     result.put("reason", "Other");
                 }
+
 
             }
 
         } catch (Exception e)
         {
-            LOGGER.debug("Exception in call Service {}",e);
+            LOGGER.debug("CXOP - Exception in call Service {}",e);
             result.put("reason", "Other");
         }
         return result;

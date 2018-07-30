@@ -46,12 +46,12 @@ public class CrawlUtils
             }
             catch(Exception e)
             {
-                return "NA";
+                return (url.split("//")[1]).split("/")[0];
             }
         }
         else
         {
-            return "NA";
+            return (url.split("//")[1]).split("/")[0];
         }
     }
 
@@ -73,10 +73,10 @@ public class CrawlUtils
                 modifiedResTiming.add(future.get());
             }
             executor.shutdown(); //always reclaim resources
-            LOGGER.debug("Crawled Resource Details : {}",modifiedResTiming.toString());
-            LOGGER.debug("Complete getResourceDetails");
+            LOGGER.debug("CXOP - Crawled Resource Details : {}",modifiedResTiming.toString());
+            LOGGER.debug("CXOP - Complete getResourceDetails");
         } catch (Exception e) {
-            LOGGER.debug("Exception in getResourceDetails : {}",e);
+            LOGGER.debug("CXOP - Exception in getResourceDetails : {}",e);
             executor.shutdown(); //always reclaim resources
             return resTiming;
         }
@@ -113,6 +113,14 @@ public class CrawlUtils
                 rs.put("IsCached", true);
             } else {
                 rs.put("IsCached", false);
+            }
+
+            if(Double.parseDouble(resData.get("responseStart").toString()) != 0.0)
+            {
+                if(resData.containsKey("encodedBodySize") && Double.parseDouble(resData.get("encodedBodySize").toString()) == 0.0 && resData.containsKey("transferSize") && Double.parseDouble(resData.get("transferSize").toString()) == 0.0)
+                {
+                    rs.put("IsCached", true);
+                }
             }
         }
         catch(Exception e)
@@ -153,15 +161,15 @@ public class CrawlUtils
 
         if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getStaticExt() + "," + CollectorConstants.getImages())) {
             try {
-                LOGGER.debug("Resource URL : " + resUrl);
+                LOGGER.debug("CXOP - Resource URL : {}",resUrl);
                 URL url = new URL(resUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(5000);
+                conn.setConnectTimeout(2000);
                 conn.setRequestProperty("User-Agent", CollectorConstants.getUserAgent());
                 if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getStaticExt() + ",.svg")) {
                     conn.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
                 }
-                LOGGER.debug("Status code for : " + resUrl + " is " + conn.getResponseCode());
+                LOGGER.debug("CXOP - Status code for : {} is {}" ,resUrl,conn.getResponseCode());
                 rs.put("Status", conn.getResponseCode());
                 if (conn.getResponseCode() == 200) {
                     Map<String, List<String>> header = conn.getHeaderFields();
@@ -261,10 +269,10 @@ public class CrawlUtils
                 }
 
             } catch (Exception e) {
-                LOGGER.error("Exception in callResource for : {} at {}",resUrl,e);
+                LOGGER.error("CXOP - Exception in callResource for : {} at {}",resUrl,e);
             }
         }
-        LOGGER.debug("Data for " + resUrl + " : " + rs.toString());
+        LOGGER.debug("CXOP - Data for {} is {}",resUrl,rs.toString());
         return rs;
     }
 

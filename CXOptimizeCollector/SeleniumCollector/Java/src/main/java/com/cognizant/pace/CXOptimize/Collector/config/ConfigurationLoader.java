@@ -40,7 +40,7 @@ public class ConfigurationLoader {
     protected ConfigurationLoader() {
 
         try {
-            LOGGER.debug("Starting Loading Configuration");
+            LOGGER.debug("CXOP - Starting Loading Configuration");
             Properties mainProperties;
             mainProperties = new Properties();
             FileInputStream file;
@@ -61,15 +61,15 @@ public class ConfigurationLoader {
                 path =  path + File.separator + "Collector.properties";
             }
 
-            LOGGER.debug("Checking if the properties file exists in {}", path);
+            LOGGER.debug("CXOP - Checking if the properties file exists in {}", path);
             File propFile = new File(path);
             boolean exists = propFile.exists();
-            LOGGER.debug("Properties file exists : {}", exists);
+            LOGGER.debug("CXOP - Properties file exists : {}", exists);
 
             if (exists) {
                 file = new FileInputStream(path);
                 mainProperties.load(file);
-                LOGGER.debug("Properties Load Successfull from file : {}", mainProperties.toString());
+                LOGGER.debug("CXOP - Properties Load Successfull from file : {}", mainProperties.toString());
                 CollectorConstants.setBeaconURL(mainProperties.getProperty("beaconUrl"));
                 CollectorConstants.setClientName(mainProperties.getProperty("clientName"));
                 CollectorConstants.setProjectName(mainProperties.getProperty("projectName"));
@@ -95,12 +95,12 @@ public class ConfigurationLoader {
                 } else {
                     CollectorConstants.setResourceSettleTime(2000);
                 }
-                LOGGER.debug("Loaded initialization parameters");
+                LOGGER.debug("CXOP - Loaded initialization parameters");
                 file.close();
             } else {
                 mainProperties.load(ConfigurationLoader.class.getResourceAsStream("/collectordependency/Collector.properties"));
                 if (mainProperties.getProperty("clientName") != null) {
-                    LOGGER.debug("Properties Load Successfull from package : {}", mainProperties.toString());
+                    LOGGER.debug("CXOP - Properties Load Successfull from package : {}", mainProperties.toString());
                     CollectorConstants.setBeaconURL(mainProperties.getProperty("beaconUrl"));
                     CollectorConstants.setClientName(mainProperties.getProperty("clientName"));
                     CollectorConstants.setProjectName(mainProperties.getProperty("projectName"));
@@ -128,9 +128,9 @@ public class ConfigurationLoader {
                         CollectorConstants.setResourceSettleTime(2000);
                     }
 
-                    LOGGER.debug("Loaded initialization parameters");
+                    LOGGER.debug("CXOP - Loaded initialization parameters");
                 } else {
-                    LOGGER.debug("Properties loaded from environment variables");
+                    LOGGER.debug("CXOP - Properties loaded from environment variables");
                 }
             }
 
@@ -173,7 +173,7 @@ public class ConfigurationLoader {
             CXOptimizeService cxOpService = new CXOptimizeServiceImpl();
             CollectorConstants.setApiToken(cxOpService.getAuthToken());
 
-            LOGGER.debug("Created ApiToken for the session {}", CollectorConstants.getApiToken());
+            LOGGER.debug("CXOP - Created ApiToken for the session {}", CollectorConstants.getApiToken());
 
             config = cxOpService.getConfiguration();
 
@@ -188,9 +188,9 @@ public class ConfigurationLoader {
 
             clientConfig = config;
 
-            LOGGER.debug("Complete Configuration :{}", config.toString());
+            LOGGER.debug("CXOP - Complete Configuration :{}", config.toString());
         } catch (Exception e) {
-            LOGGER.error("Cannot load configuration due to exception : {}",e);
+            LOGGER.error("CXOP - Cannot load configuration due to exception : {}",e);
         }
     }
 
