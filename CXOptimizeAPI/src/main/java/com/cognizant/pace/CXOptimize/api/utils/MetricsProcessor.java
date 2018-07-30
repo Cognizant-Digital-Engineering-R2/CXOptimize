@@ -46,7 +46,8 @@ public class MetricsProcessor {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MetricsProcessor.class);
 
-    public static double truncate(double value, int places) {
+    public static double truncate(double value, int places) 
+    {
         if (places < 0) {
             throw new IllegalArgumentException();
         }
@@ -57,15 +58,17 @@ public class MetricsProcessor {
         return (double) tmp / factor;
     }
 
-    public Map<String, String> statsParser(String clientName, String projectName, String scenario, JSONObject json, String esUrl, boolean geoIpFlag, String hostIP, String geoService) throws Exception {
-
+    public Map<String, String> statsParser(String clientName, String projectName, String scenario, JSONObject json, String esUrl, boolean geoIpFlag, String hostIP, String geoService) throws Exception 
+    {
         LOGGER.debug("Entering method statsParser");
 
         Map<String, String> retMap = new HashMap<>();
 
-        if (json.has("details")) {
+        if (json.has("details")) 
+        {
             JSONObject details = json.getJSONObject("details");
             Map<String,Object> configDetails = new HashMap<>();
+            
             //Source of data collection
             if (details.has("source") && !details.isNull("source"))
             {
@@ -141,15 +144,29 @@ public class MetricsProcessor {
 
                 //Transaction Details
                 parentJSONDocument.put("TransactionName", details.getString("transactionName").trim());
+                UrlValidator urlValidator = new UrlValidator();
                 parentJSONDocument.put("url", details.getString("url"));
+                String parentDomain = "";
+                if (urlValidator.isValid(details.getString("url")))
+                {
+                    parentDomain = (new URL(details.getString("url")).getHost());
+                }
+                else
+                {
+                    parentDomain = (details.getString("url").split("//")[1]).split("/")[0];
+                }
 
                 //Navigation Details
                 String navType = "";
-                if (details.has("NavType") && !details.isNull("NavType")) {
+                if (details.has("NavType") && !details.isNull("NavType")) 
+                {
                     navType = details.getString("NavType");
-                } else {
-                    navType = "";
+                } 
+                else 
+                {
+                    navType = "Hard";
                 }
+
                 parentJSONDocument.put("NavType", navType);
 
                 long visuallyComplete = 0;
@@ -269,7 +286,8 @@ public class MetricsProcessor {
 
                 }
 
-                if (json.has("others")) {
+                if (json.has("others")) 
+                {
                     JSONObject others = json.getJSONObject("others");
                     if (others.has("dom")) {
                         if (others.isNull("dom")) {
@@ -289,10 +307,13 @@ public class MetricsProcessor {
 
                 }
 
-                if (json.has("navtime")) {
-                    if (!json.isNull("navtime")) {
+                if (json.has("navtime")) 
+                {
+                    if (!json.isNull("navtime")) 
+                    {
                         JSONObject navtime = json.getJSONObject("navtime");
-                        if (navtime.length() > 0) {
+                        if (navtime.length() > 0) 
+                        {
                             parentJSONDocument.put("connectEnd", navtime.getLong("connectEnd"));
                             parentJSONDocument.put("connectStart", navtime.getLong("connectStart"));
                             parentJSONDocument.put("domComplete", navtime.getLong("domComplete"));
@@ -314,21 +335,31 @@ public class MetricsProcessor {
                             parentJSONDocument.put("secureConnectionStart", navtime.has("secureConnectionStart") ? navtime.getLong("secureConnectionStart") : 0);
                             parentJSONDocument.put("unloadEventEnd", navtime.getLong("unloadEventEnd"));
                             parentJSONDocument.put("unloadEventStart", navtime.getLong("unloadEventStart"));
-                            if (navtime.has("msFirstPaint")) {
+
+                            //Modified logic to use data Paint API
+                            parentJSONDocument.put("ttfpUser",msFirstPaint);
+                            parentJSONDocument.put("ttfpBrowser", msFirstPaint - (navtime.getLong("fetchStart") - navtime.getLong("navigationStart")));
+
+                            /*if (navtime.has("msFirstPaint"))
+                            {
                                 msFirstPaint = navtime.getLong("msFirstPaint");
                                 parentJSONDocument.put("msFirstPaint", msFirstPaint);
                                 parentJSONDocument.put("ttfpUser", msFirstPaint - navtime.getLong("navigationStart"));
                                 parentJSONDocument.put("ttfpBrowser", msFirstPaint - navtime.getLong("fetchStart"));
-                            } else {
-                                if (msFirstPaint != 0) {
+                            } 
+                            else 
+                            {
+                                if (msFirstPaint != 0) 
+                                {
                                     parentJSONDocument.put("ttfpUser", msFirstPaint - navtime.getLong("navigationStart"));
                                     parentJSONDocument.put("ttfpBrowser", msFirstPaint - navtime.getLong("fetchStart"));
-                                } else {
+                                } 
+                                else {
                                     parentJSONDocument.put("ttfpUser", navtime.getLong("loadEventEnd") - navtime.getLong("navigationStart"));
                                     parentJSONDocument.put("ttfpBrowser", navtime.getLong("loadEventEnd") - navtime.getLong("fetchStart"));
                                 }
 
-                            }
+                            }*/
 
                             long unloadTime = (navtime.getLong("unloadEventEnd") - navtime.getLong("unloadEventStart")) < 0 ? 0 : (navtime.getLong("unloadEventEnd") - navtime.getLong("unloadEventStart"));
                             parentJSONDocument.put("unloadTime", unloadTime);
@@ -378,26 +409,26 @@ public class MetricsProcessor {
                                 if (visuallyComplete <= 0)
                                 {
                                     parentJSONDocument.put("visuallyComplete", totalLoadTime);
-                                    parentJSONDocument.put("clientTime", (totalLoadTime - (details.getDouble("resourceLoadTime") + (navtime.getLong("responseStart") - navtime.getLong("requestStart")))) < 0 ? 0 : (totalLoadTime - (details.getDouble("resourceLoadTime") + (navtime.getLong("responseStart") - navtime.getLong("requestStart")))));
+                                    parentJSONDocument.put("clientTime", (totalLoadTime - ((long)details.getDouble("resourceLoadTime") + (navtime.getLong("responseEnd") - navtime.getLong("requestStart")))) < 0 ? 0 : (totalLoadTime - ((long)details.getDouble("resourceLoadTime") + (navtime.getLong("responseEnd") - navtime.getLong("requestStart")))));
                                 }
                                 else
                                 {
                                     if(visuallyComplete > totalLoadTime)
                                     {
                                         parentJSONDocument.put("visuallyComplete", visuallyComplete);
-                                        parentJSONDocument.put("clientTime", (visuallyComplete - ((long) details.getDouble("resourceLoadTime") + (navtime.getLong("responseStart") - navtime.getLong("requestStart")))));
+                                        parentJSONDocument.put("clientTime", (visuallyComplete - ((long) details.getDouble("resourceLoadTime") + (navtime.getLong("responseEnd") - navtime.getLong("requestStart")))) < 0 ? 0 : (visuallyComplete - ((long) details.getDouble("resourceLoadTime") + (navtime.getLong("responseEnd") - navtime.getLong("requestStart")))));
                                     }
                                     else
                                     {
                                         parentJSONDocument.put("visuallyComplete", totalLoadTime);
-                                        parentJSONDocument.put("clientTime", (totalLoadTime - ((long) details.getDouble("resourceLoadTime") + (navtime.getLong("responseStart") - navtime.getLong("requestStart")))));
+                                        parentJSONDocument.put("clientTime", (totalLoadTime - ((long) details.getDouble("resourceLoadTime") + (navtime.getLong("responseEnd") - navtime.getLong("requestStart")))) < 0 ? 0 : (totalLoadTime - ((long) details.getDouble("resourceLoadTime") + (navtime.getLong("responseEnd") - navtime.getLong("requestStart")))));
                                     }
                                 }
 
                             }
                             else
                             {
-                                parentJSONDocument.put("clientTime", (visuallyComplete - details.getDouble("resourceLoadTime")));
+                                parentJSONDocument.put("clientTime", (visuallyComplete - (long)details.getDouble("resourceLoadTime")) < 0 ? 0 : (visuallyComplete - (long)details.getDouble("resourceLoadTime")));
                             }
 
                             parentJSONDocument.put("pagenetworkTime", (fetchStartTime + dnsLookupTime + tcpConnectTime + downloadTime));
@@ -486,7 +517,7 @@ public class MetricsProcessor {
                         double c_startTime = 0;
                         double c_fetchStartTime = 0;
                         String resrcURL = null;
-                        String tresrcURL = null;
+                        //String tresrcURL = null;
                         double transferSize = 0;
                         String nextHopProtocol = null;
                         double encodedBodySize = 0;
@@ -505,10 +536,11 @@ public class MetricsProcessor {
                         String c_ETag = null;
                         String c_entryType = null;
                         String c_initiatorType = null;
+                        String c_host = null;
                         double c_workerStart = 0;
                         DecimalFormat df = new DecimalFormat("0.000");
 
-                        UrlValidator urlValidator = new UrlValidator();
+                        //UrlValidator urlValidator = new UrlValidator();
                         for (int j = 0; j < resrcSize; j++) {
                             JSONObject childrenJSONDocument = new JSONObject();
                             res = resource.getJSONObject(j);
@@ -534,7 +566,7 @@ public class MetricsProcessor {
                             c_startTime = 0;
                             c_fetchStartTime = 0;
                             resrcURL = "";
-                            tresrcURL = "";
+                            //tresrcURL = "";
                             transferSize = 0;
                             nextHopProtocol = "";
                             encodedBodySize = 0;
@@ -559,6 +591,7 @@ public class MetricsProcessor {
                             flagSet = false;
                             isCached = false;
                             resourceType = "others";
+                            c_host = "";
 
                             if (res.has("connectEnd") && !res.isNull("connectEnd")) {
                                 c_connectEnd = res.getDouble("connectEnd");
@@ -697,8 +730,17 @@ public class MetricsProcessor {
 
                             if (res.has("name") && !res.isNull("name")) {
                                 resrcURL = res.getString("name");
-                                tresrcURL = resrcURL.toLowerCase().split("\\?")[0];
+                                //tresrcURL = resrcURL.toLowerCase().split("\\?")[0];
+                                if (res.has("HostName") && !res.isNull("HostName"))
+                                {
+                                    c_host = res.getString("HostName");
+                                }
+                                else
+                                {
+                                    c_host = appUtils.getHostName(resrcURL);
+                                }
                             }
+
 
                             childrenJSONDocument.put("name", res.getString("name"));
                             childrenJSONDocument.put("initiatorType", c_initiatorType);
@@ -724,7 +766,22 @@ public class MetricsProcessor {
                             }
                             else
                             {
-                                totalSize = totalSize + transferSize;
+                                if(transferSize == 0 && encodedBodySize == 0)
+                                {
+                                    totalSize = totalSize + c_contentLength;
+                                }
+                                else
+                                {
+                                    if(transferSize == 0)
+                                    {
+                                        totalSize = totalSize + encodedBodySize;
+                                    }
+                                    else
+                                    {
+                                        totalSize = totalSize + transferSize;
+                                    }
+                                }
+
                             }
 
                             childrenJSONDocument.put("decodedBodySize", Double.parseDouble(df.format(decodedBodySize)));
@@ -758,8 +815,31 @@ public class MetricsProcessor {
                             childrenJSONDocument.put("clientTime", Double.parseDouble(df.format(c_clientTime)));
                             childrenJSONDocument.put("serverTime_ttlb", Double.parseDouble(df.format(c_serverTime_ttlb)));
                             childrenJSONDocument.put("totalResourceTime", Double.parseDouble(df.format(c_duration)));
-
+                            childrenJSONDocument.put("HostName", c_host);
                             childrenJSONDocument.put("IsCached", isCached);
+
+                            //Check if the browser is not IE
+                            if(!platform.getString("UserAgent").contains("Trident"))
+                            {
+                                //If resource domain is same as parent check for transfersize to set caching
+                                if (c_host.equals(parentDomain))
+                                {
+                                    if (encodedBodySize == 0 && transferSize == 0) {
+                                        childrenJSONDocument.put("IsCached", true);
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    //If resource domain is cors and the domain allows the timing value then check caching status
+                                    if(c_requestStart != 0 && c_requestStart !=0 && encodedBodySize == 0 && transferSize == 0)
+                                    {
+                                        childrenJSONDocument.put("IsCached", true);
+                                    }
+
+                                }
+                            }
 
                             if (res.has("IsStaticResrc") && res.has("IsImage") && res.has("ResourceType"))
                             {
@@ -797,6 +877,8 @@ public class MetricsProcessor {
                             }
 
 
+
+                            /*
                             if (urlValidator.isValid(resrcURL)) {
                                 childrenJSONDocument.put("HostName", new URL(resrcURL).getHost());
                             } else {
@@ -812,7 +894,7 @@ public class MetricsProcessor {
                                 } else {
                                     childrenJSONDocument.put("HostName", "Unknown");
                                 }
-                            }
+                            }*/
                             childrenArray.put(childrenJSONDocument);
 
                         }

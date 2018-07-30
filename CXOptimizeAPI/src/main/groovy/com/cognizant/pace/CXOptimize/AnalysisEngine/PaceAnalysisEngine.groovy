@@ -20,6 +20,8 @@ import groovy.json.JsonOutput
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 
+import java.math.RoundingMode
+
 class PaceAnalysisEngine
 {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PaceAnalysisEngine.class)
@@ -103,7 +105,7 @@ class PaceAnalysisEngine
 
                     }
 
-                    def compareCompliance = (statusList.count(true) / statusList.size()) * 100
+                    def compareCompliance = ((statusList.count(true) / statusList.size()) * 100).setScale(0,RoundingMode.UP)
                     if (compareCompliance > (configReader?.compareComplianceThreshold == null || configReader?.compareComplianceThreshold == '' ? 80 : configReader?.compareComplianceThreshold)) {
                         compliance.put('compareComplianceStatus', true)
                         compliance.put('compareCompliancePercentage', compareCompliance)
@@ -128,7 +130,7 @@ class PaceAnalysisEngine
                     }
 
 
-                    def indvScoreCompliance = (statusList.count(true) / statusList.size()) * 100
+                    def indvScoreCompliance = ((statusList.count(true) / statusList.size()) * 100).setScale(0,RoundingMode.UP)
                     if (indvScoreCompliance > (configReader?.indvScoreComplianceThreshold == null || configReader?.indvScoreComplianceThreshold == '' ? 80 : configReader?.indvScoreComplianceThreshold)) {
                         compliance.put('indvScoreComplianceStatus', true)
                         compliance.put('indvScoreCompliancePercentage', indvScoreCompliance)
@@ -152,7 +154,7 @@ class PaceAnalysisEngine
                         }
                     }
 
-                    def slaCompliance = (statusList.count(true) / statusList.size()) * 100
+                    def slaCompliance = ((statusList.count(true) / statusList.size()) * 100).setScale(0,RoundingMode.UP)
                     if (slaCompliance > (configReader?.slaComplianceThreshold == null || configReader?.slaComplianceThreshold == '' ? 80 : configReader?.slaComplianceThreshold)) {
                         compliance.put('slaComplianceStatus', true)
                         compliance.put('slaCompliancePercentage', slaCompliance)

@@ -1,5 +1,5 @@
 group 'com.cognizant.pace.CXOptimize.api'
-version '2.0.3'
+version '2.0.4'
 
 buildscript {
     ext {
@@ -32,7 +32,7 @@ apply plugin: 'com.github.jacobono.jaxb'
 
 jar {
     baseName = 'CXOptimizeAPI'
-    version =  '2.0.3'
+    version =  '2.0.4'
 }
 
 ext {
