@@ -1,5 +1,5 @@
 group 'com.cognizant.pace.CXOptimize.Collector'
-version '2.0.3'
+version '2.0.4'
 
 apply plugin: 'groovy'
 apply plugin: 'java'
@@ -10,7 +10,7 @@ compileJava.options.encoding = 'UTF-8'
 
 jar {
     baseName = 'CXOptimizeCollector'
-    version =  '2.0.3'
+    version =  '2.0.4'
 }
 
 sourceCompatibility = 1.7
