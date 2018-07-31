@@ -13,7 +13,7 @@ jar {
     version =  '2.0.4'
 }
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -41,6 +41,8 @@ dependencies
             compile 'commons-validator:commons-validator:1.4.0'
 
             testCompile "io.specto:hoverfly-java:0.9.1"
+            testCompile "org.springframework:spring-web:3.0.2.RELEASE"
+            testCompile "org.springframework:spring-core:5.0.8.RELEASE"
             testCompile("junit:junit"){
                 exclude group: 'org.hamcrest'
             }

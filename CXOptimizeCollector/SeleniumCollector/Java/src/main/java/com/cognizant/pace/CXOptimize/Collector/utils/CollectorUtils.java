@@ -260,11 +260,11 @@ public class CollectorUtils {
                         collectedData.put("StartTime", currNavTime);
                         totalTime = ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart"));
                         serverTime = ((long) navigationDetails.get("responseStart") - (long) navigationDetails.get("requestStart"));
-                        String[] speedIdx = (String[]) jsExe.executeScript(CollectorConstants.getSpeedIndex());
+                        ArrayList speedIdx = (ArrayList) jsExe.executeScript(CollectorConstants.getSpeedIndex());
                         //speedIndex = Double.parseDouble(jsExe.executeScript(CollectorConstants.getSpeedIndex()).toString());
-                        collectedData.put("SpeedIndex", speedIdx[0]);
-                        collectedData.put("msFirstPaint", speedIdx[1]);
-                        LOGGER.debug("CXOP - {} - SpeedIndex : {} & First Paint : {}", txnName,speedIdx[0],speedIdx[1]);
+                        collectedData.put("SpeedIndex", speedIdx.get(0));
+                        collectedData.put("msFirstPaint", speedIdx.get(1));
+                        LOGGER.debug("CXOP - {} - SpeedIndex : {} & First Paint : {}", txnName,speedIdx.get(0),speedIdx.get(0));
 
                     }
                     else
