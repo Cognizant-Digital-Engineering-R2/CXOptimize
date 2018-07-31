@@ -228,21 +228,29 @@ public class AppUtils
 
     public static String getHostName(String url)
     {
-        String truncUrl = url.toLowerCase().split("\\?")[0];
-        if (urlValidator.isValid(truncUrl))
+        if(url != null && url != "")
         {
-            try
+            String truncUrl = url.toLowerCase().split("\\?")[0];
+            if (urlValidator.isValid(truncUrl))
             {
-                return new URL(truncUrl).getHost();
+                try
+                {
+                    return new URL(truncUrl).getHost();
+                }
+                catch(Exception e)
+                {
+                    return (truncUrl.split("//")[1]).split("/")[0];
+                }
             }
-            catch(Exception e)
+            else
             {
                 return (truncUrl.split("//")[1]).split("/")[0];
             }
+
         }
         else
         {
-            return (truncUrl.split("//")[1]).split("/")[0];
+            return "NA";
         }
     }
 
