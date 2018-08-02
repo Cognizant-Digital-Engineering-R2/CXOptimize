@@ -1197,14 +1197,20 @@ class ElasticSearchUtils
         return response_body
     }
 
-    static def extractRunDetails(String esURL,int noOfDays,String clientName,String projectName,String scenario)
+	static def extractRunDetails(String esURL,int noOfDays,String clientName,String projectName,String scenario)
     {
         def response_body = null
         StringBuilder query = new StringBuilder()
-        //query.append('{"size":0,"query":{"filtered":{"filter":{"and":[{"or":[')
+        /*
         query.append('{"size":0,"query":{"bool":{"should":[{"term":{"ClientName":"').append(clientName).append('"}},{"term":{"ProjectName":"').append(projectName).append('"}},{"term":{"Scenario":"').append(scenario).append('"}}')
         query.append('],"minimum_should_match" : 1,"filter" :{"range":{"StartTime":{"gte":"now-').append(noOfDays).append('d/d","lt":"now+1h"}}}}},"aggs":{"RunIDS":{"terms":{"field": "RunID","size": 10000}}}}')
+        */
+
+        query.append('{"size":0,"query":{"bool":{"filter":[{"term":{"ClientName":"').append(clientName).append('"}},{"term":{"ProjectName":"').append(projectName).append('"}},{"term":{"Scenario":"').append(scenario).append('"}}')
+        query.append(',{"range":{"StartTime":{"gte":"now-').append(noOfDays).append('d/d","lt":"now+1h"}}}]}},"aggs":{"RunIDS":{"terms":{"field": "RunID","size": 10000}}}}')
+
         response_body = ElasticSearchUtils.elasticSearchPOST(esURL, GlobalConstants.STATSSEARCH,query)
+
         return response_body
     }
 
