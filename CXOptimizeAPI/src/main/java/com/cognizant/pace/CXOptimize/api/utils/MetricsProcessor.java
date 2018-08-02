@@ -737,7 +737,7 @@ public class MetricsProcessor {
                                 }
                                 else
                                 {
-                                    c_host = appUtils.getHostName(resrcURL);
+                                    c_host = appUtils.getHostName(resrcURL,urlValidator);
                                 }
                             }
 

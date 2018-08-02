@@ -47,9 +47,6 @@ public class AppUtils
     @Autowired
     private HTTPUtils httpUtils;
 
-    @Autowired
-    private static UrlValidator urlValidator;
-
     private Logger AUDITLOGGER = LoggerFactory.getLogger("audit");
 
     public String RemoveSpecialChars(String name)
@@ -226,11 +223,12 @@ public class AppUtils
 
     }
 
-    public static String getHostName(String url)
+    public static String getHostName(String url,UrlValidator urlValidator)
     {
         if(url != null && url != "")
         {
             String truncUrl = url.toLowerCase().split("\\?")[0];
+
             if (urlValidator.isValid(truncUrl))
             {
                 try
@@ -252,6 +250,7 @@ public class AppUtils
         {
             return "NA";
         }
+
     }
 
 
