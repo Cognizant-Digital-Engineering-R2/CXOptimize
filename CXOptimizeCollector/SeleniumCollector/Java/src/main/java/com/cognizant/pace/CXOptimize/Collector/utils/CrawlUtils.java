@@ -17,6 +17,8 @@
 package com.cognizant.pace.CXOptimize.Collector.utils;
 
 import com.cognizant.pace.CXOptimize.Collector.constant.CollectorConstants;
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
@@ -34,10 +36,11 @@ import org.apache.commons.validator.routines.UrlValidator;
 public class CrawlUtils
 {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CrawlUtils.class);
-    private static UrlValidator urlValidator = new UrlValidator();
+    //private static UrlValidator urlValidator = new UrlValidator();
 
     private static String getHostName(String url)
     {
+        UrlValidator urlValidator = new UrlValidator();
         if (urlValidator.isValid(url))
         {
             try
@@ -242,7 +245,7 @@ public class CrawlUtils
                                 //striplen = writer.toString().replace("\\n| {2}|\\t|\\r","").length();
                                 rs.put("OrgSize", writer.toString().length());
                                 if (CollectorUtils.stringContainsItemFromList(resUrl, ".js,.css")) {
-                                    rs.put("MinfSize", CollectorUtils.compress(writer.toString(), resUrl));
+                                    rs.put("MinfSize", compress(writer.toString(), resUrl));
                                 }
                             }
                         } else {
@@ -257,7 +260,7 @@ public class CrawlUtils
                                 }
                                 rs.put("OrgSize", sb.toString().length());
                                 if (CollectorUtils.stringContainsItemFromList(resUrl, ".js,.css")) {
-                                    rs.put("MinfSize", CollectorUtils.compress(sb.toString(), resUrl));
+                                    rs.put("MinfSize", compress(sb.toString(), resUrl));
                                 }
                             }
 
@@ -294,5 +297,28 @@ public class CrawlUtils
             return callResource(resDetails);
         }
 
+    }
+
+    public static long compress(String input, final String filename) {
+        long compressed = 0;
+        try {
+            Reader inputReader = new StringReader(input);
+            StringWriter outputWriter = new StringWriter();
+
+            if (CollectorUtils.stringContainsItemFromList(filename, ".js")) {
+                JavaScriptCompressor compressor = new JavaScriptCompressor(inputReader, null);
+                compressor.compress(outputWriter, -1, true, false, false, false);
+                compressed = outputWriter.toString().length();
+            } else {
+                CssCompressor compressor = new CssCompressor(inputReader);
+                compressor.compress(outputWriter, -1);
+                compressed = outputWriter.toString().length();
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Error Compressing CSS or Javascript {}",e);
+            LOGGER.debug("Continuing with simple minifier");
+            compressed = input.replace("\\n| {2}|\\t|\\r", "").length();
+        }
+        return compressed;
     }
 }

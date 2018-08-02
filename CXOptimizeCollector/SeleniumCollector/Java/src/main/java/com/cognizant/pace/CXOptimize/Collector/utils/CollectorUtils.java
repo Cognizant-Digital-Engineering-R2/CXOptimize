@@ -55,28 +55,7 @@ public class CollectorUtils {
         return false;
     }
 
-    public static long compress(String input, final String filename) {
-        long compressed = 0;
-        try {
-            Reader inputReader = new StringReader(input);
-            StringWriter outputWriter = new StringWriter();
 
-            if (stringContainsItemFromList(filename, ".js")) {
-                JavaScriptCompressor compressor = new JavaScriptCompressor(inputReader, null);
-                compressor.compress(outputWriter, -1, true, false, false, false);
-                compressed = outputWriter.toString().length();
-            } else {
-                CssCompressor compressor = new CssCompressor(inputReader);
-                compressor.compress(outputWriter, -1);
-                compressed = outputWriter.toString().length();
-            }
-        } catch (Exception e) {
-            LOGGER.debug("Error Compressing CSS or Javascript {}",e);
-            LOGGER.debug("Continuing with simple minifier");
-            compressed = input.replace("\\n| {2}|\\t|\\r", "").length();
-        }
-        return compressed;
-    }
 
     public static Map<String, Object> extractData(String txnName, String url, WebDriver browser, int txnStatus) {
         LOGGER.debug("CXOP - {} - Started extracting data",txnName);
