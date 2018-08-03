@@ -80,6 +80,16 @@ class GlobalConstants
         JWTPRIVATEKEY = key
     }
 
+    private static String SECRETKEY
+    static String getKey()
+    {
+        return SECRETKEY
+    }
+    static String setKey(String key)
+    {
+        SECRETKEY = key
+    }
+
     //Getter & Setter for ES Node Count
     private static int NODE_COUNT
 
@@ -90,7 +100,6 @@ class GlobalConstants
     static void setNodeCount(int nodes) {
         NODE_COUNT = nodes
     }
-    public static final String SECRETKEY = "E1BB465D57CAE7ACDBBE8091F9CE83DF"
 
     private static String ES_URL
     static String getESUrl() {

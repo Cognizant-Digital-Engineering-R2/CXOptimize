@@ -47,6 +47,9 @@ public class AppUtils
     @Autowired
     private HTTPUtils httpUtils;
 
+    //@Autowired
+    //private static UrlValidator urlValidator;
+
     private Logger AUDITLOGGER = LoggerFactory.getLogger("audit");
 
     public String RemoveSpecialChars(String name)

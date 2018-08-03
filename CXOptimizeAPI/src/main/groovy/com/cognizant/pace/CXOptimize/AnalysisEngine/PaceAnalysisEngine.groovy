@@ -1001,8 +1001,6 @@ class PaceAnalysisEngine
         def prevList = []
         def currMap = [:]
         def currList = []
-		long transferSize = 0
-		long encodedBodySize = 0
 
         if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
         {
@@ -1023,7 +1021,7 @@ class PaceAnalysisEngine
             {
                 prevTxnMetrics.each{it ->
                     prevMap.put('Type',it.ResourceType)
-                    prevMap.put('Size',(it.transferSize == 0 ? it.encodedBodySize : it.transferSize) == 0 ? it."Content-Length" : (it.transferSize == 0 ? it.encodedBodySize : it.transferSize))
+                    prevMap.put('Size',it.transferSize)
                     prevList.add(prevMap.clone())
                 }
             }
@@ -1039,7 +1037,7 @@ class PaceAnalysisEngine
             {
                 currTxnMetrics.each{it ->
                     currMap.put('Type',it.ResourceType)
-                    currMap.put('Size',(it.transferSize == 0 ? it.encodedBodySize : it.transferSize) == 0 ? it."Content-Length" : (it.transferSize == 0 ? it.encodedBodySize : it.transferSize))
+                    currMap.put('Size',it.transferSize)
                     currList.add(currMap.clone())
                 }
             }
@@ -1158,8 +1156,6 @@ class PaceAnalysisEngine
         LOGGER.debug 'START compareSize'
         def prevMap = [:]
         def currMap = [:]
-		long transferSize = 0
-		long encodedBodySize = 0
 
         if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
         {
@@ -1180,26 +1176,7 @@ class PaceAnalysisEngine
                 }
                 else
                 {
-                    
-					transferSize = (it?."transferSize" == null ? 0 : Long.parseLong(it?."transferSize".toString()))
-					encodedBodySize = (it?."encodedBodySize" == null ? 0 : Long.parseLong(it?."encodedBodySize".toString()))
-					
-					if(transferSize == 0 && encodedBodySize == 0)
-					{
-						prevMap.put(it.name,(it?."Content-Length" == null ? null : Long.parseLong(it?."Content-Length".toString())))
-					}
-					else
-					{
-						if(transferSize == 0)
-						{
-							prevMap.put(it.name,encodedBodySize)
-						}
-						else
-						{
-							prevMap.put(it.name,transferSize)
-						}
-					}
-					
+                    prevMap.put(it.name,(it?."transferSize" == null ? null : Long.parseLong(it?."transferSize".toString())))
                 }
 
             }
@@ -1212,24 +1189,7 @@ class PaceAnalysisEngine
                 }
                 else
                 {
-                    transferSize = (it?."transferSize" == null ? 0 : Long.parseLong(it?."transferSize".toString()))
-					encodedBodySize = (it?."encodedBodySize" == null ? 0 : Long.parseLong(it?."encodedBodySize".toString()))
-					
-					if(transferSize == 0 && encodedBodySize == 0)
-					{
-						currMap.put(it.name,(it?."Content-Length" == null ? null : Long.parseLong(it?."Content-Length".toString())))
-					}
-					else
-					{
-						if(transferSize == 0)
-						{
-							currMap.put(it.name,encodedBodySize)
-						}
-						else
-						{
-							currMap.put(it.name,transferSize)
-						}
-					}
+                    currMap.put(it.name,(it?."transferSize" == null ? null : Long.parseLong(it?."transferSize".toString())))
                 }
             }
         }

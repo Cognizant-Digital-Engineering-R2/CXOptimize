@@ -164,11 +164,11 @@ public class ApiController
     {
         long overallStart=System.currentTimeMillis();
         LOGGER.info("Received createUser Request");
-        LOGGER.info("Create User Request {}",request);
+        LOGGER.debug("Create User Request {}",request);
         request=request.replace("\\\"", "\"");
         request=request.replace("\"{", "{");
         request=request.replace("}\"", "}");
-        LOGGER.info("Create User Request Parsed {}",request);
+        LOGGER.debug("Create User Request Parsed {}",request);
         JSONObject json = new JSONObject(request);
         LOGGER.debug("Calling LoginUtils.CreateUser Method to fetch data from datasource");
         long startTime= System.currentTimeMillis();

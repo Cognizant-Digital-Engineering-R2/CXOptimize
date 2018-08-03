@@ -186,6 +186,9 @@ public class CXOptimizeStarter
 	@Value("${jwt.token.expiry.in.minutes}")
 	private long tokenExpiry;
 
+	@Value("${secret.key}")
+	private String secretKey;
+
 	@Value("${runids.to.display}")
 	private int runsToDisplay;
 
@@ -201,6 +204,8 @@ public class CXOptimizeStarter
 		GlobalConstants.setExpirationTime(tokenExpiry);
 
 		GlobalConstants.setRunIDCount(runsToDisplay);
+
+		GlobalConstants.setKey(secretKey);
 
 
 		LOGGER.info("Data store url {}", GlobalConstants.getESUrl());

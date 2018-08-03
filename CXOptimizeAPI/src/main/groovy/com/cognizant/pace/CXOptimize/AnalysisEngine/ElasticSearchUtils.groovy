@@ -1176,7 +1176,7 @@ class ElasticSearchUtils
         def response_body = null
 
         StringBuilder query = new StringBuilder()
-        //query.append('{"size":0,"query":{"filtered":{"filter":{"and":[{"or":[')
+
         query.append('{"size":0,"query":{"bool":{"should":[')
         int clientSize = clientList.size()
         for (int i=0;i< clientSize;i++)
@@ -1193,11 +1193,14 @@ class ElasticSearchUtils
         //query.append(']},{"range":{"StartTime":{"gte":"now-').append(noOfDays).append('d/d","lt":"now+1h"}}}]}}},"aggs":{"ClientName":{"terms":{"field":"ClientName","size":100},"aggs":{"ProjectName":{"terms":{"field":"ProjectName","size":100},"aggs":{"Scenario":{"terms":{"field":"Scenario","size":100},"aggs":{"RunID":{"terms":{"field":"RunID","size":100}}}}}}}}}}')
 
         query.append('],"minimum_should_match" : 1,"filter" :{"range":{"creationTimestamp":{"gte":"').append((System.currentTimeSeconds() - (noOfDays * 24 * 60 * 60)) * 1000).append('","lt":"').append(System.currentTimeMillis()).append('"}}}}},"aggs":{"ClientName":{"terms":{"field":"ClientName","size":100},"aggs":{"ProjectName":{"terms":{"field":"ProjectName","size":100},"aggs":{"Scenario":{"terms":{"field":"Scenario","size":100}}}}}}}}')
+
+
+        //println query
         response_body = ElasticSearchUtils.elasticSearchPOST(esURL, GlobalConstants.CONFIGSEARCH,query)
         return response_body
     }
 
-	static def extractRunDetails(String esURL,int noOfDays,String clientName,String projectName,String scenario)
+    static def extractRunDetails(String esURL,int noOfDays,String clientName,String projectName,String scenario)
     {
         def response_body = null
         StringBuilder query = new StringBuilder()
