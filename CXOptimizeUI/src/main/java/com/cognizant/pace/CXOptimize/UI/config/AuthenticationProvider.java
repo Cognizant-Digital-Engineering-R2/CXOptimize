@@ -40,6 +40,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
     @Value("${login.url}")
     private String loginAPIUrl;
 
+    @Value("${secret.key}")
+    private String secretKey;
+
     private static org.slf4j.Logger logger = LoggerFactory.getLogger(AuthenticationProvider.class);
 
     @Override
@@ -47,15 +50,13 @@ public class AuthenticationProvider implements org.springframework.security.auth
     {
 
         List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
-        //grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
+
         StringBuilder loginReq = new StringBuilder();
-        logger.debug(authentication.getName().toString());
-        logger.debug(loginAPIUrl);
         Map<String,Object> loginStatus = new HashMap<>();
         try
         {
             loginReq.append("{\"UserName\" : \"").append(authentication.getName()).append("\",");
-            loginReq.append("\"Password\" : \"").append(EncryptionUtils.getEncryptedPassword(authentication.getCredentials()).toString()).append("\"}");
+            loginReq.append("\"Password\" : \"").append(EncryptionUtils.getEncryptedPassword(authentication.getCredentials(),secretKey).toString()).append("\"}");
             loginStatus = JsonUtils.jsonToMap(new JSONObject(HTTPUtils.httpPOST(loginAPIUrl + "login",loginReq.toString())));
         }
         catch (Exception ex)
