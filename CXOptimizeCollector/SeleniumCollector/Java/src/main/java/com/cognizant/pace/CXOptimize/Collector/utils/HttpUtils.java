@@ -102,6 +102,7 @@ public class HttpUtils {
             }
             LOGGER.debug("CXOP - HTTP Status for url:{} is {}",urlStr,conn.getResponseCode());
             int code = conn.getResponseCode();
+			
             if (code == 200)
             {
                 result.put("status", "pass");
@@ -112,21 +113,22 @@ public class HttpUtils {
                 }
             } else {
                 result.put("status", "fail");
-                LOGGER.debug("CXOP - HTTP Status failed {}",getResponseStream(conn));
+				String response = getResponseStream(conn);
+                LOGGER.debug("CXOP - HTTP Status failed {}",);
                 try
                 {
-                    JSONObject jsonObj = new JSONObject(getResponseStream(conn));
-                    if (jsonObj.getString("exception").equals("io.jsonwebtoken.ExpiredJwtException")) {
-                        LOGGER.error("CXOP - Unable to connect to url:{} due to expired Auth Token : {}", urlStr,getResponseStream(conn));
+                    //JSONObject jsonObj = new JSONObject(getResponseStream(conn));
+                    if (response.contains("io.jsonwebtoken.ExpiredJwtException")) {
+                        LOGGER.error("CXOP - Unable to connect to url:{} due to expired Auth Token : {}", urlStr,response);
                         result.put("reason", "JWTExpiry");
                     } else {
-                        LOGGER.error("CXOP - Unable to connect to url:{} due to status code:{} {}", urlStr, code,getResponseStream(conn));
+                        LOGGER.error("CXOP - Unable to connect to url:{} due to status code:{} {}", urlStr, code,response);
                         result.put("reason", "Other");
                     }
 
                 } catch (Exception e)
                 {
-                    LOGGER.error("CXOP - Failed to parse error response from url:{} due to status code:{} {}", urlStr, code,getResponseStream(conn));
+                    LOGGER.error("CXOP - Failed to parse error response from url:{} due to status code:{} {}", urlStr, code,response);
                     result.put("reason", "Other");
                 }
 
