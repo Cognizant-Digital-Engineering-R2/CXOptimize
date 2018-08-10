@@ -95,6 +95,11 @@ public class ConfigurationLoader {
                 } else {
                     CollectorConstants.setResourceSettleTime(2000);
                 }
+                if (mainProperties.containsKey("manualResourceTimeClear")) {
+                    CollectorConstants.setManualResourceTimeClear(mainProperties.getProperty("manualResourceTimeClear"));
+                } else {
+                    CollectorConstants.setManualResourceTimeClear("false");
+                }
                 LOGGER.debug("CXOP - Loaded initialization parameters");
                 file.close();
             } else {
@@ -128,6 +133,12 @@ public class ConfigurationLoader {
                         CollectorConstants.setResourceSettleTime(2000);
                     }
 
+                    if (mainProperties.containsKey("manualResourceTimeClear")) {
+                        CollectorConstants.setManualResourceTimeClear(mainProperties.getProperty("manualResourceTimeClear"));
+                    } else {
+                        CollectorConstants.setManualResourceTimeClear("false");
+                    }
+
                     LOGGER.debug("CXOP - Loaded initialization parameters");
                 } else {
                     LOGGER.debug("CXOP - Properties loaded from environment variables");
@@ -157,6 +168,14 @@ public class ConfigurationLoader {
             }
             if (CollectorConstants.getResourceSettleTime() == 0) {
                 CollectorConstants.setResourceSettleTime(2000);
+            }
+
+            if (CollectorConstants.getManualResourceTimeClear().equals("true")) {
+                CollectorConstants.setManualResourceTimeClear("true");
+            }
+            else
+            {
+                CollectorConstants.setManualResourceTimeClear("false");
             }
             if(CollectorConstants.getRelease() == null || CollectorConstants.getRelease() == "")
             {

@@ -148,7 +148,7 @@ public class CollectorUtils {
                             loadEventEnd = Long.parseLong(jsExe.executeScript(CollectorConstants.getLoadEventEndIE()).toString());
                             endTime = System.currentTimeMillis();
                             duration = (endTime - startTime) / 1000;
-                            if (duration > 180)
+                            if (duration > 60)
                             {
                                 break;
                             }
@@ -171,7 +171,7 @@ public class CollectorUtils {
                             loadEventEnd = (long) jsExe.executeScript(CollectorConstants.getLoadEventEnd());
                             endTime = System.currentTimeMillis();
                             duration = (endTime - startTime) / 1000;
-                            if (duration > 180)
+                            if (duration > 60)
                             {
                                 break;
                             }
@@ -287,10 +287,22 @@ public class CollectorUtils {
                         resourceDetails = (ArrayList) jsExe.executeScript(CollectorConstants.getResourceTime());
                     }
                     jsExe.executeScript(CollectorConstants.clearResourceTiming());
+
+                    if(CollectorConstants.getManualResourceTimeClear().equals("true") && !navType)
+                    {
+                        LOGGER.debug("CXOP - {} - Manual Resource Truncation is enabled",txnName);
+                        LOGGER.debug("CXOP - {} - Size of resource before Manual Resource Truncation : {}",txnName,resourceDetails.size());
+                        double diff = (double)(CollectorConstants.getRunStartTime() - CollectorConstants.getScriptStartTime());
+                        LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}",txnName,diff);
+                        //remove all resources start time less than the difference
+                        resourceDetails.removeIf(s -> Double.parseDouble(s.get("startTime").toString()) < diff);
+                        LOGGER.debug("CXOP - {} - Size of resource after Manual Resource Truncation : {}",txnName,resourceDetails.size());
+                    }
+
                     collectedData.put("ResourceTime", resourceDetails);
                     LOGGER.debug("CXOP - {} - Completed Collecting Resource Timing Metrics : {}", txnName,resourceDetails.toString());
 
-                    Map<String, Double> resourceTime = new HashMap<>();
+                    Map<String, Double> resourceTime;
                     LOGGER.debug("CXOP - {} - Calling Calculate BackendTime",txnName);
                     resourceTime = calculateBackendTime((ArrayList) collectedData.get("ResourceTime"), collectedData.get("NavType").toString(),txnName);
                     LOGGER.debug("CXOP - {} - Completed Calculate BackendTime : {}",collectedData.get("TxnName").toString(),txnName);
@@ -301,6 +313,11 @@ public class CollectorUtils {
                     collectedData.put("visuallyComplete", resourceTime.get("totalTime"));
 
                 }
+				else
+				{
+					collectedData.put("resourceLoadTime",0);
+                    collectedData.put("visuallyComplete", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
+				}
 
                 if (navigationDetails == null && resourceDetails.size() <= 0)
                 {
@@ -413,7 +430,7 @@ public class CollectorUtils {
                 LOGGER.debug("CXOP - {} - Script Execution Time for collecting Performance Data : {} ms.",txnName,scriptTime);
                 collectedData.put("ScriptTime", scriptTime);
                 asyncpersistData(collectedData);
-                LOGGER.debug("CXOP - {} - COmpleted calling data persist for asynchronously", txnName);
+                LOGGER.debug("CXOP - {} - Completed calling data persist for asynchronously", txnName);
                 rtnValue.put("UploadStatus", "Success");
                 rtnValue.put("RunID", config.clientConfig.get("RunID"));
                 rtnValue.put("totalTime", totalTime);

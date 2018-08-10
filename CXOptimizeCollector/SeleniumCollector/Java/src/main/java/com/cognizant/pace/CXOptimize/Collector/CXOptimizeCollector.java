@@ -50,6 +50,14 @@ public class CXOptimizeCollector {
         LOGGER.debug("CXOP - {} - Started clearing Resource Timing API data",txnName);
         int rtnValue = 0;
         CollectorConstants.setScriptStartTime(System.currentTimeMillis());
+
+        //To support manual clear of resource timings from browser
+        if(CollectorConstants.getTxnCounter() == 0)
+        {
+            CollectorConstants.setRunStartTime(System.currentTimeMillis());
+            CollectorConstants.setTxnCounter(CollectorConstants.getTxnCounter() + 1);
+        }
+
         JavascriptExecutor jsExe = (JavascriptExecutor) browser;
         jsExe.executeScript("window.performance.clearResourceTimings();");
         LOGGER.debug("CXOP - {} - Cleared Resource Timing API data",txnName);

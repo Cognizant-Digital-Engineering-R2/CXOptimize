@@ -380,5 +380,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         ScriptStartTime = startTime;
     }
 
+    private static String ResourceClear;
+    public static String getManualResourceTimeClear() {
+        return ResourceClear;
+    }
+    public static void setManualResourceTimeClear(String resClear) {
+        ResourceClear = resClear;
+    }
+
+    private static long RunStartTime;
+
+    public static long getRunStartTime()
+    {
+        return RunStartTime;
+    }
+
+    public static void setRunStartTime(long startTime)
+    {
+        RunStartTime = startTime;
+    }
+
+    private static int TxnCounter = 0;
+
+    public static int getTxnCounter()
+    {
+        return TxnCounter;
+    }
+
+    public static void setTxnCounter(int count)
+    {
+        TxnCounter = count;
+    }
+
 
 }
