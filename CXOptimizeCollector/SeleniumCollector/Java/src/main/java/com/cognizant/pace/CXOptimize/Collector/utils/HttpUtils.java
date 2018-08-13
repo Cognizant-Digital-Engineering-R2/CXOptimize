@@ -114,7 +114,7 @@ public class HttpUtils {
             } else {
                 result.put("status", "fail");
 				String response = getResponseStream(conn);
-                LOGGER.debug("CXOP - HTTP Status failed {}",);
+                LOGGER.debug("CXOP - HTTP Status failed {}",code);
                 try
                 {
                     //JSONObject jsonObj = new JSONObject(getResponseStream(conn));
