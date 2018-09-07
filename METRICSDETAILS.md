@@ -7,9 +7,9 @@ This guide will provide information on what details is collected by CXOptimize C
 CXOptimize collects the following metrics exposed by the Browser APIs
 
 	1.	Navigation Timing API
-	![](/Documents/images/navigationtiming.png "NavigationTiming API")
+![](/Documents/images/navigationtiming.png "NavigationTiming API")
 	2.	Resource Timing API.
-	![](/Documents/images/resourcetiming.png "Resource Timing API")
+![](/Documents/images/resourcetiming.png "Resource Timing API")
 	3.	Memory API.
 	4.	Paint API
 	4.	RUM-SpeedIndex.
@@ -20,7 +20,7 @@ CXOptimize collects the following metrics exposed by the Browser APIs
 
 ## Hard Navigation
 
-![](/Documents/images/hardnavigationtime.png.png "Hard Navigation")
+![](/Documents/images/hardnavigationtime.png "Hard Navigation")
 
 ## Soft Navigation
 
