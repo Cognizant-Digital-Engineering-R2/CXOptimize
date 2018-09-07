@@ -2,7 +2,7 @@
 
 This guide will provide information on what details is collected by CXOptimize Collector and provides insight into how different metrics are calculated.
 
-#	What it Collectos
+#	What it Collects
 
 CXOptimize collects the following metrics exposed by the Browser APIs
 
