@@ -544,337 +544,338 @@ public class MetricsProcessor {
                         for (int j = 0; j < resrcSize; j++) {
                             JSONObject childrenJSONDocument = new JSONObject();
                             res = resource.getJSONObject(j);
-                            c_connectEnd = 0;
-                            c_connectStart = 0;
-                            c_domainLookupEnd = 0;
-                            c_domainLookupStart = 0;
-                            c_fetchStart = 0;
-                            c_redirectEnd = 0;
-                            c_redirectStart = 0;
-                            c_requestStart = 0;
-                            c_responseEnd = 0;
-                            c_responseStart = 0;
-                            c_secureConnectionStart = 0;
-                            c_cacheFetchTime = 0;
-                            c_serverTime = 0;
-                            c_duration = 0;
-                            c_clientTime = 0;
-                            c_serverTime_ttfb = 0;
-                            c_tcpConnectTime = 0;
-                            c_downloadTime = 0;
-                            c_serverTime_ttlb = 0;
-                            c_startTime = 0;
-                            c_fetchStartTime = 0;
-                            resrcURL = "";
-                            //tresrcURL = "";
-                            transferSize = 0;
-                            nextHopProtocol = "";
-                            encodedBodySize = 0;
-                            decodedBodySize = 0;
-                            lastModified = "";
-                            expiryDate = "";
-                            c_MinfSize = 0;
-                            c_Height = 0;
-                            c_Width = 0;
-                            c_OrgSize = 0;
-                            c_contentEncoding = "";
-                            c_contentLength = 0;
-                            c_Status = 0;
-                            c_cacheControl = "";
-                            c_Connection = "";
-                            c_ETag = "";
-                            c_entryType = "";
-                            c_initiatorType = "";
-                            c_workerStart = 0;
-                            staticResrcStatus = false;
-                            isImage = false;
-                            flagSet = false;
-                            isCached = false;
-                            resourceType = "others";
-                            c_host = "";
+                            if(!res.getString("name").equals("about:blank")){
+                                c_connectEnd = 0;
+                                c_connectStart = 0;
+                                c_domainLookupEnd = 0;
+                                c_domainLookupStart = 0;
+                                c_fetchStart = 0;
+                                c_redirectEnd = 0;
+                                c_redirectStart = 0;
+                                c_requestStart = 0;
+                                c_responseEnd = 0;
+                                c_responseStart = 0;
+                                c_secureConnectionStart = 0;
+                                c_cacheFetchTime = 0;
+                                c_serverTime = 0;
+                                c_duration = 0;
+                                c_clientTime = 0;
+                                c_serverTime_ttfb = 0;
+                                c_tcpConnectTime = 0;
+                                c_downloadTime = 0;
+                                c_serverTime_ttlb = 0;
+                                c_startTime = 0;
+                                c_fetchStartTime = 0;
+                                resrcURL = "";
+                                //tresrcURL = "";
+                                transferSize = 0;
+                                nextHopProtocol = "";
+                                encodedBodySize = 0;
+                                decodedBodySize = 0;
+                                lastModified = "";
+                                expiryDate = "";
+                                c_MinfSize = 0;
+                                c_Height = 0;
+                                c_Width = 0;
+                                c_OrgSize = 0;
+                                c_contentEncoding = "";
+                                c_contentLength = 0;
+                                c_Status = 0;
+                                c_cacheControl = "";
+                                c_Connection = "";
+                                c_ETag = "";
+                                c_entryType = "";
+                                c_initiatorType = "";
+                                c_workerStart = 0;
+                                staticResrcStatus = false;
+                                isImage = false;
+                                flagSet = false;
+                                isCached = false;
+                                resourceType = "others";
+                                c_host = "";
 
-                            if (res.has("connectEnd") && !res.isNull("connectEnd")) {
-                                c_connectEnd = res.getDouble("connectEnd");
-                            }
-                            if (res.has("connectStart") && !res.isNull("connectStart")) {
-                                c_connectStart = res.getDouble("connectStart");
-                            }
-                            if (res.has("domainLookupEnd") && !res.isNull("domainLookupEnd")) {
-                                c_domainLookupEnd = res.getDouble("domainLookupEnd");
-                            }
-                            if (res.has("domainLookupStart") && !res.isNull("domainLookupStart")) {
-                                c_domainLookupStart = res.getDouble("domainLookupStart");
-                            }
-                            if (res.has("fetchStart") && !res.isNull("fetchStart")) {
-                                c_fetchStart = res.getDouble("fetchStart");
-                            }
-                            if (res.has("redirectEnd") && !res.isNull("redirectEnd")) {
-                                c_redirectEnd = res.getDouble("redirectEnd");
-                            }
-                            if (res.has("redirectStart") && !res.isNull("redirectStart")) {
-                                c_redirectStart = res.getDouble("redirectStart");
-                            }
-                            if (res.has("requestStart") && !res.isNull("requestStart")) {
-                                c_requestStart = res.getDouble("requestStart");
-                            }
-                            if (res.has("startTime") && !res.isNull("startTime")) {
-                                c_startTime = res.getDouble("startTime");
-                            }
-                            if (res.has("responseEnd") && !res.isNull("responseEnd")) {
-                                c_responseEnd = res.getDouble("responseEnd");
-                            }
-                            if (res.has("duration") && !res.isNull("duration")) {
-                                c_duration = res.getDouble("duration");
-                            }
-                            if (res.has("responseStart") && !res.isNull("responseStart")) {
-                                c_responseStart = res.getDouble("responseStart");
-                            }
-                            if (res.has("secureConnectionStart") && !res.isNull("secureConnectionStart")) {
-                                c_secureConnectionStart = res.getDouble("secureConnectionStart");
-                            }
-                            if (res.has("transferSize") && !res.isNull("transferSize")) {
-                                transferSize = res.getDouble("transferSize");
-                            }
-                            if (res.has("encodedBodySize") && !res.isNull("encodedBodySize")) {
-                                encodedBodySize = res.getDouble("encodedBodySize");
-                            }
-                            if (res.has("decodedBodySize") && !res.isNull("decodedBodySize")) {
-                                decodedBodySize = res.getDouble("decodedBodySize");
-                            }
-                            if (res.has("nextHopProtocol") && !res.isNull("nextHopProtocol")) {
-                                nextHopProtocol = res.getString("nextHopProtocol");
-                            }
-                            if (res.has("OrgSize") && !res.isNull("OrgSize")) {
-                                c_OrgSize = res.getDouble("OrgSize");
-                            }
-                            if (res.has("MinfSize") && !res.isNull("MinfSize")) {
-                                c_MinfSize = res.getDouble("MinfSize");
-                            }
-                            if (res.has("Last-Modified") && !res.isNull("Last-Modified")) {
-                                lastModified = res.getString("Last-Modified");
-                            }
-                            if (res.has("Content-Encoding") && !res.isNull("Content-Encoding")) {
-                                c_contentEncoding = res.getString("Content-Encoding");
-                            }
-                            if (res.has("Content-Length") && !res.isNull("Content-Length")) {
-                                c_contentLength = res.getLong("Content-Length");
-                            }
-                            if (res.has("Status") && !res.isNull("Status")) {
-                                c_Status = res.getDouble("Status");
-                            }
-                            if (res.has("Connection") && !res.isNull("Connection")) {
-                                c_Connection = res.getString("Connection");
-                            }
-                            if (res.has("Cache-Control") && !res.isNull("Cache-Control")) {
-                                c_cacheControl = res.getString("Cache-Control");
-                            }
-                            if (res.has("ETag") && !res.isNull("ETag")) {
-                                c_ETag = res.getString("ETag");
-                            }
-                            if (res.has("Expires") && !res.isNull("Expires")) {
-                                expiryDate = res.getString("Expires");
-                            }
-                            if (res.has("Height") && !res.isNull("Height")) {
-                                c_Height = res.getDouble("Height");
-                            }
-                            if (res.has("Width") && !res.isNull("Width")) {
-                                c_Width = res.getDouble("Width");
-                            }
-
-                            if (res.has("entryType") && !res.isNull("entryType")) {
-                                c_entryType = res.getString("entryType");
-                            }
-                            if (res.has("initiatorType") && !res.isNull("initiatorType")) {
-                                c_initiatorType = res.getString("initiatorType");
-                            }
-                            if (res.has("workerStart") && !res.isNull("workerStart")) {
-                                c_workerStart = res.getDouble("workerStart");
-                            }
-
-                            if (res.has("IsCached") && !res.isNull("IsCached")) {
-                                isCached = res.getBoolean("IsCached");
-                            } else {
-                                if (c_duration <= resourceDurationThreshold) {
-                                    isCached = true;
+                                if (res.has("connectEnd") && !res.isNull("connectEnd")) {
+                                    c_connectEnd = res.getDouble("connectEnd");
                                 }
-                            }
+                                if (res.has("connectStart") && !res.isNull("connectStart")) {
+                                    c_connectStart = res.getDouble("connectStart");
+                                }
+                                if (res.has("domainLookupEnd") && !res.isNull("domainLookupEnd")) {
+                                    c_domainLookupEnd = res.getDouble("domainLookupEnd");
+                                }
+                                if (res.has("domainLookupStart") && !res.isNull("domainLookupStart")) {
+                                    c_domainLookupStart = res.getDouble("domainLookupStart");
+                                }
+                                if (res.has("fetchStart") && !res.isNull("fetchStart")) {
+                                    c_fetchStart = res.getDouble("fetchStart");
+                                }
+                                if (res.has("redirectEnd") && !res.isNull("redirectEnd")) {
+                                    c_redirectEnd = res.getDouble("redirectEnd");
+                                }
+                                if (res.has("redirectStart") && !res.isNull("redirectStart")) {
+                                    c_redirectStart = res.getDouble("redirectStart");
+                                }
+                                if (res.has("requestStart") && !res.isNull("requestStart")) {
+                                    c_requestStart = res.getDouble("requestStart");
+                                }
+                                if (res.has("startTime") && !res.isNull("startTime")) {
+                                    c_startTime = res.getDouble("startTime");
+                                }
+                                if (res.has("responseEnd") && !res.isNull("responseEnd")) {
+                                    c_responseEnd = res.getDouble("responseEnd");
+                                }
+                                if (res.has("duration") && !res.isNull("duration")) {
+                                    c_duration = res.getDouble("duration");
+                                }
+                                if (res.has("responseStart") && !res.isNull("responseStart")) {
+                                    c_responseStart = res.getDouble("responseStart");
+                                }
+                                if (res.has("secureConnectionStart") && !res.isNull("secureConnectionStart")) {
+                                    c_secureConnectionStart = res.getDouble("secureConnectionStart");
+                                }
+                                if (res.has("transferSize") && !res.isNull("transferSize")) {
+                                    transferSize = res.getDouble("transferSize");
+                                }
+                                if (res.has("encodedBodySize") && !res.isNull("encodedBodySize")) {
+                                    encodedBodySize = res.getDouble("encodedBodySize");
+                                }
+                                if (res.has("decodedBodySize") && !res.isNull("decodedBodySize")) {
+                                    decodedBodySize = res.getDouble("decodedBodySize");
+                                }
+                                if (res.has("nextHopProtocol") && !res.isNull("nextHopProtocol")) {
+                                    nextHopProtocol = res.getString("nextHopProtocol");
+                                }
+                                if (res.has("OrgSize") && !res.isNull("OrgSize")) {
+                                    c_OrgSize = res.getDouble("OrgSize");
+                                }
+                                if (res.has("MinfSize") && !res.isNull("MinfSize")) {
+                                    c_MinfSize = res.getDouble("MinfSize");
+                                }
+                                if (res.has("Last-Modified") && !res.isNull("Last-Modified")) {
+                                    lastModified = res.getString("Last-Modified");
+                                }
+                                if (res.has("Content-Encoding") && !res.isNull("Content-Encoding")) {
+                                    c_contentEncoding = res.getString("Content-Encoding");
+                                }
+                                if (res.has("Content-Length") && !res.isNull("Content-Length")) {
+                                    c_contentLength = res.getLong("Content-Length");
+                                }
+                                if (res.has("Status") && !res.isNull("Status")) {
+                                    c_Status = res.getDouble("Status");
+                                }
+                                if (res.has("Connection") && !res.isNull("Connection")) {
+                                    c_Connection = res.getString("Connection");
+                                }
+                                if (res.has("Cache-Control") && !res.isNull("Cache-Control")) {
+                                    c_cacheControl = res.getString("Cache-Control");
+                                }
+                                if (res.has("ETag") && !res.isNull("ETag")) {
+                                    c_ETag = res.getString("ETag");
+                                }
+                                if (res.has("Expires") && !res.isNull("Expires")) {
+                                    expiryDate = res.getString("Expires");
+                                }
+                                if (res.has("Height") && !res.isNull("Height")) {
+                                    c_Height = res.getDouble("Height");
+                                }
+                                if (res.has("Width") && !res.isNull("Width")) {
+                                    c_Width = res.getDouble("Width");
+                                }
 
-                            if (c_domainLookupStart > 0 && c_fetchStart > 0) {
-                                c_cacheFetchTime = (c_domainLookupStart - c_fetchStart) < 0 ? 0 : (c_domainLookupStart - c_fetchStart);
-                            }
+                                if (res.has("entryType") && !res.isNull("entryType")) {
+                                    c_entryType = res.getString("entryType");
+                                }
+                                if (res.has("initiatorType") && !res.isNull("initiatorType")) {
+                                    c_initiatorType = res.getString("initiatorType");
+                                }
+                                if (res.has("workerStart") && !res.isNull("workerStart")) {
+                                    c_workerStart = res.getDouble("workerStart");
+                                }
 
-                            if (c_responseStart > 0 && c_requestStart > 0) {
-                                c_serverTime_ttfb = (c_responseStart - c_requestStart) < 0 ? 0 : (c_responseStart - c_requestStart);
-                            }
-
-                            if (c_duration > 0 && c_serverTime > 0) {
-                                c_clientTime = (c_duration - c_serverTime_ttfb);
-                            }
-                            if (c_connectEnd > 0 && c_connectStart > 0) {
-                                if (c_secureConnectionStart > 0) {
-                                    c_tcpConnectTime = (c_connectEnd - c_secureConnectionStart);
+                                if (res.has("IsCached") && !res.isNull("IsCached")) {
+                                    isCached = res.getBoolean("IsCached");
                                 } else {
-                                    c_tcpConnectTime = (c_connectEnd - c_connectStart);
+                                    if (c_duration <= resourceDurationThreshold) {
+                                        isCached = true;
+                                    }
                                 }
-                            }
 
-                            if (c_responseEnd > 0 && c_responseStart > 0) {
-                                c_downloadTime = c_responseEnd - c_responseStart;
-                            }
-
-                            c_serverTime_ttlb = c_serverTime_ttfb + c_downloadTime;
-
-                            if (c_fetchStart > 0 && c_startTime > 0) {
-                                c_fetchStartTime = (c_fetchStart - c_startTime) < 0 ? 0 : (c_fetchStart - c_startTime);
-                            }
-
-                            if (res.has("name") && !res.isNull("name")) {
-                                resrcURL = res.getString("name");
-                                //tresrcURL = resrcURL.toLowerCase().split("\\?")[0];
-                                if (res.has("HostName") && !res.isNull("HostName"))
-                                {
-                                    c_host = res.getString("HostName");
+                                if (c_domainLookupStart > 0 && c_fetchStart > 0) {
+                                    c_cacheFetchTime = (c_domainLookupStart - c_fetchStart) < 0 ? 0 : (c_domainLookupStart - c_fetchStart);
                                 }
-                                else
-                                {
-                                    c_host = appUtils.getHostName(resrcURL,urlValidator);
+
+                                if (c_responseStart > 0 && c_requestStart > 0) {
+                                    c_serverTime_ttfb = (c_responseStart - c_requestStart) < 0 ? 0 : (c_responseStart - c_requestStart);
                                 }
-                            }
+
+                                if (c_duration > 0 && c_serverTime > 0) {
+                                    c_clientTime = (c_duration - c_serverTime_ttfb);
+                                }
+                                if (c_connectEnd > 0 && c_connectStart > 0) {
+                                    if (c_secureConnectionStart > 0) {
+                                        c_tcpConnectTime = (c_connectEnd - c_secureConnectionStart);
+                                    } else {
+                                        c_tcpConnectTime = (c_connectEnd - c_connectStart);
+                                    }
+                                }
+
+                                if (c_responseEnd > 0 && c_responseStart > 0) {
+                                    c_downloadTime = c_responseEnd - c_responseStart;
+                                }
+
+                                c_serverTime_ttlb = c_serverTime_ttfb + c_downloadTime;
+
+                                if (c_fetchStart > 0 && c_startTime > 0) {
+                                    c_fetchStartTime = (c_fetchStart - c_startTime) < 0 ? 0 : (c_fetchStart - c_startTime);
+                                }
+
+                                if (res.has("name") && !res.isNull("name")) {
+                                    resrcURL = res.getString("name");
+                                    //tresrcURL = resrcURL.toLowerCase().split("\\?")[0];
+                                    if (res.has("HostName") && !res.isNull("HostName"))
+                                    {
+                                        c_host = res.getString("HostName");
+                                    }
+                                    else
+                                    {
+                                        c_host = appUtils.getHostName(resrcURL,urlValidator);
+                                    }
+                                }
 
 
-                            childrenJSONDocument.put("name", res.getString("name"));
-                            childrenJSONDocument.put("initiatorType", c_initiatorType);
-                            childrenJSONDocument.put("startTime", Double.parseDouble(df.format(c_startTime)));
-                            childrenJSONDocument.put("fetchStart", Double.parseDouble(df.format(c_fetchStart)));
-                            childrenJSONDocument.put("redirectStart", Double.parseDouble(df.format(c_redirectStart)));
-                            childrenJSONDocument.put("redirectEnd", Double.parseDouble((df.format(c_redirectEnd))));
-                            childrenJSONDocument.put("domainLookupStart", Double.parseDouble(df.format(c_domainLookupStart)));
-                            childrenJSONDocument.put("domainLookupEnd", Double.parseDouble(df.format(c_domainLookupEnd)));
-                            childrenJSONDocument.put("connectStart", Double.parseDouble(df.format(c_connectStart)));
-                            childrenJSONDocument.put("secureConnectionStart", Double.parseDouble(df.format(c_secureConnectionStart)));
-                            childrenJSONDocument.put("connectEnd", Double.parseDouble(df.format(c_connectEnd)));
-                            childrenJSONDocument.put("requestStart", Double.parseDouble(df.format(c_requestStart)));
-                            childrenJSONDocument.put("responseStart", Double.parseDouble(df.format(c_responseStart)));
-                            childrenJSONDocument.put("responseEnd", Double.parseDouble(df.format(c_responseEnd)));
-                            childrenJSONDocument.put("duration", c_duration);
+                                childrenJSONDocument.put("name", res.getString("name"));
+                                childrenJSONDocument.put("initiatorType", c_initiatorType);
+                                childrenJSONDocument.put("startTime", Double.parseDouble(df.format(c_startTime)));
+                                childrenJSONDocument.put("fetchStart", Double.parseDouble(df.format(c_fetchStart)));
+                                childrenJSONDocument.put("redirectStart", Double.parseDouble(df.format(c_redirectStart)));
+                                childrenJSONDocument.put("redirectEnd", Double.parseDouble((df.format(c_redirectEnd))));
+                                childrenJSONDocument.put("domainLookupStart", Double.parseDouble(df.format(c_domainLookupStart)));
+                                childrenJSONDocument.put("domainLookupEnd", Double.parseDouble(df.format(c_domainLookupEnd)));
+                                childrenJSONDocument.put("connectStart", Double.parseDouble(df.format(c_connectStart)));
+                                childrenJSONDocument.put("secureConnectionStart", Double.parseDouble(df.format(c_secureConnectionStart)));
+                                childrenJSONDocument.put("connectEnd", Double.parseDouble(df.format(c_connectEnd)));
+                                childrenJSONDocument.put("requestStart", Double.parseDouble(df.format(c_requestStart)));
+                                childrenJSONDocument.put("responseStart", Double.parseDouble(df.format(c_responseStart)));
+                                childrenJSONDocument.put("responseEnd", Double.parseDouble(df.format(c_responseEnd)));
+                                childrenJSONDocument.put("duration", c_duration);
 
-                            childrenJSONDocument.put("entryType", c_entryType);
-                            childrenJSONDocument.put("transferSize", Double.parseDouble(df.format(transferSize)));
-                            if(platform.getString("UserAgent").contains("Trident"))
-                            {
-                                totalSize = totalSize + c_contentLength;
-                            }
-                            else
-                            {
-                                if(transferSize == 0 && encodedBodySize == 0)
+                                childrenJSONDocument.put("entryType", c_entryType);
+                                childrenJSONDocument.put("transferSize", Double.parseDouble(df.format(transferSize)));
+                                if(platform.getString("UserAgent").contains("Trident"))
                                 {
                                     totalSize = totalSize + c_contentLength;
                                 }
                                 else
                                 {
-                                    if(transferSize == 0)
+                                    if(transferSize == 0 && encodedBodySize == 0)
                                     {
-                                        totalSize = totalSize + encodedBodySize;
+                                        totalSize = totalSize + c_contentLength;
                                     }
                                     else
                                     {
-                                        totalSize = totalSize + transferSize;
+                                        if(transferSize == 0)
+                                        {
+                                            totalSize = totalSize + encodedBodySize;
+                                        }
+                                        else
+                                        {
+                                            totalSize = totalSize + transferSize;
+                                        }
+                                    }
+
+                                }
+
+                                childrenJSONDocument.put("decodedBodySize", Double.parseDouble(df.format(decodedBodySize)));
+                                childrenJSONDocument.put("encodedBodySize", Double.parseDouble(df.format(encodedBodySize)));
+                                childrenJSONDocument.put("nextHopProtocol", nextHopProtocol);
+                                childrenJSONDocument.put("workerStart", Double.parseDouble(df.format(c_workerStart)));
+
+
+                                childrenJSONDocument.put("OrgSize", c_OrgSize);
+
+                                childrenJSONDocument.put("MinfSize", c_MinfSize);
+                                childrenJSONDocument.put("Last-Modified", lastModified);
+                                childrenJSONDocument.put("Content-Encoding", c_contentEncoding);
+                                childrenJSONDocument.put("Content-Length", c_contentLength);
+                                childrenJSONDocument.put("Status", c_Status);
+                                childrenJSONDocument.put("Connection", c_Connection);
+                                childrenJSONDocument.put("Cache-Control", c_cacheControl);
+                                childrenJSONDocument.put("ETag", c_ETag);
+                                childrenJSONDocument.put("Expires", expiryDate);
+                                childrenJSONDocument.put("Height", c_Height);
+                                childrenJSONDocument.put("Width", c_Width);
+
+
+                                childrenJSONDocument.put("cacheFetchTime", Double.parseDouble(df.format(c_cacheFetchTime)));
+                                childrenJSONDocument.put("redirectTime", Double.parseDouble(df.format(c_redirectEnd - c_redirectStart)));
+                                childrenJSONDocument.put("dnsLookupTime", Double.parseDouble(df.format(c_domainLookupEnd - c_domainLookupStart)));
+                                childrenJSONDocument.put("tcpConnectTime", Double.parseDouble(df.format(c_tcpConnectTime)));
+                                childrenJSONDocument.put("serverTime_ttfb", Double.parseDouble(df.format(c_serverTime_ttfb)));
+                                childrenJSONDocument.put("downloadTime", Double.parseDouble(df.format(c_downloadTime)));
+                                childrenJSONDocument.put("fetchStartTime", Double.parseDouble(df.format(c_fetchStartTime)));
+                                childrenJSONDocument.put("clientTime", Double.parseDouble(df.format(c_clientTime)));
+                                childrenJSONDocument.put("serverTime_ttlb", Double.parseDouble(df.format(c_serverTime_ttlb)));
+                                childrenJSONDocument.put("totalResourceTime", Double.parseDouble(df.format(c_duration)));
+                                childrenJSONDocument.put("HostName", c_host);
+                                childrenJSONDocument.put("IsCached", isCached);
+
+                                //Check if the browser is not IE
+                                if(!platform.getString("UserAgent").contains("Trident"))
+                                {
+                                    //If resource domain is same as parent check for transfersize to set caching
+                                    if (c_host.equals(parentDomain))
+                                    {
+                                        if (encodedBodySize == 0 && transferSize == 0) {
+                                            childrenJSONDocument.put("IsCached", true);
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        //If resource domain is cors and the domain allows the timing value then check caching status
+                                        if(c_requestStart != 0 && c_requestStart !=0 && encodedBodySize == 0 && transferSize == 0)
+                                        {
+                                            childrenJSONDocument.put("IsCached", true);
+                                        }
+
                                     }
                                 }
 
-                            }
-
-                            childrenJSONDocument.put("decodedBodySize", Double.parseDouble(df.format(decodedBodySize)));
-                            childrenJSONDocument.put("encodedBodySize", Double.parseDouble(df.format(encodedBodySize)));
-                            childrenJSONDocument.put("nextHopProtocol", nextHopProtocol);
-                            childrenJSONDocument.put("workerStart", Double.parseDouble(df.format(c_workerStart)));
-
-
-                            childrenJSONDocument.put("OrgSize", c_OrgSize);
-
-                            childrenJSONDocument.put("MinfSize", c_MinfSize);
-                            childrenJSONDocument.put("Last-Modified", lastModified);
-                            childrenJSONDocument.put("Content-Encoding", c_contentEncoding);
-                            childrenJSONDocument.put("Content-Length", c_contentLength);
-                            childrenJSONDocument.put("Status", c_Status);
-                            childrenJSONDocument.put("Connection", c_Connection);
-                            childrenJSONDocument.put("Cache-Control", c_cacheControl);
-                            childrenJSONDocument.put("ETag", c_ETag);
-                            childrenJSONDocument.put("Expires", expiryDate);
-                            childrenJSONDocument.put("Height", c_Height);
-                            childrenJSONDocument.put("Width", c_Width);
-
-
-                            childrenJSONDocument.put("cacheFetchTime", Double.parseDouble(df.format(c_cacheFetchTime)));
-                            childrenJSONDocument.put("redirectTime", Double.parseDouble(df.format(c_redirectEnd - c_redirectStart)));
-                            childrenJSONDocument.put("dnsLookupTime", Double.parseDouble(df.format(c_domainLookupEnd - c_domainLookupStart)));
-                            childrenJSONDocument.put("tcpConnectTime", Double.parseDouble(df.format(c_tcpConnectTime)));
-                            childrenJSONDocument.put("serverTime_ttfb", Double.parseDouble(df.format(c_serverTime_ttfb)));
-                            childrenJSONDocument.put("downloadTime", Double.parseDouble(df.format(c_downloadTime)));
-                            childrenJSONDocument.put("fetchStartTime", Double.parseDouble(df.format(c_fetchStartTime)));
-                            childrenJSONDocument.put("clientTime", Double.parseDouble(df.format(c_clientTime)));
-                            childrenJSONDocument.put("serverTime_ttlb", Double.parseDouble(df.format(c_serverTime_ttlb)));
-                            childrenJSONDocument.put("totalResourceTime", Double.parseDouble(df.format(c_duration)));
-                            childrenJSONDocument.put("HostName", c_host);
-                            childrenJSONDocument.put("IsCached", isCached);
-
-                            //Check if the browser is not IE
-                            if(!platform.getString("UserAgent").contains("Trident"))
-                            {
-                                //If resource domain is same as parent check for transfersize to set caching
-                                if (c_host.equals(parentDomain))
+                                if (res.has("IsStaticResrc") && res.has("IsImage") && res.has("ResourceType"))
                                 {
-                                    if (encodedBodySize == 0 && transferSize == 0) {
-                                        childrenJSONDocument.put("IsCached", true);
-                                    }
-
-
+                                    childrenJSONDocument.put("IsStaticResrc", res.getBoolean("IsStaticResrc"));
+                                    childrenJSONDocument.put("IsImage", res.getBoolean("IsImage"));
+                                    childrenJSONDocument.put("ResourceType", res.getString("ResourceType"));
                                 }
                                 else
                                 {
-                                    //If resource domain is cors and the domain allows the timing value then check caching status
-                                    if(c_requestStart != 0 && c_requestStart !=0 && encodedBodySize == 0 && transferSize == 0)
-                                    {
-                                        childrenJSONDocument.put("IsCached", true);
-                                    }
-
-                                }
-                            }
-
-                            if (res.has("IsStaticResrc") && res.has("IsImage") && res.has("ResourceType"))
-                            {
-                                childrenJSONDocument.put("IsStaticResrc", res.getBoolean("IsStaticResrc"));
-                                childrenJSONDocument.put("IsImage", res.getBoolean("IsImage"));
-                                childrenJSONDocument.put("ResourceType", res.getString("ResourceType"));
-                            }
-                            else
-                            {
-                                for (String img : imgArray) {
-                                    if ((res.getString("name").toLowerCase().split("\\?")[0]).contains(img.toLowerCase().trim())) {
-                                        isImage = true;
-                                        staticResrcStatus = true;
-                                        flagSet = true;
-                                        resourceType = img.trim();
-                                        break;
-                                    }
-                                }
-
-                                if (!flagSet) {
-                                    for (String stat : staticArray) {
-                                        if ((res.getString("name").toLowerCase().split("\\?")[0]).contains(stat.toLowerCase().trim())) {
+                                    for (String img : imgArray) {
+                                        if ((res.getString("name").toLowerCase().split("\\?")[0]).contains(img.toLowerCase().trim())) {
+                                            isImage = true;
                                             staticResrcStatus = true;
-                                            isImage = false;
-                                            resourceType = stat.trim();
+                                            flagSet = true;
+                                            resourceType = img.trim();
                                             break;
                                         }
                                     }
+
+                                    if (!flagSet) {
+                                        for (String stat : staticArray) {
+                                            if ((res.getString("name").toLowerCase().split("\\?")[0]).contains(stat.toLowerCase().trim())) {
+                                                staticResrcStatus = true;
+                                                isImage = false;
+                                                resourceType = stat.trim();
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    childrenJSONDocument.put("IsStaticResrc", staticResrcStatus);
+                                    childrenJSONDocument.put("IsImage", isImage);
+                                    childrenJSONDocument.put("ResourceType", resourceType);
+
                                 }
-
-                                childrenJSONDocument.put("IsStaticResrc", staticResrcStatus);
-                                childrenJSONDocument.put("IsImage", isImage);
-                                childrenJSONDocument.put("ResourceType", resourceType);
-
-                            }
 
 
 
@@ -895,7 +896,10 @@ public class MetricsProcessor {
                                     childrenJSONDocument.put("HostName", "Unknown");
                                 }
                             }*/
-                            childrenArray.put(childrenJSONDocument);
+                                childrenArray.put(childrenJSONDocument);
+
+                            }
+
 
                         }
                     }

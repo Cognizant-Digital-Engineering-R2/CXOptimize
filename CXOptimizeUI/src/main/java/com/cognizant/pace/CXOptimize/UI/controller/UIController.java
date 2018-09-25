@@ -16,8 +16,7 @@
 
 package com.cognizant.pace.CXOptimize.UI.controller;
 
-import com.cognizant.pace.CXOptimize.UI.config.HTTPUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +29,8 @@ import javax.servlet.http.Cookie;
 @Controller
 public class UIController
 {
-    @Value("${login.url}")
-    private String loginAPIUrl;
-
-    @Value("${auth.request}")
-    private String authRequest;
+    @Autowired
+    private HTTPUtils httpUtils;
 
     @GetMapping("/login")
     public String loginpage()
@@ -52,16 +48,23 @@ public class UIController
     @GetMapping("/Landing")
     public String landingPage(Model model,HttpServletResponse  response)
     {
-        Cookie co = new Cookie("token",HTTPUtils.getHTTPHeader(loginAPIUrl + "authToken",authRequest).replace("Bearer ",""));
-        response.addCookie(co);
-        model.addAttribute("cxop", new CXOptimiseInput());
-        return "Landing";
+        String validAuthToken = httpUtils.getAuthToken();
+        if(validAuthToken != null)
+        {
+            Cookie co = new Cookie("token",validAuthToken);
+            response.addCookie(co);
+            model.addAttribute("cxop", new CXOptimiseInput());
+            return "Landing";
+        }else{
+            return "login";
+        }
+
+
     }
 
     @PostMapping("/Dashboard")
     public String dashboardPage(@ModelAttribute CXOptimiseInput cxop)
     {
-            //System.out.println(cxop.getClientName());
             return "Dashboard";
     }
 

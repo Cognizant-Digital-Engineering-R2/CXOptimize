@@ -1,5 +1,5 @@
 group 'com.cognizant.pace.CXOptimize.api'
-version '2.0.4'
+version '2.0.5'
 
 buildscript {
     ext {
@@ -32,7 +32,7 @@ apply plugin: 'com.github.jacobono.jaxb'
 
 jar {
     baseName = 'CXOptimizeAPI'
-    version =  '2.0.4'
+    version =  '2.0.5'
 }
 
 ext {
@@ -104,6 +104,7 @@ dependencies {
     compile group: 'net.sf.uadetector', name: 'uadetector-core', version: '0.9.22'
     compile group: 'net.sf.uadetector', name: 'uadetector-resources', version: '2014.10'
     compile group: 'org.springframework', name: 'spring-context-support', version: '4.2.4.RELEASE'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile("io.springfox:springfox-swagger2:2.6.1")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("junit:junit"){

@@ -21,9 +21,6 @@ import com.cognizant.pace.CXOptimize.Collector.config.ConfigurationLoader;
 import com.cognizant.pace.CXOptimize.Collector.service.CXOptimizeService;
 import com.cognizant.pace.CXOptimize.Collector.service.CXOptimizeServiceImpl;
 import com.cognizant.pace.CXOptimize.Collector.constant.CollectorConstants;
-//import cognizant.pace.CXOptimize.Collector.service.*;
-import com.yahoo.platform.yui.compressor.CssCompressor;
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.JavascriptExecutor;
@@ -31,9 +28,6 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -56,39 +50,32 @@ public class CollectorUtils {
     }
 
 
-
     public static Map<String, Object> extractData(String txnName, String url, WebDriver browser, int txnStatus) {
-        LOGGER.debug("CXOP - {} - Started extracting data",txnName);
+        LOGGER.debug("CXOP - {} - Started extracting data", txnName);
         Map<String, Object> rtnValue = new HashMap<>();
-        try
-        {
+        try {
             JavascriptExecutor jsExe = (JavascriptExecutor) browser;
             String userAgent = (String) jsExe.executeScript("var nAgt = navigator.userAgent|| {}; return nAgt;");
-            LOGGER.debug("CXOP - {} - User Agent:{}",txnName,userAgent);
+            LOGGER.debug("CXOP - {} - User Agent:{}", txnName, userAgent);
 
-            if (userAgent != null)
-            {
+            if (userAgent != null) {
                 CollectorConstants.setUserAgent(userAgent);
                 rtnValue = collateData(txnName, url, jsExe, txnStatus);
-                LOGGER.debug("CXOP - {} - Completed extracting data",txnName);
-            }
-            else
-            {
+                LOGGER.debug("CXOP - {} - Completed extracting data", txnName);
+            } else {
                 /*Adding conditions to check if Client Config is null or User Agent is null*/
                 LOGGER.debug("CXOP - {} -  No performance data will be collected since UserAgent is {}", txnName, userAgent);
                 rtnValue = null;
             }
-        } catch (Exception e)
-        {
-            LOGGER.error("CXOP - {} - Exception in extractDataat {} ",txnName,e);
+        } catch (Exception e) {
+            LOGGER.error("CXOP - {} - Exception in extractData at {} ", txnName, e);
         }
 
         return rtnValue;
 
     }
 
-    public static Map<String, Object> collateData(String txnName, String url, JavascriptExecutor jsExe, int txnStatus)
-    {
+    public static Map<String, Object> collateData(String txnName, String url, JavascriptExecutor jsExe, int txnStatus) {
         LOGGER.debug("CXOP - {} - Started collate data", txnName);
         Map<String, Object> rtnValue = new HashMap<>();
         long currNavTime;
@@ -99,8 +86,7 @@ public class CollectorUtils {
 
         Map<String, Object> collectedData = new HashMap<>();
 
-        try
-        {
+        try {
             Map<String, Object> navigationDetails = new HashMap<>();
             Map<String, Object> browserDetails = new HashMap<>();
             Map<String, Object> heapUsage = new HashMap<>();
@@ -115,8 +101,7 @@ public class CollectorUtils {
             //Load Configuration from remote service
             LOGGER.debug("CXOP - {} - Started Loading Configuration", txnName);
             ConfigurationLoader config = ConfigurationLoader.getInstance();
-            if (config.clientConfig.size() > 0)
-            {
+            if (config.clientConfig.size() > 0) {
 
 
                 for (Map.Entry pair : config.clientConfig.entrySet()) {
@@ -136,88 +121,50 @@ public class CollectorUtils {
 
                 LOGGER.debug("CXOP - {} - Navigation API data collection started", txnName);
 
-                if (true == isNavigationAPIEnabled)
-                {
-                    LOGGER.debug("CXOP - {} - User Agent : {}",txnName,CollectorConstants.getUserAgent());
-                    if (CollectorConstants.getUserAgent().contains("Trident"))
-                    {
-                        LOGGER.debug("CXOP - {} - Collecting Navigation Timing Details for IE 11 or below",txnName);
+                if (true == isNavigationAPIEnabled) {
+                    LOGGER.debug("CXOP - {} - User Agent : {}", txnName, CollectorConstants.getUserAgent());
+                    if (CollectorConstants.getUserAgent().contains("Trident")) {
+                        LOGGER.debug("CXOP - {} - Collecting Navigation Timing Details for IE 11 or below", txnName);
+
+                        loadEventEnd = Long.parseLong(jsExe.executeScript(CollectorConstants.getLoadEventEndIE()).toString());
+
                         startTime = System.currentTimeMillis();
-                        do
-                        {
+
+                        while (loadEventEnd <= 0) {
                             loadEventEnd = Long.parseLong(jsExe.executeScript(CollectorConstants.getLoadEventEndIE()).toString());
                             endTime = System.currentTimeMillis();
                             duration = (endTime - startTime) / 1000;
-                            if (duration > 60)
-                            {
+                            if (duration > 60) {
                                 break;
                             }
+                            Thread.sleep(10000);
+                            LOGGER.debug("CXOP - {} - Rechecking loadEventEnd since it is {}", txnName, loadEventEnd);
                         }
-                        while (loadEventEnd <= 0);
 
 
                         JSONObject jsonObj = new JSONObject((jsExe.executeScript(CollectorConstants.getNavigationTimeIE())).toString());
                         navigationDetails = JsonUtils.toMap(jsonObj);
-                        LOGGER.debug("CXOP - {} - Navigation Timing Details : {}",txnName,navigationDetails.toString());
-                    }
-                    else
-                    {
-                        LOGGER.debug("CXOP - {} - Collecting Navigation Timing Details for other than IE11",txnName);
+                        LOGGER.debug("CXOP - {} - Navigation Timing Details : {}", txnName, navigationDetails.toString());
+                    } else {
+                        LOGGER.debug("CXOP - {} - Collecting Navigation Timing Details for other than IE11", txnName);
                         //Loop until loadEventEnd is non zero or 3 minutes to avoid infinite loop
+
+                        loadEventEnd = (long) jsExe.executeScript(CollectorConstants.getLoadEventEnd());
                         startTime = System.currentTimeMillis();
-                        do
-                        {
-                            //navigationDetails = (Map<String, Object>)jsExe.executeScript("var performance = window.performance || window.webkitPerformance || window.mozPerformance || window.msPerformance || {};var timings = performance.timing || {}; return timings.loadEventEnd;");
+
+                        while (loadEventEnd <= 0) {
                             loadEventEnd = (long) jsExe.executeScript(CollectorConstants.getLoadEventEnd());
                             endTime = System.currentTimeMillis();
                             duration = (endTime - startTime) / 1000;
-                            if (duration > 60)
-                            {
+                            if (duration > 60) {
                                 break;
                             }
+                            Thread.sleep(10000);
+                            LOGGER.debug("CXOP - {} - Rechecking loadEventEnd since it is {}", txnName, loadEventEnd);
                         }
-                        while (loadEventEnd <= 0); //Adding the loop to avoid loadEventEnd = 0
 
                         navigationDetails = (Map<String, Object>) jsExe.executeScript(CollectorConstants.getNavigationTime());
-                        LOGGER.debug("CXOP - {} - Navigation Timing Details : {}",txnName,navigationDetails.toString());
-
-                        /*
-                        LOGGER.debug("CXOP - {} - Collecting First Paint started: {}",txnName);
-                        if (CollectorConstants.getUserAgent().contains("Chrome") && !CollectorConstants.getUserAgent().contains("Edge"))
-                        {
-                            msFirstPaint = (long) jsExe.executeScript(CollectorConstants.getFirstPaint());
-							if (msFirstPaint!=-9999)
-							{
-								collectedData.put("msFirstPaint", msFirstPaint);
-							}
-							else
-							{
-								collectedData.put("msFirstPaint", navigationDetails.get("loadEventEnd"));
-							}
-                            LOGGER.debug("CXOP - {} - First Paint : {}",txnName,collectedData.get("msFirstPaint").toString());
-
-                        }
-                        else
-                        {
-                            //No first paint event available for firefox
-                            if(!CollectorConstants.getUserAgent().contains("Edge"))
-                            {
-                                collectedData.put("msFirstPaint", navigationDetails.get("loadEventEnd"));
-                            }
-                            LOGGER.debug("CXOP - {} - First Paint : {}",txnName,collectedData.get("msFirstPaint").toString());
-                        }
-                        LOGGER.debug("CXOP - {} - Collecting First Paint : {}",txnName);
-
-						msFirstPaint = (long) jsExe.executeScript(CollectorConstants.getFirstPaint());
-						if (msFirstPaint!=-9999)
-						{
-							collectedData.put("msFirstPaint", msFirstPaint);
-						}
-						else
-						{
-							collectedData.put("msFirstPaint", navigationDetails.get("loadEventEnd"));
-						}*/
-						
+                        LOGGER.debug("CXOP - {} - Navigation Timing Details : {}", txnName, navigationDetails.toString());
 
                     }
 
@@ -225,32 +172,78 @@ public class CollectorUtils {
 
                     //validate if this is a new transaction. If true persist data else break immediately
 
-                    LOGGER.debug("CXOP - {} - Previous Start Time : {}", txnName,CollectorConstants.getPrevTxnStartTime());
+                    LOGGER.debug("CXOP - {} - Previous Start Time : {}", txnName, CollectorConstants.getPrevTxnStartTime());
 
                     currNavTime = (long) navigationDetails.get("navigationStart");
 
-                    LOGGER.debug("CXOP - {} - Current Start Time : {}", txnName,navigationDetails.get("navigationStart").toString());
+                    LOGGER.debug("CXOP - {} - Current Start Time : {}", txnName, navigationDetails.get("navigationStart").toString());
 
-                    if (currNavTime > CollectorConstants.getPrevTxnStartTime())
-                    {
+                    if (currNavTime > CollectorConstants.getPrevTxnStartTime()) {
                         CollectorConstants.setPrevTxnStartTime(currNavTime);
                         navType = true;
-                        LOGGER.debug("CXOP - {} - Setting Navigation Type to : {}", txnName,"Hard");
+                        LOGGER.debug("CXOP - {} - Setting Navigation Type to : {}", txnName, "Hard");
                         collectedData.put("StartTime", currNavTime);
                         totalTime = ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart"));
                         serverTime = ((long) navigationDetails.get("responseStart") - (long) navigationDetails.get("requestStart"));
                         ArrayList speedIdx = (ArrayList) jsExe.executeScript(CollectorConstants.getSpeedIndex());
-                        //speedIndex = Double.parseDouble(jsExe.executeScript(CollectorConstants.getSpeedIndex()).toString());
-                        collectedData.put("SpeedIndex", speedIdx.get(0));
-                        collectedData.put("msFirstPaint", speedIdx.get(1));
-                        LOGGER.debug("CXOP - {} - SpeedIndex : {} & First Paint : {}", txnName,speedIdx.get(0),speedIdx.get(0));
 
-                    }
-                    else
-                    {
+                        if (speedIdx.size() > 0) {
+                            if (Double.parseDouble(speedIdx.get(0).toString()) <= 0) {
+                                if (loadEventEnd > 0) {
+                                    collectedData.put("SpeedIndex", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
+
+                                } else {
+                                    collectedData.put("SpeedIndex", ((long) navigationDetails.get("domComplete") - (long) navigationDetails.get("navigationStart")));
+                                }
+                            } else {
+                                collectedData.put("SpeedIndex", speedIdx.get(0));
+                            }
+
+                            if (Double.parseDouble(speedIdx.get(1).toString()) > 0) {
+                                collectedData.put("msFirstPaint", speedIdx.get(1));
+
+                            } else {
+                                if (CollectorConstants.getUserAgent().contains("Trident")) {
+                                    collectedData.put("msFirstPaint", ((long) navigationDetails.get("msFirstPaint") - (long) navigationDetails.get("navigationStart")));
+                                } else{
+                                    if (loadEventEnd > 0) {
+                                        collectedData.put("msFirstPaint", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
+                                    } else {
+                                        collectedData.put("msFirstPaint", ((long) navigationDetails.get("domComplete") - (long) navigationDetails.get("navigationStart")));
+                                    }
+
+                                }
+
+                            }
+
+                        } else {
+                            LOGGER.debug("CXOP - {} - Failed to get result for SpeedIndex script.Setting SpeedIndex to fallback logic", txnName);
+                            if (CollectorConstants.getUserAgent().contains("Trident")) {
+                                if (loadEventEnd > 0) {
+                                    collectedData.put("SpeedIndex", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
+
+                                } else {
+                                    collectedData.put("SpeedIndex", ((long) navigationDetails.get("domComplete") - (long) navigationDetails.get("navigationStart")));
+
+                                }
+                                collectedData.put("msFirstPaint", ((long) navigationDetails.get("msFirstPaint") - (long) navigationDetails.get("navigationStart")));
+                            } else{
+                            if (loadEventEnd > 0) {
+                                collectedData.put("SpeedIndex", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
+                                collectedData.put("msFirstPaint", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
+                            } else {
+                                collectedData.put("SpeedIndex", ((long) navigationDetails.get("domComplete") - (long) navigationDetails.get("navigationStart")));
+                                collectedData.put("msFirstPaint", ((long) navigationDetails.get("domComplete") - (long) navigationDetails.get("navigationStart")));
+                            }}
+
+                        }
+                        LOGGER.debug("CXOP - {} - SpeedIndex : {} & First Paint : {}", txnName, collectedData.get("SpeedIndex"), collectedData.get("msFirstPaint"));
+
+
+                    } else {
                         navType = false;
-                        LOGGER.debug("CXOP - {} - Setting Navigation Type to : {}", txnName,"Soft");
-                        collectedData.put("StartTime",CollectorConstants.getScriptStartTime());
+                        LOGGER.debug("CXOP - {} - Setting Navigation Type to : {}", txnName, "Soft");
+                        collectedData.put("StartTime", CollectorConstants.getScriptStartTime());
                         navigationDetails = null;
                     }
                     collectedData.put("NavigationTime", navigationDetails);
@@ -258,122 +251,104 @@ public class CollectorUtils {
 
                 }
 
-                //Mutation Observer Logic to wait until all resources gets downloaded
-
 
                 // Fetch Client-side Resource Details via Resource Timing API
-                if (true == isResourceAPIEnabled)
-                {
-                    //Work around to wait for all resources to download (if no resource is called in 2 seconds it just collects data).This needs 
+                if (true == isResourceAPIEnabled) {
+                    //Work around to wait for all resources to download (if no resource is called in 2 seconds it just collects data).
+                    //Mutation Observer Logic to wait until all resources gets downloaded - todoitem
 
                     LOGGER.debug("CXOP - {} - Checking if all resource are downloaded", txnName);
-                    long beforeLength,afterLength = 0;
+                    long beforeLength, afterLength = 0;
                     do {
                         beforeLength = (long) jsExe.executeScript(CollectorConstants.getResourceLength());
                         Thread.sleep(CollectorConstants.getResourceSettleTime());
                         afterLength = (long) jsExe.executeScript(CollectorConstants.getResourceLength());
+                        LOGGER.debug("CXOP - {} - Resource count before {} seconds is {} and current count {}", txnName, CollectorConstants.getResourceSettleTime(), beforeLength, afterLength);
+                    } while (beforeLength < afterLength);
 
-                    } while(beforeLength < afterLength);
                     LOGGER.debug("CXOP - {} - All resource are downloaded", txnName);
 
                     LOGGER.debug("CXOP - {} - Started Collecting Resource Timing Metrics", txnName);
-                    if (CollectorConstants.getUserAgent().contains("Trident"))
-                    {
+                    if (CollectorConstants.getUserAgent().contains("Trident")) {
                         JSONArray resources = new JSONArray((jsExe.executeScript(CollectorConstants.getResourceTimeIE())).toString());
                         resourceDetails = (ArrayList) JsonUtils.toList(resources);
-                    }
-                    else
-                    {
+                    } else {
                         resourceDetails = (ArrayList) jsExe.executeScript(CollectorConstants.getResourceTime());
                     }
                     jsExe.executeScript(CollectorConstants.clearResourceTiming());
 
-                    if(CollectorConstants.getManualResourceTimeClear().equals("true") && !navType)
-                    {
-                        LOGGER.debug("CXOP - {} - Manual Resource Truncation is enabled",txnName);
-                        LOGGER.debug("CXOP - {} - Size of resource before Manual Resource Truncation : {}",txnName,resourceDetails.size());
-                        double diff = (double)(CollectorConstants.getRunStartTime() - CollectorConstants.getScriptStartTime());
-                        LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}",txnName,diff);
+                    if (CollectorConstants.getManualResourceTimeClear().equals("true") && !navType) {
+                        LOGGER.debug("CXOP - {} - Manual Resource Truncation is enabled", txnName);
+                        LOGGER.debug("CXOP - {} - Size of resource before Manual Resource Truncation : {}", txnName, resourceDetails.size());
+                        double diff = (double) (CollectorConstants.getRunStartTime() - CollectorConstants.getScriptStartTime());
+                        LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}", txnName, diff);
                         //remove all resources start time less than the difference
                         resourceDetails.removeIf(s -> Double.parseDouble(s.get("startTime").toString()) < diff);
-                        LOGGER.debug("CXOP - {} - Size of resource after Manual Resource Truncation : {}",txnName,resourceDetails.size());
+                        LOGGER.debug("CXOP - {} - Size of resource after Manual Resource Truncation : {}", txnName, resourceDetails.size());
                     }
 
                     collectedData.put("ResourceTime", resourceDetails);
-                    LOGGER.debug("CXOP - {} - Completed Collecting Resource Timing Metrics : {}", txnName,resourceDetails.toString());
+                    LOGGER.debug("CXOP - {} - Completed Collecting Resource Timing Metrics : {}", txnName, resourceDetails.toString());
 
                     Map<String, Double> resourceTime;
-                    LOGGER.debug("CXOP - {} - Calling Calculate BackendTime",txnName);
-                    resourceTime = calculateBackendTime((ArrayList) collectedData.get("ResourceTime"), collectedData.get("NavType").toString(),txnName);
-                    LOGGER.debug("CXOP - {} - Completed Calculate BackendTime : {}",collectedData.get("TxnName").toString(),txnName);
+                    LOGGER.debug("CXOP - {} - Calling Calculate BackendTime", txnName);
+                    resourceTime = calculateBackendTime((ArrayList) collectedData.get("ResourceTime"), collectedData.get("NavType").toString(), txnName);
+                    LOGGER.debug("CXOP - {} - Completed Calculate BackendTime : {}", collectedData.get("TxnName").toString(), txnName);
                     totalTime = resourceTime.get("totalTime").longValue();
                     serverTime = serverTime + resourceTime.get("backendTime").longValue();
 
                     collectedData.put("resourceLoadTime", resourceTime.get("backendTime"));
                     collectedData.put("visuallyComplete", resourceTime.get("totalTime"));
 
-                }
-				else
-				{
-					collectedData.put("resourceLoadTime",0);
+                } else {
+                    collectedData.put("resourceLoadTime", 0);
                     collectedData.put("visuallyComplete", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
-				}
+                }
 
-                if (navigationDetails == null && resourceDetails.size() <= 0)
-                {
+                if (navigationDetails == null && resourceDetails.size() <= 0) {
                     LOGGER.info("CXOP - {} - probably did not make a server request and hence will be ignored.", txnName);
                     return rtnValue;
                 }
 
                 // Fetch Client-side Memory Details via Memory API
 
-                if (true == isMemoryAPIEnabled)
-                {
-                    LOGGER.debug("CXOP - {} - Collecting Heap Usage",txnName);
-                    if (CollectorConstants.getUserAgent().contains("Chrome"))
-                    {
+                if (true == isMemoryAPIEnabled) {
+                    LOGGER.debug("CXOP - {} - Collecting Heap Usage", txnName);
+                    if (CollectorConstants.getUserAgent().contains("Chrome")) {
                         heapUsage = (Map<String, Object>) jsExe.executeScript(CollectorConstants.getHeapUsage());
 
-                        if (heapUsage.containsKey("totalJSHeapSize"))
-                        {
+                        if (heapUsage.containsKey("totalJSHeapSize")) {
                             memoryDetails.put("jsHeapSizeLimit", heapUsage.get("jsHeapSizeLimit"));
                             memoryDetails.put("totalJSHeapSize", heapUsage.get("totalJSHeapSize"));
                             memoryDetails.put("usedJSHeapSize", heapUsage.get("usedJSHeapSize"));
-                            if (CollectorConstants.getPrevTxnHeapSize() == 0)
-                            {
+                            if (CollectorConstants.getPrevTxnHeapSize() == 0) {
                                 CollectorConstants.setPrevTxnHeapSize((long) heapUsage.get("usedJSHeapSize"));
                                 memoryDetails.put("currentPageUsage", CollectorConstants.getPrevTxnHeapSize());
-                            }
-                            else
-                            {
+                            } else {
                                 currentHeapUsage = ((long) heapUsage.get("usedJSHeapSize") - CollectorConstants.getPrevTxnHeapSize());
                                 CollectorConstants.setPrevTxnHeapSize((long) heapUsage.get("usedJSHeapSize"));
                                 memoryDetails.put("currentPageUsage", currentHeapUsage);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             memoryDetails.put("jsHeapSizeLimit", 0);
                             memoryDetails.put("totalJSHeapSize", 0);
                             memoryDetails.put("usedJSHeapSize", 0);
                             memoryDetails.put("currentPageUsage", 0);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         memoryDetails.put("jsHeapSizeLimit", 0);
                         memoryDetails.put("totalJSHeapSize", 0);
                         memoryDetails.put("usedJSHeapSize", 0);
                         memoryDetails.put("currentPageUsage", 0);
                     }
                     collectedData.put("Memory", memoryDetails);
-                    LOGGER.debug("CXOP - {} - Completed Collecting Heap Usage : {}",txnName,memoryDetails.toString());
+                    LOGGER.debug("CXOP - {} - Completed Collecting Heap Usage : {}", txnName, memoryDetails.toString());
                 }
 
                 //Fetch dom element count
                 long domElements = (long) jsExe.executeScript(CollectorConstants.getDomLength());
                 collectedData.put("DomElements", domElements);
-                LOGGER.debug("CXOP - {} - DOM Element Count :{} ",txnName,domElements);
+                LOGGER.debug("CXOP - {} - DOM Element Count :{} ", txnName, domElements);
 
 
                 //Fetch Browser Details
@@ -382,42 +357,31 @@ public class CollectorUtils {
 
 
                 // Fetch Client-side details Details via ResourceTiming API
-                if (true == isMarkAPIEnabled)
-                {
-                    LOGGER.debug("CXOP - {} - Collecting Custom Mark using Performance Mark",txnName);
+                if (true == isMarkAPIEnabled) {
+                    LOGGER.debug("CXOP - {} - Collecting Custom Mark using Performance Mark", txnName);
                     Thread.sleep(CollectorConstants.getMarkWaitTime());
-                    if (CollectorConstants.getUserAgent().contains("Trident"))
-                    {
+                    if (CollectorConstants.getUserAgent().contains("Trident")) {
                         JSONArray mark = new JSONArray((jsExe.executeScript(CollectorConstants.getMarkTimeIE())).toString());
                         markDetails = (ArrayList) JsonUtils.toList(mark);
-                    }
-                    else
-                    {
+                    } else {
                         markDetails = (ArrayList) jsExe.executeScript(CollectorConstants.getMarkTime());
                     }
 
-                    if (markDetails.size() > 0)
-                    {
+                    if (markDetails.size() > 0) {
                         collectedData.put("MarkTime", markDetails);
                     }
                     jsExe.executeScript(CollectorConstants.clearMarkTiming());
-                    LOGGER.debug("CXOP - {} - Completed collecting Custom Mark using Performance Mark : {}",txnName,markDetails.toString());
+                    LOGGER.debug("CXOP - {} - Completed collecting Custom Mark using Performance Mark : {}", txnName, markDetails.toString());
                 }
 
                 //Store DOM if required for analysis
-                if (config.clientConfig.containsKey("isDOMNeeded") && Boolean.parseBoolean(config.clientConfig.get("isDOMNeeded").toString()) == true)
-                {
-                    if (navType == true)
-                    {
+                if (config.clientConfig.containsKey("isDOMNeeded") && Boolean.parseBoolean(config.clientConfig.get("isDOMNeeded").toString()) == true) {
+                    if (navType == true) {
                         document = document.append((jsExe.executeScript(CollectorConstants.getDom())).toString());
-                    }
-                    else
-                    {
+                    } else {
                         document = null;
                     }
-                }
-                else
-                {
+                } else {
                     document = null;
                 }
 
@@ -426,8 +390,8 @@ public class CollectorUtils {
 
 
                 LOGGER.debug("CXOP - {} - Calling data persist for asynchronously", txnName);
-                long scriptTime = (System.currentTimeMillis()- CollectorConstants.getScriptStartTime());
-                LOGGER.debug("CXOP - {} - Script Execution Time for collecting Performance Data : {} ms.",txnName,scriptTime);
+                long scriptTime = (System.currentTimeMillis() - CollectorConstants.getScriptStartTime());
+                LOGGER.debug("CXOP - {} - Script Execution Time for collecting Performance Data : {} ms.", txnName, scriptTime);
                 collectedData.put("ScriptTime", scriptTime);
                 asyncpersistData(collectedData);
                 LOGGER.debug("CXOP - {} - Completed calling data persist for asynchronously", txnName);
@@ -436,12 +400,9 @@ public class CollectorUtils {
                 rtnValue.put("totalTime", totalTime);
                 rtnValue.put("serverTime", serverTime);
                 rtnValue.put("txnName", txnName);
-                if (txnStatus == 1)
-                {
+                if (txnStatus == 1) {
                     rtnValue.put("txnStatus", "Pass");
-                }
-                else
-                {
+                } else {
                     rtnValue.put("txnStatus", "Fail");
                 }
                 LOGGER.debug("CXOP - {} - Completed collateData successfully", txnName);
@@ -449,7 +410,7 @@ public class CollectorUtils {
                 LOGGER.error("CXOP - {} - Exception in collateData for getting configuration", txnName);
             }
         } catch (Exception e) {
-            LOGGER.error("CXOP - {} - Exception in collateData at {}", txnName,e);
+            LOGGER.error("CXOP - {} - Exception in collateData at {}", txnName, e);
         }
 
         return rtnValue;
@@ -462,7 +423,7 @@ public class CollectorUtils {
                 try {
                     persistData(collectedData);
                 } catch (InterruptedException | ExecutionException e) {
-                    LOGGER.error("CXOP - {} - Exception in asyncpersistData at {}", collectedData.get("TxnName"),e);
+                    LOGGER.error("CXOP - {} - Exception in asyncpersistData at {}", collectedData.get("TxnName"), e);
                 }
             }
         };
@@ -506,13 +467,10 @@ public class CollectorUtils {
             details.put("ScriptTime", collectedData.get("ScriptTime"));
 
 
-            if (Boolean.valueOf(collectedData.get("NavType").toString()))
-            {
+            if (Boolean.valueOf(collectedData.get("NavType").toString())) {
                 details.put("NavType", "Hard");
                 details.put("speedIndex", collectedData.get("SpeedIndex"));
-            }
-            else
-            {
+            } else {
                 details.put("NavType", "Soft");
 
             }
@@ -528,14 +486,13 @@ public class CollectorUtils {
             jsonDoc.put("memory", collectedData.get("Memory"));
             jsonDoc.put("others", others);
             jsonDoc.put("navtime", collectedData.get("NavigationTime"));
-            if (collectedData.containsKey("MarkTime"))
-            {
+            if (collectedData.containsKey("MarkTime")) {
                 jsonDoc.put("marktime", markListProcessed((ArrayList) collectedData.get("MarkTime")));
             }
 
             boolean crawlEnabled = (collectedData.containsKey("isResourceCrawlingEnabled") ? Boolean.valueOf(collectedData.get("isResourceCrawlingEnabled").toString()) : true);
 
-            LOGGER.debug("CXOP - {} - Crawl Enabled : {}",collectedData.get("TxnName"),crawlEnabled);
+            LOGGER.debug("CXOP - {} - Crawl Enabled : {}", collectedData.get("TxnName"), crawlEnabled);
 
             if (crawlEnabled) {
                 jsonDoc.put("resources", CrawlUtils.getResourceDetails((ArrayList) collectedData.get("ResourceTime")));
@@ -543,13 +500,13 @@ public class CollectorUtils {
                 jsonDoc.put("resources", collectedData.get("ResourceTime"));
             }
 
-            LOGGER.debug("CXOP - {} - Crawl Completed",collectedData.get("TxnName"));
+            LOGGER.debug("CXOP - {} - Crawl Completed", collectedData.get("TxnName"));
 
             LOGGER.debug("CXOP - {} - Data collected : {}", collectedData.get("TxnName"), jsonDoc.toString());
             CXOptimizeService cxOpService = new CXOptimizeServiceImpl();
             String post = cxOpService.uploadPerformanceData(jsonDoc.toString());
 
-            LOGGER.debug("CXOP - {} - Post Status : {}",collectedData.get("TxnName"),post);
+            LOGGER.debug("CXOP - {} - Post Status : {}", collectedData.get("TxnName"), post);
 
             //Checking if the response is null. If so, then it will go to finally block
             if (post == null) {
@@ -563,21 +520,22 @@ public class CollectorUtils {
             }
 
         } catch (Exception e) {
-            LOGGER.error("CXOP - {} - Exception in persistData at {}", collectedData.get("TxnName"),e);
+            LOGGER.error("CXOP - {} - Exception in persistData at {}", collectedData.get("TxnName"), e);
         }
     }
 
-    private static Map<String, Double> calculateBackendTime(ArrayList<Map<String, Object>> resourceDetailsOrg, String NavType,String txnName)
-    {
-        LOGGER.debug("CXOP - {} - Starting  calculateBackendTime with {} Navigation",txnName,NavType);
+    private static Map<String, Double> calculateBackendTime(ArrayList<Map<String, Object>> resourceDetailsOrg, String NavType, String txnName) {
+        LOGGER.debug("CXOP - {} - Starting  calculateBackendTime with {} Navigation", txnName, NavType);
         ArrayList<Map<String, Double>> resourceDetails = new ArrayList<>();
         ArrayList<Map<String, Double>> resourceDetails1 = new ArrayList<>();
         HashMap<String, Double> newmap1 = new HashMap<>();
         Map<String, Double> result = new HashMap<>();
         for (Map<String, Object> resource : resourceDetailsOrg) {
-            newmap1.put("fetchStart", Double.parseDouble(resource.get("fetchStart").toString()));
-            newmap1.put("responseEnd", Double.parseDouble(resource.get("responseEnd").toString()));
-            resourceDetails.add((HashMap) newmap1.clone());
+            if (!resource.get("name").toString().equals("about:blank")) {
+                newmap1.put("fetchStart", Double.parseDouble(resource.get("fetchStart").toString()));
+                newmap1.put("responseEnd", Double.parseDouble(resource.get("responseEnd").toString()));
+                resourceDetails.add((HashMap) newmap1.clone());
+            }
         }
 
         // First, sort by start time, then end time
@@ -643,40 +601,34 @@ public class CollectorUtils {
                 resourceDetails1.add(resourceDetails.get(i));
             }
         }
-        LOGGER.debug("CXOP - {} - Reduced Resource List :{}",txnName,resourceDetails.toString());
+        LOGGER.debug("CXOP - {} - Reduced Resource List :{}", txnName, resourceDetails.toString());
 
         Double backendTime = 0.0;
         Double fetchStart = 0.0;
         Double responseEnd = 0.0;
         size = resourceDetails1.size();
-        for(int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             backendTime = backendTime + (resourceDetails1.get(i).get("responseEnd") - resourceDetails1.get(i).get("fetchStart"));
-            if(i==0)
-            {
+            if (i == 0) {
                 fetchStart = resourceDetails1.get(i).get("fetchStart");
             }
-            if(i == (size-1))
-            {
+            if (i == (size - 1)) {
                 responseEnd = resourceDetails1.get(i).get("responseEnd");
             }
 
         }
-        LOGGER.debug("CXOP - {} - Backend Time :{}",txnName,backendTime);
+        LOGGER.debug("CXOP - {} - Backend Time :{}", txnName, backendTime);
 
-        if (Boolean.valueOf(NavType))
-        {
+        if (Boolean.valueOf(NavType)) {
             result.put("totalTime", responseEnd);
-            LOGGER.debug("CXOP - {} - Navigation : {} TotalTime :{}",txnName,NavType,responseEnd);
-        }
-        else
-        {
+            LOGGER.debug("CXOP - {} - Navigation : {} TotalTime :{}", txnName, NavType, responseEnd);
+        } else {
             result.put("totalTime", (responseEnd - fetchStart));
-            LOGGER.debug("CXOP - {} - Navigation : {} TotalTime :{}",txnName,NavType,responseEnd);
+            LOGGER.debug("CXOP - {} - Navigation : {} TotalTime :{}", txnName, NavType, responseEnd);
         }
 
         result.put("backendTime", backendTime);
-        LOGGER.debug("CXOP - {} - Completed  calculateBackendTime with {} Navigation",txnName,NavType);
+        LOGGER.debug("CXOP - {} - Completed  calculateBackendTime with {} Navigation", txnName, NavType);
         return result;
     }
 

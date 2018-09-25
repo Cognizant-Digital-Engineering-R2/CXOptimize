@@ -190,7 +190,7 @@ public class ConfigurationLoader {
 
 
             CXOptimizeService cxOpService = new CXOptimizeServiceImpl();
-            CollectorConstants.setApiToken(cxOpService.getAuthToken());
+            cxOpService.getAuthToken();
 
             LOGGER.debug("CXOP - Created ApiToken for the session {}", CollectorConstants.getApiToken());
 

@@ -21,8 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cognizant.pace.CXOptimize.UI.controller.HTTPUtils;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,9 @@ import com.cognizant.pace.CXOptimize.UI.JsonUtils;
 @Component
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider
 {
+    @Autowired
+    private HTTPUtils httpUtils;
+
     @Value("${login.url}")
     private String loginAPIUrl;
 
@@ -56,8 +61,8 @@ public class AuthenticationProvider implements org.springframework.security.auth
         try
         {
             loginReq.append("{\"UserName\" : \"").append(authentication.getName()).append("\",");
-            loginReq.append("\"Password\" : \"").append(EncryptionUtils.getEncryptedPassword(authentication.getCredentials(),secretKey).toString()).append("\"}");
-            loginStatus = JsonUtils.jsonToMap(new JSONObject(HTTPUtils.httpPOST(loginAPIUrl + "login",loginReq.toString())));
+            loginReq.append("\"Password\" : \"").append(EncryptionUtils.getEncryptedPassword(authentication.getCredentials(),secretKey)).append("\"}");
+            loginStatus = JsonUtils.jsonToMap(new JSONObject(httpUtils.getLoginStatus(loginReq.toString())));
         }
         catch (Exception ex)
         {
