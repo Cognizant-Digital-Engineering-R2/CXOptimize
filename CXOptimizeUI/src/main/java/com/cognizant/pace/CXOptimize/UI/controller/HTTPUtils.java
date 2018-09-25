@@ -241,12 +241,13 @@ public class HTTPUtils {
                 if (code == 200)
                 {
                     Base64 base64Url = new Base64(true);
-                    String[] split_string = conn.getHeaderField("Authorization").split("\\.");
+                    String authToken = conn.getHeaderField("Authorization");
+                    String[] split_string = authToken.split("\\.");
                     String base64EncodedBody = split_string[1];
                     String tokenbody = new String(base64Url.decode(base64EncodedBody));
                     JSONObject tokenDetails = new JSONObject(tokenbody);
                     if(tokenDetails.getString("sub").equals(user)){
-                        output = base64EncodedBody;
+                        output = authToken.replace("Bearer ","");
                     }
 
                     conn.disconnect();
