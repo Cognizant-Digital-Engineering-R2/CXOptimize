@@ -404,7 +404,16 @@ public class MetricsProcessor {
 
                             if ("hard" .equals(navType.toLowerCase()))
                             {
-                                long totalLoadTime = navtime.getLong("loadEventEnd") - navtime.getLong("navigationStart");
+                                long totalLoadTime = 0;
+                                if(navtime.getLong("loadEventEnd") > 0)
+                                {
+                                    totalLoadTime = navtime.getLong("loadEventEnd") - navtime.getLong("navigationStart");
+                                }
+                                else
+                                {
+                                    totalLoadTime = navtime.getLong("domComplete") - navtime.getLong("navigationStart");
+                                }
+
                                 parentJSONDocument.put("totalPageLoadTime", totalLoadTime);
                                 if (visuallyComplete <= 0)
                                 {
