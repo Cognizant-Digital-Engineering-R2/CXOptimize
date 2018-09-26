@@ -43,7 +43,7 @@ public class HTTPUtils {
 
             StringBuilder response = new StringBuilder();
             URL obj = new URL(esUrl);
-            if (obj.getAuthority().equals(GlobalConstants.getESUrl())) {
+            if (GlobalConstants.getESUrl().contains(obj.getAuthority())) {
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
                 con.setRequestMethod("POST");
                 con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -91,7 +91,7 @@ public class HTTPUtils {
             //
             StringBuilder response = new StringBuilder();
             URL obj = new URL(esUrl);
-            if (obj.getAuthority().equals(GlobalConstants.getESUrl())) {
+            if (GlobalConstants.getESUrl().contains(obj.getAuthority())) {
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("User-Agent", USER_AGENT);

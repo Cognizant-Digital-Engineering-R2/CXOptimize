@@ -159,6 +159,41 @@ public class ApiController
 
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/getEncryptedPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getEncryptedPassword(@RequestBody String request) throws Exception
+    {
+        long overallStart=System.currentTimeMillis();
+        LOGGER.info("Received getEncryptedPassword Request");
+        LOGGER.debug("getEncryptedPassword Request {}",request);
+        request=request.replace("\\\"", "\"");
+        request=request.replace("\"{", "{");
+        request=request.replace("}\"", "}");
+        JSONObject json = new JSONObject(request);
+        LOGGER.debug("Calling LoginUtils.getEncryptedPassword Method to fetch data from datasource");
+        long startTime= System.currentTimeMillis();
+        String result = LoginUtils.getEncryptedPassword(baseUrl,json.getString(GlobalConstants.USERNAME)).toString();
+        long endTime= System.currentTimeMillis();
+        LOGGER.debug("Execution of LoginUtils.getEncryptedPassword Method took {} ms",(endTime-startTime));
+        LOGGER.debug("Final Response: {}",result);
+        long overallEnd=System.currentTimeMillis();
+        JSONObject resultJson = new JSONObject(result);
+        if (resultJson.getBoolean("status"))
+        {
+            LOGGER.debug("getEncryptedPassword Request Passed %s",resultJson);
+            appUtils.asyncAuditLog(overallStart,"API","getEncryptedPassword","NA","NA","NA","S","","",0,"",0,0,0,0);
+        }
+        else
+        {
+            LOGGER.debug("getEncryptedPassword Request Failed %s",resultJson);
+            appUtils.asyncAuditLog(overallStart,"API","getEncryptedPassword","NA","NA","NA","F",resultJson.getString("reason"),"",0,"",0,0,0,0);
+        }
+
+        LOGGER.info("Completed getEncryptedPassword Request and took {} ms",(overallEnd-overallStart));
+
+        return result;
+
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/createUser", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String createUser(@RequestBody String request) throws Exception
     {

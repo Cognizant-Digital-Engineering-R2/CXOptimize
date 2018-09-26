@@ -930,6 +930,7 @@ public class MetricsProcessor {
 
                 LOGGER.debug("Post message : {}", parentJSONDocument.toString());
 
+
                 StringBuilder status = null;
                 status = httpUtils.httpPost(parentJSONDocument.toString(), GlobalConstants.getESUrl() + "/" + GlobalConstants.STATSINDEX_INSERT);
                 if (status.indexOf("NOT_FOUND") < 0) {

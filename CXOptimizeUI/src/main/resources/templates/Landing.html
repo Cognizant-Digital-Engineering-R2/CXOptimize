@@ -542,6 +542,24 @@
     </script>
     <script th:inline="javascript">
         /*<![CDATA[*/
+        var username = /*[[${#httpServletRequest.remoteUser}]]*/ Test;
+        (function($) {
+            $('#encrypt').click(function() {
+    if($('#encryptpass').is(':visible')){
+          jQuery(this).text('Show Encrypt Password');
+    }else{
+          jQuery(this).text('Hide Encrypt Password');
+    }
+    $('#encryptpass').slideToggle('fast');
+    return false;
+});
+            })(jQuery);
+
+
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
         jQuery(document).ready(function($) {});
         /*]]>*/
     </script>
@@ -556,6 +574,10 @@
                 <div class="col-md-12">
                     <legend><span class="blue">Select Details</span></legend>
                 </div>
+            </div>
+            <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
+                <a href="#" id="encrypt">Show Encrypt Password</a>
+                <div id="encryptpass" style="display:none">ghjjkkhjhg</div>
             </div>
             <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
                 <div class="col-md-2">
