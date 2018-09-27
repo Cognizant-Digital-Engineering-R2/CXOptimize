@@ -543,24 +543,44 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         var username = /*[[${#httpServletRequest.remoteUser}]]*/ Test;
-        (function($) {
-            $('#encrypt').click(function() {
-    if($('#encryptpass').is(':visible')){
-          jQuery(this).text('Show Encrypt Password');
-    }else{
-          jQuery(this).text('Hide Encrypt Password');
-    }
-    $('#encryptpass').slideToggle('fast');
-    return false;
-});
-            })(jQuery);
+        function togglePassword(){
+         (function($) {
+            var x = document.getElementById("encrypt");
+            var y = document.getElementById("encryptpass");
+            if(x.innerHTML === "Hide Encrypt Password"){
+                x.innerHTML = "Show Encrypt Password";
+                y.style.visibility = "hidden";
+            } else{
+                x.innerHTML = "Hide Encrypt Password";
+                var hostName = (window.location.origin).split(":");
+                var APIPort = '80';
+                if (!isNaN(hostName[2])) {
+                    APIPort = hostName[2];
+                } else {
+                    if (hostName[0] === 'https') {
+                        APIPort = '443';
+                    }
+                }
 
-
-        /*]]>*/
-    </script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        jQuery(document).ready(function($) {});
+                var userJSON = '{' + '"UserName": "' + username + '"}';
+                var postUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getEncryptedPassword';
+                  var jsonRequest = $.ajax({
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + Cookies.get('token')
+                    },
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: postUrl,
+                    data: JSON.stringify(userJSON)
+                });
+                jsonRequest.always(function(data) {
+                    y.innerHTML = data.password;
+                });
+                y.style.visibility = "visible";
+            }
+			})(jQuery);
+			}
         /*]]>*/
     </script>
 </head>
@@ -576,8 +596,12 @@
                 </div>
             </div>
             <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
-                <a href="#" id="encrypt">Show Encrypt Password</a>
-                <div id="encryptpass" style="display:none">ghjjkkhjhg</div>
+                <div class="col-md-3">
+                <a href="#" id="encrypt" onclick="togglePassword()">Show Encrypt Password</a>
+                </div>
+                <div class="col-md-3">
+                <div id="encryptpass" style="visibility:hidden"></div>
+                </div>
             </div>
             <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
                 <div class="col-md-2">
