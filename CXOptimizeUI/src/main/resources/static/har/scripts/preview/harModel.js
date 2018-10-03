@@ -401,7 +401,7 @@ HarModel.Loader =
     {
         var href = document.location.href;
         var index = href.indexOf("?");
-        document.location = href.substr(0, index) + "?path=" + path;
+        //document.location = href.substr(0, index) + "?path=" + path;
 
         // Show timeline and stats by default if an example is displayed.
         Cookies.setCookie("timeline", true);

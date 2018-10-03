@@ -510,6 +510,7 @@
                 var updateJSON = '{' + '"UserName": "' + username + '" , "TimeZone" : "' + timeZone[5] + '"}';
                 var postUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getClientDetails';
                 //var postUrl = 'http://localhost:9001/getClientDetails';
+
                 var jsonRequest = $.ajax({
                     type: "POST",
                     headers: {

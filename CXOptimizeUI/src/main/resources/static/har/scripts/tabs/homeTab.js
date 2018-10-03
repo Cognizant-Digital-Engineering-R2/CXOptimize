@@ -93,8 +93,8 @@ HomeTab.prototype = Lib.extend(TabView.Tab.prototype,
 
         var href = document.location.href;
         var index = href.indexOf("?");
-        document.location = href.substr(0, index) + "?path=" + path;
-		alert(document.location);
+        //document.location = href.substr(0, index) + "?path=" + path;
+		//alert(document.location);
 
         // Show timeline and stats by default if an example is displayed.
         Cookies.setCookie("timeline", true);
