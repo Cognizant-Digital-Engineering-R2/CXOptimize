@@ -221,16 +221,21 @@ class ElasticSearchUtils
                             }
                         }
                         response.failure = { resp, reader ->
+                            log.debug 'PUT reader : ' +  reader
                             response_body = null
                         }
                     }
         }
         catch (groovyx.net.http.HttpResponseException ex)
         {
+            log.debug 'PUT Response Exception : '
+            ex.printStackTrace()
             response_body = null
         }
         catch (java.net.ConnectException ex)
         {
+            log.debug 'PUT Connect Exception : '
+            ex.printStackTrace()
             response_body = null
         }
         return response_body
