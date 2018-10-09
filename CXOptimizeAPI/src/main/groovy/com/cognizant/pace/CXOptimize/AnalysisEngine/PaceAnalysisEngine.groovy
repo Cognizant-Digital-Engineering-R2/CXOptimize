@@ -874,7 +874,7 @@ class PaceAnalysisEngine
         def currTxnMetrics = ElasticSearchUtils.extractSampleForDetailedAnalysis(configReader,txnName,configReader.CurrentRun.toString(),'Current',txnData.cRT)
         LOGGER.debug 'OUTPUT extractSampleForDetailedAnalysis for Current Run : '  + currTxnMetrics
 
-        if (currTxnMetrics.hits.hits[0]._source != null && prevTxnMetrics.hits.hits[0]._source != null)
+        if (currTxnMetrics?.hits?.hits[0]?._source != null && prevTxnMetrics?.hits?.hits[0]?._source != null)
         {
             if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
             {
