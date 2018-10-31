@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 @SpringBootApplication
 public class CXOptimizeUI extends AsyncConfigurerSupport
 {
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SpringApplication.run(CXOptimizeUI.class, args);
 	}
 

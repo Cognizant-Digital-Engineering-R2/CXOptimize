@@ -16,9 +16,11 @@
 
 package com.cognizant.pace.CXOptimize.api.utils;
 
+import com.cognizant.pace.CXOptimize.AnalysisEngine.GlobalConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -26,45 +28,51 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.output.StringBuilderWriter;
+
 
 @Component
-public class HTTPUtils
-{
+public class HTTPUtils {
     private Logger logger = LoggerFactory.getLogger(HTTPUtils.class);
+    private String USER_AGENT = "Mozilla/5.0";
+
     public StringBuilder httpPost(String query, String esUrl) throws Exception {
         try {
 
-            URL obj = new URL(esUrl);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type","application/json; charset=UTF-8");
-            con.setDoOutput(true);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), "UTF-8"));
-            writer.write(query);
-            writer.close();
-
             StringBuilder response = new StringBuilder();
-            int responseCode = con.getResponseCode();
+            URL obj = new URL(esUrl);
+            if (GlobalConstants.getESUrl().contains(obj.getAuthority())) {
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                con.setDoOutput(true);
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), "UTF-8"));
+                writer.write(query);
+                writer.close();
 
-            if (responseCode == 200 || responseCode == 201) {
+                int responseCode = con.getResponseCode();
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String inputLine;
+                if (responseCode == 200 || responseCode == 201) {
 
+                    BoundedInputStream boundedInput = new BoundedInputStream(con.getInputStream(), 20480);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(boundedInput), 2048);
+                    StringBuilderWriter swriter = new StringBuilderWriter(response);
+                    IOUtils.copy(reader, swriter); // copies data from "reader" => "writer"
+                    reader.close();
 
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                } else {
+
+                    response.append("NOT_FOUND400");
                 }
-                in.close();
 
-            }
+                con.disconnect();
 
-            else {
-
+            } else {
                 response.append("NOT_FOUND400");
             }
 
-            con.disconnect();
 
             return response;
         } catch (Exception e) {
@@ -80,31 +88,33 @@ public class HTTPUtils
 
         try {
 
-            String USER_AGENT = "Mozilla/5.0";
-
-            URL obj = new URL(esUrl);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", USER_AGENT);
-            int responseCode = con.getResponseCode();
+            //
             StringBuilder response = new StringBuilder();
+            URL obj = new URL(esUrl);
+            if (GlobalConstants.getESUrl().contains(obj.getAuthority())) {
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                con.setRequestMethod("GET");
+                con.setRequestProperty("User-Agent", USER_AGENT);
+                int responseCode = con.getResponseCode();
 
-            if (responseCode == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String inputLine;
+                if (responseCode == 200) {
 
+                    BoundedInputStream boundedInput = new BoundedInputStream(con.getInputStream(), 20480);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(boundedInput), 2048);
+                    StringBuilderWriter swriter = new StringBuilderWriter(response);
+                    IOUtils.copy(reader, swriter); // copies data from "reader" => "writer"
+                    reader.close();
 
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                } else {
+                    response.append("NOT_FOUND400");
                 }
 
-            }
-            else {
+                con.disconnect();
+
+
+            } else {
                 response.append("NOT_FOUND400");
             }
-
-            con.disconnect();
-
             return response;
 
         } catch (Exception e) {

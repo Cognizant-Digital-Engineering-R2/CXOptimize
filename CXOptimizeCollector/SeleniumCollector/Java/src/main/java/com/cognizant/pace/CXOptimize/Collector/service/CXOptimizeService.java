@@ -19,7 +19,7 @@ package com.cognizant.pace.CXOptimize.Collector.service;
 import java.util.Map;
 
 public interface CXOptimizeService {
-    String getAuthToken();
+    boolean getAuthToken();
 
     Map<String, Object> getConfiguration();
 

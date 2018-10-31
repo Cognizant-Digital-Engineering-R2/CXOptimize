@@ -31,6 +31,11 @@ In order to install the server side components, download the cxoptimize_window.r
 3.	Navigate to \kibana-5.5.2-linux-x86_64\bin and execute ./kibana
 4.	Navigate to \ui and execute java -jar CXOptimizeUI-2.0.3.jar
 5.	Navigate to \caddy and execute ./caddy Caddyfile
+
+### Docker Compose
+1. Download [docker-compse.yml](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/dev/docker-compose.yml) file to your machine
+2. Make sure docker and docker-compose are installed
+3. Execute docker-compose -d up.This should start everything in the required order and application will be accessible in http://localhost:8080/cxoptimize/login
 	
 ##	Scaled Out mode
 In order to install the server side components, download the cxoptimize_window.rar or cxoptimize_linux.rar from the [Releases](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3) folder.After extracting the files the folder will looks like this

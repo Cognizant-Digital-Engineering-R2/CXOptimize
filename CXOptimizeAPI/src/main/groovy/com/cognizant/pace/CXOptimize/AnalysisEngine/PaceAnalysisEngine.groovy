@@ -20,6 +20,8 @@ import groovy.json.JsonOutput
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 
+import java.math.RoundingMode
+
 class PaceAnalysisEngine
 {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PaceAnalysisEngine.class)
@@ -48,11 +50,11 @@ class PaceAnalysisEngine
                 //println reportCopy.toString()
                 if(args?.scale == null || args.scale == 'milliseconds')
                 {
-                    report.append(PaceReportEngine.summaryJSON(configReader,reportCopy.toString()))
+                    report.append(PaceReportEngine.summaryJSON(configReader,reportCopy.toString(),args?.timezone == null ? 'UTC' : args?.timezone))
                 }
                 else
                 {
-                    report.append(PaceReportEngine.summaryJSONInSeconds(configReader,reportCopy.toString()))
+                    report.append(PaceReportEngine.summaryJSONInSeconds(configReader,reportCopy.toString(),args?.timezone == null ? 'UTC' : args?.timezone))
                 }
                 LOGGER.debug('SUMMARY JSON : {}',report)
 
@@ -103,7 +105,7 @@ class PaceAnalysisEngine
 
                     }
 
-                    def compareCompliance = (statusList.count(true) / statusList.size()) * 100
+                    def compareCompliance = ((statusList.count(true) / statusList.size()) * 100).setScale(0,RoundingMode.UP)
                     if (compareCompliance > (configReader?.compareComplianceThreshold == null || configReader?.compareComplianceThreshold == '' ? 80 : configReader?.compareComplianceThreshold)) {
                         compliance.put('compareComplianceStatus', true)
                         compliance.put('compareCompliancePercentage', compareCompliance)
@@ -128,7 +130,7 @@ class PaceAnalysisEngine
                     }
 
 
-                    def indvScoreCompliance = (statusList.count(true) / statusList.size()) * 100
+                    def indvScoreCompliance = ((statusList.count(true) / statusList.size()) * 100).setScale(0,RoundingMode.UP)
                     if (indvScoreCompliance > (configReader?.indvScoreComplianceThreshold == null || configReader?.indvScoreComplianceThreshold == '' ? 80 : configReader?.indvScoreComplianceThreshold)) {
                         compliance.put('indvScoreComplianceStatus', true)
                         compliance.put('indvScoreCompliancePercentage', indvScoreCompliance)
@@ -141,18 +143,36 @@ class PaceAnalysisEngine
                     errorMsg.removeAll { it || !it }
                     statusList.removeAll { it || !it }
 
-                    summaryMap.Transactions.each { it ->
-                        if (!ignoreTransactionList.count(it.name)) {
-                            if (Double.parseDouble(it.restime.toString()) > Double.parseDouble(it.sla.toString())) {
-                                statusList.add(false)
-                                errorMsg.add(it.name + ' with response time of ' + it.restime + ' ms exceeds configured SLA of ' + it.sla + ' ms')
-                            } else {
-                                statusList.add(true)
+                    if(configReader?.SLACheck == null || configReader?.SLACheck == 'onload')
+                    {
+                        summaryMap.Transactions.each { it ->
+                            if (!ignoreTransactionList.count(it.name)) {
+                                if (Double.parseDouble(it.restime.toString()) > Double.parseDouble(it.sla.toString())) {
+                                    statusList.add(false)
+                                    errorMsg.add(it.name + ' with response time of ' + it.restime + ' ms exceeds configured SLA of ' + it.sla + ' ms')
+                                } else {
+                                    statusList.add(true)
+                                }
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        summaryMap.Transactions.each { it ->
+                            if (!ignoreTransactionList.count(it.name)) {
+                                if (Double.parseDouble(it.visuallyComplete.toString()) > Double.parseDouble(it.sla.toString())) {
+                                    statusList.add(false)
+                                    errorMsg.add(it.name + ' with response time of ' + it.visuallyComplete + ' ms exceeds configured SLA of ' + it.sla + ' ms')
+                                } else {
+                                    statusList.add(true)
+                                }
                             }
                         }
                     }
 
-                    def slaCompliance = (statusList.count(true) / statusList.size()) * 100
+
+                    def slaCompliance = ((statusList.count(true) / statusList.size()) * 100).setScale(0,RoundingMode.UP)
                     if (slaCompliance > (configReader?.slaComplianceThreshold == null || configReader?.slaComplianceThreshold == '' ? 80 : configReader?.slaComplianceThreshold)) {
                         compliance.put('slaComplianceStatus', true)
                         compliance.put('slaCompliancePercentage', slaCompliance)
@@ -872,7 +892,7 @@ class PaceAnalysisEngine
         def currTxnMetrics = ElasticSearchUtils.extractSampleForDetailedAnalysis(configReader,txnName,configReader.CurrentRun.toString(),'Current',txnData.cRT)
         LOGGER.debug 'OUTPUT extractSampleForDetailedAnalysis for Current Run : '  + currTxnMetrics
 
-        if (currTxnMetrics.hits.hits[0]._source != null && prevTxnMetrics.hits.hits[0]._source != null)
+        if (currTxnMetrics?.hits?.hits[0]?._source != null && prevTxnMetrics?.hits?.hits[0]?._source != null)
         {
             if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
             {
@@ -1667,11 +1687,11 @@ class PaceAnalysisEngine
             LOGGER.debug 'END getAllSamplesForTransaction for ' + args.txnName
             if(args?.scale == null || args.scale == 'milliseconds')
             {
-                return [configFlag,PaceReportEngine.getJsonStringForAllSamples(configReader,args.txnName,(args?.CurrentRun == null ? configReader.RunID : args.CurrentRun),analysisList)]
+                return [configFlag,PaceReportEngine.getJsonStringForAllSamples(configReader,args.txnName,(args?.CurrentRun == null ? configReader.RunID : args.CurrentRun),analysisList,args?.timezone)]
             }
             else
             {
-                return [configFlag,PaceReportEngine.getJsonStringForAllSamplesInSeconds(configReader,args.txnName,(args?.CurrentRun == null ? configReader.RunID : args.CurrentRun),analysisList)]
+                return [configFlag,PaceReportEngine.getJsonStringForAllSamplesInSeconds(configReader,args.txnName,(args?.CurrentRun == null ? configReader.RunID : args.CurrentRun),analysisList,args?.timezone)]
             }
         }
         else
@@ -2153,10 +2173,19 @@ class PaceAnalysisEngine
 
     }
 
-    static boolean setupRules(String esUrl,String rules)
+    static boolean setupRules(String esUrl,String rules,String esVersion = '5')
     {
         boolean chkFlag = false
-        def response = ElasticSearchUtils.elasticSearchGET(esUrl,GlobalConstants.RULESDOC)
+        def response = null
+        if(esVersion == '5')
+        {
+            response = ElasticSearchUtils.elasticSearchGET(esUrl,GlobalConstants.RULESDOC)
+        }
+        else
+        {
+            response = ElasticSearchUtils.elasticSearchGET(esUrl,GlobalConstants.ES6RULESDOC)
+        }
+
         if(response != null)
         {
             chkFlag = true
@@ -2164,7 +2193,15 @@ class PaceAnalysisEngine
 
         if(!chkFlag)
         {
-            response = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.RULESDOC,rules)
+            if(esVersion == '5')
+            {
+                response = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.RULESDOC,rules)
+            }
+            else
+            {
+                response = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.ES6RULESDOC,rules)
+            }
+
             if(response != null)
             {
                 chkFlag = true
@@ -2299,6 +2336,7 @@ class PaceAnalysisEngine
             config.put('runTimestamp',System.currentTimeMillis())
             config.put('comments', 'Config file was created by admin')
             config.put('configUpdated', false)
+            config.put('SLACheck', 'onload')
 
             if(args.isMarkEnabled == true)
             {
@@ -2360,6 +2398,11 @@ class PaceAnalysisEngine
             if(updatedConfig?.configUpdated != null)
             {
                 config.put('configUpdated',updatedConfig?.configUpdated)
+            }
+
+            if(updatedConfig?.SLACheck != null)
+            {
+                config.put('SLACheck',updatedConfig?.SLACheck)
             }
 
             if(updatedConfig?.devThreshold != null)

@@ -234,545 +234,7 @@
         }
         /*]]>*/
       </script>
-        <script th:inline="javascript">
-         /*<![CDATA[*/
-            var clientname = '';
-            var projectname = '';
-            var scenarioname = '';
-            var analysisType = '';
-            (function($) {
-                $(document).ready(function() {
-
-                    if (valAlphaNumericUnderScore(getQueryVariable('ClientName')) && valAlphaNumericUnderScore(getQueryVariable('ProjectName')) && valAlphaNumericUnderScore(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('analysisType'))) {
-                        clientname = getQueryVariable('ClientName');
-                        $('#client').html('<b>Client Name :  </b>' + clientname);
-                        $('#client_tranSLA').html('<b>Client Name :  </b>' + clientname);
-                        $('#client_genericRule').html('<b>Client Name :  </b>' + clientname);
-                         $('#client_softNavigationRules').html('<b>Client Name :  </b>' + clientname);
-                          $('#client_delete').html('<b>Client Name :  </b>' + clientname);
-
-                        projectname = getQueryVariable('ProjectName');
-                        $('#project').html('<b>Project Name :  </b>' + projectname);
-                        $('#project_tranSLA').html('<b>Project Name :  </b>' + projectname);
-                        $('#project_genericRule').html('<b>Project Name :  </b>' + projectname);
-                        $('#project_softNavigationRules').html('<b>Project Name :  </b>' + projectname);
-                        $('#project_delete').html('<b>Project Name :  </b>' + projectname);
-
-                        scenarioname = getQueryVariable('Scenario');
-                        $('#scenario').html('<b>Scenario Name :  </b>' + scenarioname);
-                        $('#scenario_tranSLA').html('<b>Scenario Name :  </b>' + scenarioname);
-                        $('#scenario_genericRule').html('<b>Scenario Name :  </b>' + scenarioname);
-                        $('#scenario_softNavigationRules').html('<b>Scenario Name :  </b>' + scenarioname);
-                        $('#scenario_delete').html('<b>Scenario Name :  </b>' + scenarioname);
-                        var filter = '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname;
-                        analysisType = getQueryVariable('analysisType');
-                        if (analysisType == undefined || analysisType == "") {
-                            analysisType = 'Run';
-                        }
-
-                        var jServices = jQuery.noConflict();
-                        jServices.ajaxSetup({
-                            contentType: "application/json; charset=UTF-8",
-                            headers:{"Authorization" : "Bearer " + Cookies.get('token')}
-                        });
-                        var hostName = (window.location.origin).split(":");
-                        var APIPort = '80';
-                        if (!isNaN(hostName[2])) {
-                            APIPort = hostName[2];
-                        } else {
-                            if (hostName[0] === 'https') {
-                                APIPort = '443';
-                            }
-                        }
-
-                        var baseUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api';
-                        SLA_html = '';
-                        var tranNum = 0;
-                        if(clientname != '' && projectname != '' && scenarioname != '')
-                        {
-                            var apiURL_SLA = baseUrl +  '/getTransactionsSLA' + filter;
-
-                            jServices.getJSON(apiURL_SLA, function(json_SLA)
-                            {
-                                 if (!json_SLA["Status"])
-                                 {
-                                     for(key in json_SLA)
-                                     {
-                                        SLA_html = SLA_html + '<div class="row  p-2 text-justify" ><div class="col-md-6"> <label style="text-align: left;vertical-align: middle;" id ="transName'+tranNum+'">'+ key +'</label></div><div class="col-md-5 w-75"> <input class="form-control" type="number" id="transactionSLA'+tranNum+'" value="'+json_SLA[key]+'" min="0" oninput="validity.valid||(value=\'\');"/></div><div class="col-md-1"> <div class="help-tip"><p>Enter SLA</p></div></div></div>' ;
-                                        tranNum++ ;
-                                     }
-                                     SLA_html= SLA_html + '<input type="hidden" id="tranSLAlength" value="' + tranNum + '">';
-                                     $("#tranSLA").append(SLA_html);
-                                 }
-                            });
-                        }
-                        else
-                        {
-                            $("#editconfigtab").hide();
-                            $("#editslatab").hide();
-                            $("#editgrulestab").hide();
-                            $("#editsrulestab").hide();
-                            $("#deletedata").hide();
-                        }
-
-
-                        var apiURL_client = baseUrl + '/getClientList';
-                        var selectClient_html='<select id="selectClient" multiple="multiple">';
-                        var selectClientManage_html='<select id="selectClientManage" multiple="multiple">';
-                        jServices.getJSON(apiURL_client, function(json_client) {
-                        for ( i=0;i<json_client.length ;i++){
-
-                                selectClient_html= selectClient_html + '<option value="'+json_client[i]+'">'+json_client[i]+'</option>';
-                                selectClientManage_html= selectClientManage_html + '<option value="'+json_client[i]+'">'+json_client[i]+'</option>';
-
-                        }
-                         selectClient_html = selectClient_html + '</select>';
-                         selectClientManage_html = selectClientManage_html + '</select>';
-
-                         $( "#clientSelect" ).append(selectClient_html);
-                         $( "#clientSelectManage" ).append(selectClientManage_html);
-
-                         $('#selectClient').multiselect({
-                             enableClickableOptGroups: true
-                         });
-                         $('#selectClientManage').multiselect({
-                             enableClickableOptGroups: true
-                         });
-
-                        });
-
-
-                        var genericRules_html='';
-                        var softNavigationRules_html='';
-                        if(clientname != '' && projectname != '' && scenarioname != '')
-                        {
-                            var apiURL = baseUrl + '/getConfig' + filter + '&updateRunID=false';
-                            jServices.getJSON(apiURL, function(json)
-                            {
-                                $('#clientName').val(clientname);
-                                $('#projectName').val(projectname);
-                                $('#scenarioName').val(scenarioname);
-                                $('#analysisType').val(analysisType);
-                                $('#currentRun').val(json.RunID);
-                                $('#baselineRun').val(json.BaselineRunID);
-                                $('#is_resource_crawl').attr('checked', json.isResourceCrawlingEnabled);
-                                $('#image_resource_extension').val(json.imageResourceExtension);
-                                $('#baseline_runid').val(json.BaselineRunID);
-                                $('#excluded_generic_rules').val(json.excludedGeneriRules);
-                                $('#excluded_soft_rules').val(json.excludedSoftNavigationRules);
-                                $('#dom_count_thresold').val(json.domCountThreshold);
-                                $('#run_interval_in_minutes').val(json.runIntervalInMinutes);
-                                $('#default_transaction_threshold').val(json.defaultTransactionThreshold);
-                                $('#excluded_cbt_rules').val(json.excludedCBTRules);
-                                $('#excluded_mobile_rules').val(json.excludedMobileRules);
-                                $('#runid').val(json.RunID);
-                                $('#static_resource_extension').val(json.staticResourceExtension);
-                                $('#compare_deviation_threshold').val(json.devThreshold);
-                                $('#slaComplianceThreshold').val(json.slaComplianceThreshold);
-                                $('#indvScoreComplianceThreshold').val(json.indvScoreComplianceThreshold);
-                                $('#totalScoreThreshold').val(json.totalScoreThreshold);
-                                $('#individualScoreThreshold').val(json.individualScoreThreshold);
-                                $('#compareComplianceThreshold').val(json.compareComplianceThreshold);
-                                $('#http_calls_threshold').val(json.httpCallsThreshold);
-                                $('#slaComplianceWeight').val(json.slaComplianceWeight);
-                                $('#indvScoreComplianceWeight').val(json.indvScoreComplianceWeight);
-                                $('#compareComplianceWeight').val(json.compareComplianceWeight);
-                                $('#totalScoreComplianceWeight').val(json.totalScoreComplianceWeight);
-
-
-                                for ( i=0;i<json.Rules.genericRules.length ;i++)
-                                {
-                                        genericRules_html = genericRules_html + '<div class="row my-1" ><div class="col-md-4"><input type="checkbox" name="genericRules" id="genericRules'+(i+1)+'" value="'+json.Rules.genericRules[i].id+'" onclick="fun_getRules()"/><label for="genericRules'+(i+1)+'" id ="genericRules'+(i+1)+'_name">'+json.Rules.genericRules[i].description+'</label></div><div class="col-md-4"><select class="selectpicker" id="genericRules'+ i + '_priority">';
-                                       if (json.Rules.genericRules[i].priority == 'Low'){
-                                            genericRules_html = genericRules_html + '<option value="Low" selected>Low</option><option value="Medium">Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.genericRules[i].weight +'" min="0" max="100" step="1" id="genericRules'+i+'_weight"/></div></div>';
-                                       } else if (json.Rules.genericRules[i].priority == 'Medium'){
-                                            genericRules_html = genericRules_html + '<option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.genericRules[i].weight +'" min="0" max="100" step="1" id="genericRules'+i+'_weight"/></div></div>';
-                                       } else {
-                                            genericRules_html = genericRules_html + '<option value="Low">Low</option><option value="Medium" >Medium</option><option value="High" selected>High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.genericRules[i].weight +'" min="0" max="100" step="1" id="genericRules'+i+'_weight"/></div></div>';
-                                       }
-                                }
-                                genericRules_html = genericRules_html + '<input type="hidden" id="genericRules_length" value="' + json.Rules.genericRules.length + '">';
-
-                                for ( i=0;i<json.Rules.softNavigationRules.length ;i++) {
-                                        softNavigationRules_html = softNavigationRules_html + '<div class="row my-1" ><div class="col-md-4"><input type="checkbox" name="softNavigationRules" id="softNavigationRules'+(i+1)+'" value="'+json.Rules.softNavigationRules[i].id+'" onclick="fun_getSoftRules()"/><label for="softNavigationRules'+(i+1)+'" id ="softNavigationRules'+(i+1)+'_name">'+json.Rules.softNavigationRules[i].description+'</label></div><div class="col-md-4"><select class="selectpicker" id="softNavigationRules'+ i + '_priority">';
-                                       if (json.Rules.softNavigationRules[i].priority == 'Low'){
-                                            softNavigationRules_html = softNavigationRules_html + '<option value="Low" selected>Low</option><option value="Medium">Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.softNavigationRules[i].weight +'" min="0" max="100" step="1" id="softNavigationRules'+i+'_weight"/></div></div>';
-                                       } else if (json.Rules.softNavigationRules[i].priority == 'Medium'){
-                                            softNavigationRules_html = softNavigationRules_html + '<option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.softNavigationRules[i].weight +'" min="0" max="100" step="1" id="softNavigationRules'+i+'_weight"/></div></div>';
-                                       } else {
-                                            softNavigationRules_html = softNavigationRules_html + '<option value="Low">Low</option><option value="Medium" >Medium</option><option value="High" selected>High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="'+ json.Rules.softNavigationRules[i].weight +'" min="0" max="100" step="1" id="softNavigationRules'+i+'_weight"/></div></div>';
-                                       }
-                                }
-                                genericRules_html = genericRules_html + '<input type="hidden" id="softNavigationRules_length" value="' + json.Rules.softNavigationRules.length + '">';
-                                $( "#genericRules" ).append(genericRules_html);
-                                $( "#softNavigationRules").append(softNavigationRules_html);
-                                if (json.samplesCount === undefined) {
-                                    $('#max_samples_threshold').val(10);
-                                } else {
-                                    $('#max_samples_threshold').val(json.samplesCount);
-                                }
-                                if (json.samplePercentile === undefined || json.samplePercentile == 'Pcnt95') {
-                                    document.getElementById("Pcnt95").checked = true;
-                                } else if (json.samplePercentile == 'Pcnt90') {
-                                    document.getElementById("Pcnt90").checked = true;
-                                } else {
-                                    document.getElementById("Average").checked = true;
-                                }
-
-                            });
-                        }
-                        $('button').bind('click', function()
-                        {
-                            var btnId = $(this).attr('id');
-                            if (btnId == 'create_config')
-                            {
-                                if (valAlphaNumericUnderScore($('#clientID').val()) && valAlphaNumericUnderScore($('#projectID').val()) && valAlphaNumericUnderScore($('#scenarioID').val())) {
-
-                                     var getUrl =  baseUrl + '/createConfig?ProjectName='+$('#projectID').val()+'&Scenario='+$('#scenarioID').val()+'&ClientName='+$('#clientID').val()+'&isLoadTest='+$('#is_load_test').prop('checked')+'&isMarkEnabled='+$('#is_mark_enabled').prop('checked');
-
-                                     $.ajax({
-                                    method: "GET",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: getUrl
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (response["Status"]){
-                                                alert(response.Reason);
-                                            } else {
-                                                alert("Configuration created Successfully !!!");
-
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-                                }
-                                else {
-                                alert('Client Name , Project Name , Scenario Name cannot contain special characters or spaces \r \n Only Alphanumeric value and _ allowed ');
-
-                               }
-                            }
-                            if (btnId == 'deletestats')
-                            {
-                                 var deleteUrl =  baseUrl + '/deleteStats?ProjectName='+projectname+'&Scenario='+scenarioname+'&ClientName='+clientname;
-                                       if($('#delete_runid').val() != '')
-                                       {
-                                         deleteUrl = deleteUrl + '&RunID='+$('#delete_runid').val()
-                                       }
-
-                                     $.ajax({
-                                    method: "GET",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: deleteUrl
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (response["Status"]){
-                                                alert(response.Reason);
-                                            } else {
-                                                alert("Configuration created Successfully !!!");
-
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-
-                            }
-
-                            if (btnId == 'config_update')
-                            {
-                                var updateJSON = '{' + '"isResourceCrawlingEnabled": ' + $('#is_resource_crawl').prop('checked') + ',' + '"ProjectName": "' + projectname + '",' + '"imageResourceExtension": "' + $('#image_resource_extension').val() + '",' + '"BaselineRunID": ' + $('#baseline_runid').val() + ',' +  '"domCountThreshold": ' + $('#dom_count_thresold').val() + ',' + '"devThreshold": ' + $('#compare_deviation_threshold').val() + ',' + '"httpCallsThreshold": ' + $('#http_calls_threshold').val() + ',' + '"samplesCount": ' + $('#max_samples_threshold').val() + ',' + '"samplePercentile": "' + $('input[name="percentile"]:checked').val() + '",' + '"ClientName": "' + clientname + '",' + '"Scenario": "' + scenarioname + '",' + '"runIntervalInMinutes": ' + $('#run_interval_in_minutes').val() + ',' + '"defaultTransactionThreshold": ' + $('#default_transaction_threshold').val() + ',' +  '"staticResourceExtension": "' + $('#static_resource_extension').val() + '",' + '"slaComplianceThreshold": ' + $('#slaComplianceThreshold').val() + ',' + '"indvScoreComplianceThreshold": ' + $('#indvScoreComplianceThreshold').val() + ',' + '"individualScoreThreshold": ' + $('#individualScoreThreshold').val() + ',' + '"totalScoreThreshold": ' + $('#totalScoreThreshold').val() + ',' + '"compareComplianceThreshold": ' + $('#compareComplianceThreshold').val() + ',' + '"totalScoreComplianceWeight": ' + $('#totalScoreComplianceWeight').val() + ',' + '"compareComplianceWeight": ' + $('#compareComplianceWeight').val() + ',' + '"indvScoreComplianceWeight": ' + $('#indvScoreComplianceWeight').val() + ',' + '"slaComplianceWeight": ' + $('#slaComplianceWeight').val() + ',' + '"configUpdated":true}';
-                                
-                                var postUrl = baseUrl + '/updateConfig';
-                                //location.reload();
-                                $.ajax({
-                                    method: "POST",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: postUrl,
-                                    data: JSON.stringify(updateJSON)
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (response.Status != 'Success'){
-                                                alert(response.Reason);
-                                            } else {
-                                                alert("Configuration Updated Successfully !!!");
-
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-                            }
-                             if (btnId == 'config_update_sla')
-                            {
-                                var nTrans = $('#tranSLAlength').val() ;
-                                var updateJSON = '{ "configUpdated":true,"ProjectName": "'+ projectname +'","ClientName": "' + clientname +'","Scenario": "'+ scenarioname + '","transactionSLA": {';
-                                var postUrl = baseUrl + '/updateConfig';
-                               // var postUrl = "http://localhost:9001" + '/updateConfig';
-                                for(i=0;i<nTrans;i++){
-                                    var name = '#transName' + i;
-                                    var sla = '#transactionSLA' + i ;
-                                    if( $(sla).val() == '') {
-                                        alert('SLA cannot be empty');
-                                        break;
-                                    } else {
-                                        updateJSON = updateJSON + '"' +  $(name).text() + '":' +  $(sla).val();
-                                    }
-
-                                    if( i != nTrans-1) {
-                                        updateJSON = updateJSON +',';
-                                    } else {
-                                        updateJSON = updateJSON + '}}';
-                                    }
-
-                                }
-
-                                $.ajax({
-                                    method: "POST",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: postUrl,
-                                    data: JSON.stringify(updateJSON)
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (response.Status != 'Success'){
-                                                alert(response.Reason);
-                                            } else {
-                                                alert("SLA Updated Successfully !!!");
-
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-
-                            }
-
-                            if (btnId == 'config_update_genericRules')
-                            {
-                                var ngenericRules = $('#genericRules_length').val() ;
-                                var updateJSON = '{"configUpdated":true, "ProjectName": "'+ projectname +'","ClientName": "' + clientname +'","Scenario": "'+ scenarioname + '","Rules": { "genericRules": [';
-                                var postUrl = baseUrl + '/updateConfig';
-                               // var postUrl = "http://localhost:9001" + '/updateConfig';
-                                var weight_sum = 0;
-                                for(i=0;i<ngenericRules;i++){
-                                    var name = '#genericRules' + (i+1)+'_name';
-                                    var id = '#genericRules' + (i+1) ;
-                                    var priority = '#genericRules' + i + '_priority';
-                                    var weight = '#genericRules' + i + '_weight';
-                                    if( Number.isInteger(parseInt($(weight).val()))){
-                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight":' + $(weight).val() + '}';
-                                        weight_sum = weight_sum + parseInt($(weight).val()) ;
-                                    } else {
-                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight": 0}';
-                                    }
-                                    if( i != ngenericRules-1) {
-                                        updateJSON = updateJSON +',';
-                                    } else {
-                                        updateJSON = updateJSON + ']},"excludedGeneriRules":"' +$('#excluded_generic_rules').val()+'"}';
-                                    }
-
-                                }
-
-                                if(weight_sum != 100) {
-                                   alert("Weightage should sum to 100! Current weightage : " + weight_sum );
-                                }else {
-                                    $.ajax({
-                                    method: "POST",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: postUrl,
-                                    data: JSON.stringify(updateJSON)
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (response.Status != 'Success'){
-                                                alert(response.Reason);
-                                            } else {
-                                                alert("Generic Rules Updated Successfully !!!");
-
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-                                }
-                            }
-                             if (btnId == 'config_update_softRules')
-                            {
-                                var nsoftNavigationRules = $('#softNavigationRules_length').val() ;
-                                var updateJSON = '{"configUpdated":true, "ProjectName": "'+ projectname +'","ClientName": "' + clientname +'","Scenario": "'+ scenarioname + '","Rules": { "softNavigationRules": [';
-                                var postUrl = baseUrl + '/updateConfig';
-                               // var postUrl = "http://localhost:9001" + '/updateConfig';
-                                var weight_sum = 0;
-                                for(i=0;i<nsoftNavigationRules;i++){
-                                    var name = '#softNavigationRules' + (i+1)+'_name';
-                                    var id = '#softNavigationRules' + (i+1) ;
-                                    var priority = '#softNavigationRules' + i + '_priority';
-                                    var weight = '#softNavigationRules' + i + '_weight';
-                                    if( Number.isInteger(parseInt($(weight).val()))){
-                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight":' + $(weight).val() + '}';
-                                        weight_sum = weight_sum + parseInt($(weight).val()) ;
-                                    } else {
-                                        updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "'+ $(priority).val() + '","weight": 0 }';
-                                    }
-                                    if( i != nsoftNavigationRules-1) {
-                                        updateJSON = updateJSON +',';
-                                    } else {
-                                        updateJSON = updateJSON + ']},"excludedSoftNavigationRules":"' +$('#excluded_soft_rules').val()+'"}';
-                                    }
-
-                                }
-
-                                if(weight_sum != 100) {
-                                   alert("Weightage should sum to 100! Current weightage : " + weight_sum );
-                                }else {
-                                    $.ajax({
-                                    method: "POST",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: postUrl,
-                                    data: JSON.stringify(updateJSON)
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (!response.Status != 'Success'){
-                                                alert(response.Reason);
-                                            } else {
-                                                alert("Soft Navigation Rules Updated Successfully !!!");
-
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-                                }
-                            }
-                            if (btnId == 'create_user')
-                            {
-
-                                if (valAlphaNumericUnderScore($('#Username').val()) &&  valPassword($('#Password').val())) {
-
-                                        var postUrl = baseUrl + '/createUser';
-                                       // var postUrl = "http://localhost:9001" + '/createUser';
-                                        var Regex = new RegExp("^(?=.*[a-z0-9])(?=.{1,})");
-                                        var updateJSON = '{ "UserName": "'+ $('#Username').val()  +'","Password": "' + $('#Password').val() +'","Role": "'+ $('input[name="role"]:checked').val() + '","SecurityQuestions": { "q1": "' ;
-                                        if ( $('#question1').val()!= '') {
-                                            if( Regex.test($('#question1').val()) && Regex.test($('#answer1').val())){
-                                               updateJSON = updateJSON + $('#question1').val() + '","a1" : "' +  $('#answer1').val()+ '","q2" : "';
-                                            } else {
-                                                alert ("Question / Answer should atleast contain an alphabet or number");
-                                                return;
-                                            }
-                                        } else {
-                                            updateJSON = updateJSON + '","a1" : "","q2" : "';
-                                        }
-                                        if ( $('#question2').val()!= '') {
-                                            if(Regex.test($('#question2').val()) && Regex.test($('#answer2').val())){
-                                               updateJSON = updateJSON + $('#question2').val() + '","a2" : "' +  $('#answer2').val()+ '","q3" : "';
-                                            } else {
-                                                alert ("Question / Answer should atleast contain an alphabet or number");
-                                                return;
-                                            }
-                                        } else {
-                                            updateJSON = updateJSON + '","a2" : "","q3" : "';
-                                        }
-                                        if ( $('#question3').val()!= '') {
-                                            if(Regex.test($('#question3').val()) && Regex.test($('#answer3').val())){
-                                               updateJSON = updateJSON + $('#question3').val() + '","a3" : "' +  $('#answer3').val()+ '" },"Clients" : "' + $('#selectClient').val() + '"}';
-                                            } else {
-                                                alert ("Question / Answer should atleast contain an alphabet or number");
-                                                return;
-                                            }
-                                        } else {
-                                            updateJSON = updateJSON + '","a3" : "' + '" },"Clients" : "';
-                                        }
-                                        if ( $('#selectClient').val() != null ) {
-                                             updateJSON = updateJSON + $('#selectClient').val() + '"}';
-
-                                        } else {
-                                            updateJSON = updateJSON + '"}'
-                                        }
-                                   $.ajax({
-                                    method: "POST",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: postUrl,
-                                    data: JSON.stringify(updateJSON)
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (!response.status){
-                                                alert(response.reason);
-                                            } else {
-                                                alert("User Created Successfully !!!");
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-
-                                }
-                                else {
-                                    alert ("Only Alphanumeric and _ allowed in Username (or) \r\n Password should be atleast 8 character length and have one Uppercase letter , one Number and one special character (!@#$%^&*) ");
-                                }
-                            }
-
-                            if (btnId == 'manage_user')
-                            {
-
-                                if (valAlphaNumericUnderScore($('#UsernameManage').val()))
-                                {
-
-                                        var postUrl = baseUrl + '/manageClientAccess';
-                                       // var postUrl = "http://localhost:9001" + '/createUser';
-                                        var Regex = new RegExp("^(?=.*[a-z0-9])(?=.{1,})");
-                                        var updateJSON = '{ "UserName": "'+ $('#UsernameManage').val()  + '"' ;
-
-                                        if ( $('#selectClientManage').val() != null ) {
-                                             updateJSON = updateJSON + ',"Clients" : "' + $('#selectClientManage').val() + '"}';
-
-                                        } else {
-                                            updateJSON = updateJSON + '}'
-                                        }
-                                   $.ajax({
-                                    method: "POST",
-                                    headers:{"Authorization" : "Bearer " + Cookies.get('token')},
-                                    url: postUrl,
-                                    data: JSON.stringify(updateJSON)
-                                    }).always(function(data, textStatus, jqXHR){
-                                        if (textStatus == 'success'){
-                                            var response = JSON.parse(jqXHR.responseText);
-                                            if (!response.status){
-                                                alert(response.reason);
-                                            } else {
-                                                alert("User Created Successfully !!!");
-                                            }
-                                        } else {
-                                            alert("An error occured while creating User. Please try again later !!");
-                                        }
-                                        location.reload();
-                                       });
-
-                                }
-                                else {
-                                    alert ("Only Alphanumeric and _ allowed in Username");
-                                }
-                            }
-
-                        });
-                    }
-                });
-            })(jQuery);
-        /*]]>*/
-      </script>
+        
     </head>
     <body class="bg-primary p-0"  >
     <div class="p-0">
@@ -1046,6 +508,9 @@
                                         <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>SLA Compliance Weight :  </b></p></div>
                                         <div class="col-md-2 w-75"> <input class="form-control" type="text" id="slaComplianceWeight" name="slaComplianceWeight"/></div>
                                         <div class="col-md-1"><div class="help-tip"><p>Enter weight used to calculate run status in executive summary for SLA check</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>SLACheck :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="slacheck" name="slacheck"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Controls whether onload or totalload compared against SLA</p></div></div>
                                     </div>
 
                                     <div class="row   p-2 text-center" >
@@ -1213,9 +678,9 @@
         /*]]>*/
       </script>
     <script>
-      jQuery(document).ready(function($){
-
-      $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+    /*<![CDATA[*/
+    jQuery(document).ready(function($){
+        $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
             e.preventDefault();
             $(this).siblings('a.active').removeClass("active");
             $(this).addClass("active");
@@ -1223,9 +688,611 @@
             $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
             $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
         });
-
-
     });
+    /*]]>*/
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var clientname = '';
+        var projectname = '';
+        var scenarioname = '';
+        var analysisType = '';
+        var baseUrl = '';
+        var hostName = (window.location.origin).split(":");
+        var APIPort = '80';
+
+        if (!isNaN(hostName[2])) {
+            APIPort = hostName[2];
+        } else {
+            if (hostName[0] === 'https') {
+                APIPort = '443';
+            }
+        }
+
+        baseUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api';
+        jQuery(document).ready(function($){
+            clientname = getQueryVariable('ClientName');
+            projectname = getQueryVariable('ProjectName');
+            scenarioname = getQueryVariable('Scenario');
+            if (clientname == '' && projectname == '' && scenarioname == '')
+		    {
+                $("#editconfigtab").hide();
+                $("#editslatab").hide();
+                $("#editgrulestab").hide();
+                $("#editsrulestab").hide();
+                $("#deletedata").hide();
+            }
+		    else
+		    {
+                if (valAlphaNumericUnderScore(getQueryVariable('ClientName')) && valAlphaNumericUnderScore(getQueryVariable('ProjectName')) && valAlphaNumericUnderScore(getQueryVariable('Scenario')) && valAlphabets(getQueryVariable('analysisType')))
+			    {
+                    var cliHtml = '<b>Client Name :  </b>' + clientname;
+                    $('#client').html(cliHtml);
+                    $('#client_tranSLA').html(cliHtml);
+                    $('#client_genericRule').html(cliHtml);
+                    $('#client_softNavigationRules').html(cliHtml);
+                    $('#client_delete').html(cliHtml);
+
+
+                    var proHtml = '<b>Project Name :  </b>' + projectname;
+                    $('#project').html(proHtml);
+                    $('#project_tranSLA').html(proHtml);
+                    $('#project_genericRule').html(proHtml);
+                    $('#project_softNavigationRules').html(proHtml);
+                    $('#project_delete').html(proHtml);
+
+                    var scHtml = '<b>Scenario Name :  </b>' + scenarioname;
+                    $('#scenario').html(scHtml);
+                    $('#scenario_tranSLA').html(scHtml);
+                    $('#scenario_genericRule').html(scHtml);
+                    $('#scenario_softNavigationRules').html(scHtml);
+                    $('#scenario_delete').html(scHtml);
+
+                    var filter = '?ClientName=' + clientname + '&ProjectName=' + projectname + '&Scenario=' + scenarioname;
+
+              	    analysisType = getQueryVariable('analysisType');
+
+                    if (analysisType == undefined || analysisType == "") {
+                        analysisType = 'Run';
+                    }
+
+                    var jServices = jQuery.noConflict();
+                    jServices.ajaxSetup({
+                        contentType: "application/json; charset=UTF-8",
+                        headers: {
+                            "Authorization": "Bearer " + Cookies.get('token')
+                        }
+                    });
+
+                    SLA_html = '';
+                    var tranNum = 0;
+
+				    var apiURL_SLA = baseUrl + '/getTransactionsSLA' + filter;
+
+                    jServices.getJSON(apiURL_SLA, function(json_SLA) {
+                        if (!json_SLA["Status"]) {
+                            for (key in json_SLA) {
+                                SLA_html = SLA_html + '<div class="row  p-2 text-justify" ><div class="col-md-6"> <label style="text-align: left;vertical-align: middle;" id ="transName' + tranNum + '">' + key + '</label></div><div class="col-md-5 w-75"> <input class="form-control" type="number" id="transactionSLA' + tranNum + '" value="' + json_SLA[key] + '" min="0" oninput="validity.valid||(value=\'\');"/></div><div class="col-md-1"> <div class="help-tip"><p>Enter SLA</p></div></div></div>';
+                                tranNum++;
+                            }
+                            SLA_html = SLA_html + '<input type="hidden" id="tranSLAlength" value="' + tranNum + '">';
+                            $("#tranSLA").append(SLA_html);
+                        }
+                    });
+
+
+
+                    var apiURL_client = baseUrl + '/getClientList';
+                    var selectClient_html = '<select id="selectClient" multiple="multiple">';
+                    var selectClientManage_html = '<select id="selectClientManage" multiple="multiple">';
+                    jServices.getJSON(apiURL_client, function(json_client) {
+                        for (i = 0; i < json_client.length; i++) {
+
+                            selectClient_html = selectClient_html + '<option value="' + json_client[i] + '">' + json_client[i] + '</option>';
+                            selectClientManage_html = selectClientManage_html + '<option value="' + json_client[i] + '">' + json_client[i] + '</option>';
+
+                        }
+                        selectClient_html = selectClient_html + '</select>';
+                        selectClientManage_html = selectClientManage_html + '</select>';
+
+                        $("#clientSelect").append(selectClient_html);
+                        $("#clientSelectManage").append(selectClientManage_html);
+
+                        $('#selectClient').multiselect({
+                            enableClickableOptGroups: true
+                        });
+                        $('#selectClientManage').multiselect({
+                            enableClickableOptGroups: true
+                        });
+
+                    });
+
+
+                    var genericRules_html = '';
+                    var softNavigationRules_html = '';
+
+                    var apiURL = baseUrl + '/getConfig' + filter + '&updateRunID=false';
+                    jServices.getJSON(apiURL, function(json) {
+                        $('#clientName').val(clientname);
+                        $('#projectName').val(projectname);
+                        $('#scenarioName').val(scenarioname);
+                        $('#analysisType').val(analysisType);
+                        $('#currentRun').val(json.RunID);
+                        $('#baselineRun').val(json.BaselineRunID);
+                        $('#is_resource_crawl').attr('checked', json.isResourceCrawlingEnabled);
+                        $('#image_resource_extension').val(json.imageResourceExtension);
+                        $('#baseline_runid').val(json.BaselineRunID);
+                        $('#excluded_generic_rules').val(json.excludedGeneriRules);
+                        $('#excluded_soft_rules').val(json.excludedSoftNavigationRules);
+                        $('#dom_count_thresold').val(json.domCountThreshold);
+                        $('#run_interval_in_minutes').val(json.runIntervalInMinutes);
+                        $('#default_transaction_threshold').val(json.defaultTransactionThreshold);
+                        $('#excluded_cbt_rules').val(json.excludedCBTRules);
+                        $('#excluded_mobile_rules').val(json.excludedMobileRules);
+                        $('#runid').val(json.RunID);
+                        $('#static_resource_extension').val(json.staticResourceExtension);
+                        $('#compare_deviation_threshold').val(json.devThreshold);
+                        $('#slaComplianceThreshold').val(json.slaComplianceThreshold);
+                        $('#indvScoreComplianceThreshold').val(json.indvScoreComplianceThreshold);
+                        $('#totalScoreThreshold').val(json.totalScoreThreshold);
+                        $('#individualScoreThreshold').val(json.individualScoreThreshold);
+                        $('#compareComplianceThreshold').val(json.compareComplianceThreshold);
+                        $('#http_calls_threshold').val(json.httpCallsThreshold);
+                        $('#slaComplianceWeight').val(json.slaComplianceWeight);
+                        $('#indvScoreComplianceWeight').val(json.indvScoreComplianceWeight);
+                        $('#compareComplianceWeight').val(json.compareComplianceWeight);
+                        $('#totalScoreComplianceWeight').val(json.totalScoreComplianceWeight);
+                        if(json.SLACheck === undefined)
+                        {
+                             $('#slacheck').val('onload');
+                        }
+                        else
+                        {
+                             $('#slacheck').val(json.SLACheck);
+                        }
+
+
+
+                        for (i = 0; i < json.Rules.genericRules.length; i++) {
+                            genericRules_html = genericRules_html + '<div class="row my-1" ><div class="col-md-4"><input type="checkbox" name="genericRules" id="genericRules' + (i + 1) + '" value="' + json.Rules.genericRules[i].id + '" onclick="fun_getRules()"/><label for="genericRules' + (i + 1) + '" id ="genericRules' + (i + 1) + '_name">' + json.Rules.genericRules[i].description + '</label></div><div class="col-md-4"><select class="selectpicker" id="genericRules' + i + '_priority">';
+                            if (json.Rules.genericRules[i].priority == 'Low') {
+                                genericRules_html = genericRules_html + '<option value="Low" selected>Low</option><option value="Medium">Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="' + json.Rules.genericRules[i].weight + '" min="0" max="100" step="1" id="genericRules' + i + '_weight"/></div></div>';
+                            } else if (json.Rules.genericRules[i].priority == 'Medium') {
+                                genericRules_html = genericRules_html + '<option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="' + json.Rules.genericRules[i].weight + '" min="0" max="100" step="1" id="genericRules' + i + '_weight"/></div></div>';
+                            } else {
+                                genericRules_html = genericRules_html + '<option value="Low">Low</option><option value="Medium" >Medium</option><option value="High" selected>High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="' + json.Rules.genericRules[i].weight + '" min="0" max="100" step="1" id="genericRules' + i + '_weight"/></div></div>';
+                            }
+                        }
+                        genericRules_html = genericRules_html + '<input type="hidden" id="genericRules_length" value="' + json.Rules.genericRules.length + '">';
+
+                        for (i = 0; i < json.Rules.softNavigationRules.length; i++) {
+                            softNavigationRules_html = softNavigationRules_html + '<div class="row my-1" ><div class="col-md-4"><input type="checkbox" name="softNavigationRules" id="softNavigationRules' + (i + 1) + '" value="' + json.Rules.softNavigationRules[i].id + '" onclick="fun_getSoftRules()"/><label for="softNavigationRules' + (i + 1) + '" id ="softNavigationRules' + (i + 1) + '_name">' + json.Rules.softNavigationRules[i].description + '</label></div><div class="col-md-4"><select class="selectpicker" id="softNavigationRules' + i + '_priority">';
+                            if (json.Rules.softNavigationRules[i].priority == 'Low') {
+                                softNavigationRules_html = softNavigationRules_html + '<option value="Low" selected>Low</option><option value="Medium">Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="' + json.Rules.softNavigationRules[i].weight + '" min="0" max="100" step="1" id="softNavigationRules' + i + '_weight"/></div></div>';
+                            } else if (json.Rules.softNavigationRules[i].priority == 'Medium') {
+                                softNavigationRules_html = softNavigationRules_html + '<option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="' + json.Rules.softNavigationRules[i].weight + '" min="0" max="100" step="1" id="softNavigationRules' + i + '_weight"/></div></div>';
+                            } else {
+                                softNavigationRules_html = softNavigationRules_html + '<option value="Low">Low</option><option value="Medium" >Medium</option><option value="High" selected>High</option></select></div><div class="col-md-4"> <input class="form-control" type="number" value="' + json.Rules.softNavigationRules[i].weight + '" min="0" max="100" step="1" id="softNavigationRules' + i + '_weight"/></div></div>';
+                            }
+                        }
+                        genericRules_html = genericRules_html + '<input type="hidden" id="softNavigationRules_length" value="' + json.Rules.softNavigationRules.length + '">';
+                        $("#genericRules").append(genericRules_html);
+                        $("#softNavigationRules").append(softNavigationRules_html);
+                        if (json.samplesCount === undefined) {
+                            $('#max_samples_threshold').val(10);
+                        } else {
+                            $('#max_samples_threshold').val(json.samplesCount);
+                        }
+                        if (json.samplePercentile === undefined || json.samplePercentile == 'Pcnt95') {
+                            document.getElementById("Pcnt95").checked = true;
+                        } else if (json.samplePercentile == 'Pcnt90') {
+                            document.getElementById("Pcnt90").checked = true;
+                        } else {
+                            document.getElementById("Average").checked = true;
+                        }
+
+                    });
+                }
+		    }
+
+        });
+
+        /*]]>*/
       </script>
+      <script>
+        /*<![CDATA[*/
+        jQuery(document).ready(function($){
+            $('button').bind('click', function(){
+			    var btnId = $(this).attr('id');
+
+                if (btnId == 'create_config')
+                {
+                    if (valAlphaNumericUnderScore($('#clientID').val()) && valAlphaNumericUnderScore($('#projectID').val()) && valAlphaNumericUnderScore($('#scenarioID').val())) {
+
+                        var getUrl = baseUrl + '/createConfig?ProjectName=' + $('#projectID').val() + '&Scenario=' + $('#scenarioID').val() + '&ClientName=' + $('#clientID').val() + '&isLoadTest=' + $('#is_load_test').prop('checked') + '&isMarkEnabled=' + $('#is_mark_enabled').prop('checked');
+
+                        $.ajax({
+                            method: "GET",
+                            headers: {
+                                "Authorization": "Bearer " + Cookies.get('token')
+                            },
+                            url: getUrl
+                        }).always(function(data, textStatus, jqXHR) {
+                            if (textStatus == 'success') {
+                                var response = JSON.parse(jqXHR.responseText);
+                                if (response["Status"]) {
+                                    alert(response.Reason);
+                                } else {
+                                    alert("Configuration created Successfully !!!");
+
+                                }
+                            } else {
+                                alert("An error occured while creating User. Please try again later !!");
+                            }
+                            location.reload();
+                        });
+                    }
+                    else
+                    {
+                        alert('Client Name , Project Name , Scenario Name cannot contain special characters or spaces \r \n Only Alphanumeric value and _ allowed ');
+                    }
+                }
+
+                if (btnId == 'deletestats')
+                {
+                    var deleteUrl = baseUrl + '/deleteStats?ProjectName=' + projectname + '&Scenario=' + scenarioname + '&ClientName=' + clientname;
+                    if ($('#delete_runid').val() != '') {
+                        deleteUrl = deleteUrl + '&RunID=' + $('#delete_runid').val()
+                    }
+
+                    $.ajax({
+                        method: "GET",
+                        headers: {
+                            "Authorization": "Bearer " + Cookies.get('token')
+                        },
+                        url: deleteUrl
+                    }).always(function(data, textStatus, jqXHR) {
+                        if (textStatus == 'success') {
+                            var response = JSON.parse(jqXHR.responseText);
+                            if (response["Status"]) {
+                                alert(response.Reason);
+                            } else {
+                                alert("Configuration created Successfully !!!");
+
+                            }
+                        } else {
+                            alert("An error occured while creating User. Please try again later !!");
+                        }
+                        location.reload();
+                    });
+
+                }
+
+                if (btnId == 'config_update')
+                {
+                    var updateJSON = '{' + '"isResourceCrawlingEnabled": ' + $('#is_resource_crawl').prop('checked') + ',' + '"ProjectName": "' + projectname + '",' + '"imageResourceExtension": "' + $('#image_resource_extension').val() + '",' + '"BaselineRunID": ' + $('#baseline_runid').val() + ',' + '"domCountThreshold": ' + $('#dom_count_thresold').val() + ',' + '"devThreshold": ' + $('#compare_deviation_threshold').val() + ',' + '"httpCallsThreshold": ' + $('#http_calls_threshold').val() + ',' + '"samplesCount": ' + $('#max_samples_threshold').val() + ',' + '"samplePercentile": "' + $('input[name="percentile"]:checked').val() + '",' + '"ClientName": "' + clientname + '",' + '"Scenario": "' + scenarioname + '",' + '"runIntervalInMinutes": ' + $('#run_interval_in_minutes').val() + ',' + '"defaultTransactionThreshold": ' + $('#default_transaction_threshold').val() + ',' + '"staticResourceExtension": "' + $('#static_resource_extension').val() + '",' + '"slaComplianceThreshold": ' + $('#slaComplianceThreshold').val() + ',' + '"indvScoreComplianceThreshold": ' + $('#indvScoreComplianceThreshold').val() + ',' + '"individualScoreThreshold": ' + $('#individualScoreThreshold').val() + ',' + '"totalScoreThreshold": ' + $('#totalScoreThreshold').val() + ',' + '"compareComplianceThreshold": ' + $('#compareComplianceThreshold').val() + ',' + '"totalScoreComplianceWeight": ' + $('#totalScoreComplianceWeight').val() + ',' + '"compareComplianceWeight": ' + $('#compareComplianceWeight').val() + ',' + '"indvScoreComplianceWeight": ' + $('#indvScoreComplianceWeight').val() + ',' + '"slaComplianceWeight": ' + $('#slaComplianceWeight').val() + ',' + '"SLACheck": "' + $('#slacheck').val() + '",' + '"configUpdated":true}';
+
+                    var postUrl = baseUrl + '/updateConfig';
+                    //location.reload();
+                    $.ajax({
+                        method: "POST",
+                        headers: {
+                            "Authorization": "Bearer " + Cookies.get('token'),
+                            "Content-Type": "application/json"
+                        },
+                        url: postUrl,
+                        data: updateJSON
+                    }).always(function(data, textStatus, jqXHR) {
+                        if (textStatus == 'success') {
+                            var response = JSON.parse(jqXHR.responseText);
+                            if (response.Status != 'Success') {
+                                alert(response.Reason);
+                            } else {
+                                alert("Configuration Updated Successfully !!!");
+
+                            }
+                        } else {
+                            alert("An error occured while creating User. Please try again later !!");
+                        }
+                        location.reload();
+                    });
+                }
+
+                if (btnId == 'config_update_sla')
+                {
+                    var nTrans = $('#tranSLAlength').val();
+                    var updateJSON = '{ "configUpdated":true,"ProjectName": "' + projectname + '","ClientName": "' + clientname + '","Scenario": "' + scenarioname + '","transactionSLA": {';
+                    var postUrl = baseUrl + '/updateConfig';
+                    for (i = 0; i < nTrans; i++) {
+                        var name = '#transName' + i;
+                        var sla = '#transactionSLA' + i;
+                        if ($(sla).val() == '') {
+                            alert('SLA cannot be empty');
+                            break;
+                        } else {
+                            updateJSON = updateJSON + '"' + $(name).text() + '":' + $(sla).val();
+                        }
+
+                        if (i != nTrans - 1) {
+                            updateJSON = updateJSON + ',';
+                        } else {
+                            updateJSON = updateJSON + '}}';
+                        }
+
+                    }
+
+                    $.ajax({
+                        method: "POST",
+                        headers: {
+                            "Authorization": "Bearer " + Cookies.get('token'),
+                                "Content-Type": "application/json"
+                        },
+                        url: postUrl,
+                        data: updateJSON
+                    }).always(function(data, textStatus, jqXHR) {
+                        if (textStatus == 'success') {
+                            var response = JSON.parse(jqXHR.responseText);
+                            if (response.Status != 'Success') {
+                                alert(response.Reason);
+                            } else {
+                                alert("SLA Updated Successfully !!!");
+
+                            }
+                        } else {
+                            alert("An error occured while creating User. Please try again later !!");
+                        }
+                        location.reload();
+                    });
+
+                }
+
+                if (btnId == 'config_update_genericRules')
+                {
+                    var ngenericRules = $('#genericRules_length').val();
+                    var updateJSON = '{"configUpdated":true, "ProjectName": "' + projectname + '","ClientName": "' + clientname + '","Scenario": "' + scenarioname + '","Rules": { "genericRules": [';
+                    var postUrl = baseUrl + '/updateConfig';
+                    // var postUrl = "http://localhost:9001" + '/updateConfig';
+                    var weight_sum = 0;
+                    for (i = 0; i < ngenericRules; i++) {
+                        var name = '#genericRules' + (i + 1) + '_name';
+                        var id = '#genericRules' + (i + 1);
+                        var priority = '#genericRules' + i + '_priority';
+                        var weight = '#genericRules' + i + '_weight';
+                        if (Number.isInteger(parseInt($(weight).val()))) {
+                            updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "' + $(priority).val() + '","weight":' + $(weight).val() + '}';
+                            weight_sum = weight_sum + parseInt($(weight).val());
+                        } else {
+                            updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "' + $(priority).val() + '","weight": 0}';
+                        }
+                        if (i != ngenericRules - 1) {
+                            updateJSON = updateJSON + ',';
+                        } else {
+                            updateJSON = updateJSON + ']},"excludedGeneriRules":"' + $('#excluded_generic_rules').val() + '"}';
+                        }
+
+                    }
+
+                    if (weight_sum != 100) {
+                        alert("Weightage should sum to 100! Current weightage : " + weight_sum);
+                    } else {
+                        $.ajax({
+                            method: "POST",
+                            headers: {
+                                "Authorization": "Bearer " + Cookies.get('token'),
+                                "Content-Type": "application/json"
+                            },
+                            url: postUrl,
+                            data: updateJSON
+                        }).always(function(data, textStatus, jqXHR) {
+                            if (textStatus == 'success') {
+                                var response = JSON.parse(jqXHR.responseText);
+                                if (response.Status != 'Success') {
+                                    alert(response.Reason);
+                                } else {
+                                    alert("Generic Rules Updated Successfully !!!");
+
+                                }
+                            } else {
+                                alert("An error occured while creating User. Please try again later !!");
+                            }
+                            location.reload();
+                        });
+                    }
+                }
+
+                if (btnId == 'config_update_softRules')
+                {
+                    var nsoftNavigationRules = $('#softNavigationRules_length').val();
+                    var updateJSON = '{"configUpdated":true, "ProjectName": "' + projectname + '","ClientName": "' + clientname + '","Scenario": "' + scenarioname + '","Rules": { "softNavigationRules": [';
+                    var postUrl = baseUrl + '/updateConfig';
+                    var weight_sum = 0;
+                    for (i = 0; i < nsoftNavigationRules; i++) {
+                        var name = '#softNavigationRules' + (i + 1) + '_name';
+                        var id = '#softNavigationRules' + (i + 1);
+                        var priority = '#softNavigationRules' + i + '_priority';
+                        var weight = '#softNavigationRules' + i + '_weight';
+                        if (Number.isInteger(parseInt($(weight).val()))) {
+                            updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "' + $(priority).val() + '","weight":' + $(weight).val() + '}';
+                            weight_sum = weight_sum + parseInt($(weight).val());
+                        } else {
+                            updateJSON = updateJSON + '{"description":"' + $(name).text() + '","id" : ' + $(id).val() + ',"priority": "' + $(priority).val() + '","weight": 0 }';
+                        }
+                        if (i != nsoftNavigationRules - 1) {
+                            updateJSON = updateJSON + ',';
+                        } else {
+                            updateJSON = updateJSON + ']},"excludedSoftNavigationRules":"' + $('#excluded_soft_rules').val() + '"}';
+                        }
+
+                    }
+
+                    if (weight_sum != 100) {
+                        alert("Weightage should sum to 100! Current weightage : " + weight_sum);
+                    } else {
+                        $.ajax({
+                            method: "POST",
+                            headers: {
+                                "Authorization": "Bearer " + Cookies.get('token'),
+                                "Content-Type": "application/json"
+                            },
+                            url: postUrl,
+                            data: updateJSON
+                        }).always(function(data, textStatus, jqXHR) {
+                            if (textStatus == 'success') {
+                                var response = JSON.parse(jqXHR.responseText);
+                                if (response.Status != 'Success') {
+                                    alert(response.Reason);
+                                } else {
+                                    alert("Soft Navigation Rules Updated Successfully !!!");
+
+                                }
+                            } else {
+                                alert("An error occured while creating User. Please try again later !!");
+                            }
+                            location.reload();
+                        });
+                    }
+                }
+
+                if (btnId == 'create_user')
+                {
+                    if (valAlphaNumericUnderScore($('#Username').val()) && valPassword($('#Password').val()))
+                    {
+                        var postUrl = baseUrl + '/createUser';
+                        var Regex = new RegExp("^(?=.*[a-z0-9])(?=.{1,})");
+                        var updateJSON = '{ "UserName": "' + $('#Username').val() + '","Password": "' + $('#Password').val() + '","Role": "' + $('input[name="role"]:checked').val() + '","SecurityQuestions": { "q1": "';
+                        if ($('#question1').val() != '')
+                        {
+                            if (Regex.test($('#question1').val()) && Regex.test($('#answer1').val()))
+                            {
+                                updateJSON = updateJSON + $('#question1').val() + '","a1" : "' + $('#answer1').val() + '","q2" : "';
+                            }
+                            else
+                            {
+                                alert("Question / Answer should atleast contain an alphabet or number");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            updateJSON = updateJSON + '","a1" : "","q2" : "';
+                        }
+                        if ($('#question2').val() != '')
+                        {
+                            if (Regex.test($('#question2').val()) && Regex.test($('#answer2').val()))
+                            {
+                                updateJSON = updateJSON + $('#question2').val() + '","a2" : "' + $('#answer2').val() + '","q3" : "';
+                            }
+                            else
+                            {
+                                alert("Question / Answer should atleast contain an alphabet or number");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            updateJSON = updateJSON + '","a2" : "","q3" : "';
+                        }
+                        if ($('#question3').val() != '')
+                        {
+                            if (Regex.test($('#question3').val()) && Regex.test($('#answer3').val()))
+                            {
+                                updateJSON = updateJSON + $('#question3').val() + '","a3" : "' + $('#answer3').val() + '" },"Clients" : "' + $('#selectClient').val() + '"}';
+                            }
+                            else
+                            {
+                                alert("Question / Answer should atleast contain an alphabet or number");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            updateJSON = updateJSON + '","a3" : "' + '" },"Clients" : "';
+                        }
+                        if ($('#selectClient').val() != null)
+                        {
+                            updateJSON = updateJSON + $('#selectClient').val() + '"}';
+                        }
+                        else
+                        {
+                            updateJSON = updateJSON + '"}'
+                        }
+                        $.ajax({
+                            method: "POST",
+                            headers: {
+                                "Authorization": "Bearer " + Cookies.get('token'),
+                                "Content-Type": "application/json"
+                            },
+                            url: postUrl,
+                            data: updateJSON
+                        }).always(function(data, textStatus, jqXHR) {
+                            if (textStatus == 'success') {
+                                var response = JSON.parse(jqXHR.responseText);
+                                if (!response.status) {
+                                    alert(response.reason);
+                                } else {
+                                    alert("User Created Successfully !!!");
+                                }
+                            } else {
+                                alert("An error occured while creating User. Please try again later !!");
+                            }
+                            location.reload();
+                        });
+
+                    }
+                    else
+                    {
+                        alert("Only Alphanumeric and _ allowed in Username (or) \r\n Password should be atleast 8 character length and have one Uppercase letter , one Number and one special character (!@#$%^&*) ");
+                    }
+                }
+
+                if (btnId == 'manage_user')
+                {
+                    if (valAlphaNumericUnderScore($('#UsernameManage').val()))
+                    {
+                        var postUrl = baseUrl + '/manageClientAccess';
+                        var Regex = new RegExp("^(?=.*[a-z0-9])(?=.{1,})");
+                        var updateJSON = '{ "UserName": "' + $('#UsernameManage').val() + '"';
+
+                        if ($('#selectClientManage').val() != null)
+                        {
+                            updateJSON = updateJSON + ',"Clients" : "' + $('#selectClientManage').val() + '"}';
+                        }
+                        else
+                        {
+                            updateJSON = updateJSON + '}'
+                        }
+
+                        $.ajax({
+                            method: "POST",
+                            headers: {
+                                "Authorization": "Bearer " + Cookies.get('token'),
+                                "Content-Type": "application/json"
+                            },
+                            url: postUrl,
+                            data: updateJSON
+                        }).always(function(data, textStatus, jqXHR) {
+                            if (textStatus == 'success') {
+                                var response = JSON.parse(jqXHR.responseText);
+                                if (!response.status) {
+                                    alert(response.reason);
+                                } else {
+                                    alert("User Created Successfully !!!");
+                                }
+                            } else {
+                                alert("An error occured while creating User. Please try again later !!");
+                            }
+                            location.reload();
+                        });
+
+                    }
+                    else
+                    {
+                        alert("Only Alphanumeric and _ allowed in Username");
+                    }
+                }
+    		});
+        });
+        /*]]>*/
+        </script>
     </body>
     </html>

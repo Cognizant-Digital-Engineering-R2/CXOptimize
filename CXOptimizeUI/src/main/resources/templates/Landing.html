@@ -510,6 +510,7 @@
                 var updateJSON = '{' + '"UserName": "' + username + '" , "TimeZone" : "' + timeZone[5] + '"}';
                 var postUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getClientDetails';
                 //var postUrl = 'http://localhost:9001/getClientDetails';
+
                 var jsonRequest = $.ajax({
                     type: "POST",
                     headers: {
@@ -542,7 +543,45 @@
     </script>
     <script th:inline="javascript">
         /*<![CDATA[*/
-        jQuery(document).ready(function($) {});
+        var username = /*[[${#httpServletRequest.remoteUser}]]*/ Test;
+        function togglePassword(){
+         (function($) {
+            var x = document.getElementById("encrypt");
+            var y = document.getElementById("encryptpass");
+            if(x.innerHTML === "Hide Encrypt Password"){
+                x.innerHTML = "Show Encrypt Password";
+                y.style.visibility = "hidden";
+            } else{
+                x.innerHTML = "Hide Encrypt Password";
+                var hostName = (window.location.origin).split(":");
+                var APIPort = '80';
+                if (!isNaN(hostName[2])) {
+                    APIPort = hostName[2];
+                } else {
+                    if (hostName[0] === 'https') {
+                        APIPort = '443';
+                    }
+                }
+
+                var userJSON = '{' + '"UserName": "' + username + '"}';
+                var postUrl = hostName[0] + ':' + hostName[1] + ':' + APIPort + '/cxoptimize/api/getEncryptedPassword';
+                  var jsonRequest = $.ajax({
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + Cookies.get('token')
+                    },
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    url: postUrl,
+                    data: JSON.stringify(userJSON)
+                });
+                jsonRequest.always(function(data) {
+                    y.innerHTML = data.password;
+                });
+                y.style.visibility = "visible";
+            }
+			})(jQuery);
+			}
         /*]]>*/
     </script>
 </head>
@@ -555,6 +594,14 @@
             <div class="row  p-2 text-justify">
                 <div class="col-md-12">
                     <legend><span class="blue">Select Details</span></legend>
+                </div>
+            </div>
+            <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">
+                <div class="col-md-3">
+                <a href="#" id="encrypt" onclick="togglePassword()">Show Encrypt Password</a>
+                </div>
+                <div class="col-md-3">
+                <div id="encryptpass" style="visibility:hidden"></div>
                 </div>
             </div>
             <div class="row  p-2 m-2 text-justify" style="border-radius: 0.25em; border: 0.01em solid;border-color :#e5e5e5">

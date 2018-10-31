@@ -17,6 +17,7 @@
 package com.cognizant.pace.CXOptimize.api.utils;
 
 import com.cognizant.pace.CXOptimize.AnalysisEngine.GlobalConstants;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -44,6 +46,9 @@ public class AppUtils
 
     @Autowired
     private HTTPUtils httpUtils;
+
+    //@Autowired
+    //private static UrlValidator urlValidator;
 
     private Logger AUDITLOGGER = LoggerFactory.getLogger("audit");
 
@@ -217,6 +222,36 @@ public class AppUtils
         else
         {
             AUDITLOGGER.info("LogType:{}, API: {}, ClientName: {}, Project:{}, Scenario:{}, Status: {}, ErrorMsg:{}, AnalysisType:{}, RunID:{},TransactionName:{},TransactionsAnalysed:{}, TimeTaken:{}, RecommendationCount:{}, Score:{}",logType,apiName,cName,pName,sName,status,msg,anaType,runID,txnName,txnsAnalyzed,duration,recommCnt,score);
+        }
+
+    }
+
+    public static String getHostName(String url,UrlValidator urlValidator)
+    {
+        if(url != null && url != "")
+        {
+            String truncUrl = url.toLowerCase().split("\\?")[0];
+
+            if (urlValidator.isValid(truncUrl))
+            {
+                try
+                {
+                    return new URL(truncUrl).getHost();
+                }
+                catch(Exception e)
+                {
+                    return (truncUrl.split("//")[1]).split("/")[0];
+                }
+            }
+            else
+            {
+                return (truncUrl.split("//")[1]).split("/")[0];
+            }
+
+        }
+        else
+        {
+            return "NA";
         }
 
     }

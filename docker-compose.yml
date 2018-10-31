@@ -1,0 +1,77 @@
+version: '3'
+services:
+  proxy:
+    image: "cxoptimize/proxy:2.0.5"
+    container_name: cxopproxy
+    restart: always
+    depends_on:
+      - ui
+      - api
+      - datasource
+      - dashboard
+    ports:
+      - 8080:8080
+    networks:
+      - cxopnetwork
+  ui:
+    image: "cxoptimize/ui:2.0.5"
+    container_name: cxopui
+    restart: always
+    ports:
+      - 9050:9050
+    networks:
+      - cxopnetwork
+  api:
+    image: "cxoptimize/api:2.0.5"
+    container_name: cxopapi
+    restart: always
+    depends_on:
+      - datasource
+    ports:
+      - 9000:9000
+    networks:
+      - cxopnetwork
+  datasource:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:5.5.2"
+    container_name: cxopdata
+    restart: always
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.ml.enabled=false
+      - cluster.name=cxoptimizedata
+      - ES_JAVA_OPTS=-Xms2048m -Xmx2048m
+    volumes:
+      - cxopesdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - cxopnetwork
+  dashboard:
+    image: "docker.elastic.co/kibana/kibana:5.5.2"
+    container_name: cxopdashboard
+    restart: always
+    depends_on:
+      - datasource
+      - api    
+    environment:
+      - SERVER_BASEPATH=/cxoptimize
+      - ELASTICSEARCH_URL=http://cxopdata:9200
+      - XPACK_SECURITY_ENABLED=false
+      - XPACK_MONITORING_ENABLED=false
+      - XPACK_GRAPH_ENABLED=false
+      - XPACK_WATCHER_ENABLED=false
+      - XPACK_REPORTING_ENABLED=false
+      - XPACK_ML_ENABLED=false
+    ports:
+      - 5601:5601
+    networks:
+      - cxopnetwork
+volumes:
+  cxopesdata:
+    driver: local
+networks:
+  cxopnetwork:

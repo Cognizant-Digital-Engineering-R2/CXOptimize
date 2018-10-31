@@ -50,7 +50,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 
         try
         {
-            loginStatus = JsonUtils.jsonToMap(new JSONObject(LoginUtils.Login(GlobalConstants.getESUrl(),authentication.getName(),EncryptionUtils.getEncryptedPassword(authentication.getCredentials())).toString()));
+            loginStatus = JsonUtils.jsonToMap(new JSONObject(LoginUtils.Login(GlobalConstants.getESUrl(),authentication.getName(),authentication.getCredentials()).toString()));
         }
         catch (Exception ex)
         {

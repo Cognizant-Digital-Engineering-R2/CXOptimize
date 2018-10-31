@@ -221,16 +221,22 @@ class ElasticSearchUtils
                             }
                         }
                         response.failure = { resp, reader ->
+                            log.debug 'PUT reader : ' +  reader
                             response_body = null
                         }
                     }
         }
         catch (groovyx.net.http.HttpResponseException ex)
         {
+            log.debug 'PUT Response Exception : '
+            ex.printStackTrace()
             response_body = null
         }
         catch (java.net.ConnectException ex)
         {
+            log.debug 'PUT Connect Exception : '
+            println ex.getStackTrace()
+            ex.printStackTrace()
             response_body = null
         }
         return response_body
@@ -980,7 +986,7 @@ class ElasticSearchUtils
         return response_body
     }
 
-    static def execTimeOfRunID(def configReader,def runID,def timeline=null,def type=null)
+    static def execTimeOfRunID(def configReader,def runID,def timeline=null,def type=null,def timezone = null)
     {
         def timeArr = []
         StringBuilder release = new StringBuilder()
@@ -1048,7 +1054,8 @@ class ElasticSearchUtils
                     release.append('')
                 }
 
-                execution.append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MinTime.value)).append(' - ').append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MaxTime.value))
+
+                execution.append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MinTime.value,timezone)).append(' - ').append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MaxTime.value,timezone))
 
             }
 
@@ -1176,7 +1183,7 @@ class ElasticSearchUtils
         def response_body = null
 
         StringBuilder query = new StringBuilder()
-        //query.append('{"size":0,"query":{"filtered":{"filter":{"and":[{"or":[')
+
         query.append('{"size":0,"query":{"bool":{"should":[')
         int clientSize = clientList.size()
         for (int i=0;i< clientSize;i++)
@@ -1193,6 +1200,9 @@ class ElasticSearchUtils
         //query.append(']},{"range":{"StartTime":{"gte":"now-').append(noOfDays).append('d/d","lt":"now+1h"}}}]}}},"aggs":{"ClientName":{"terms":{"field":"ClientName","size":100},"aggs":{"ProjectName":{"terms":{"field":"ProjectName","size":100},"aggs":{"Scenario":{"terms":{"field":"Scenario","size":100},"aggs":{"RunID":{"terms":{"field":"RunID","size":100}}}}}}}}}}')
 
         query.append('],"minimum_should_match" : 1,"filter" :{"range":{"creationTimestamp":{"gte":"').append((System.currentTimeSeconds() - (noOfDays * 24 * 60 * 60)) * 1000).append('","lt":"').append(System.currentTimeMillis()).append('"}}}}},"aggs":{"ClientName":{"terms":{"field":"ClientName","size":100},"aggs":{"ProjectName":{"terms":{"field":"ProjectName","size":100},"aggs":{"Scenario":{"terms":{"field":"Scenario","size":100}}}}}}}}')
+
+
+        //println query
         response_body = ElasticSearchUtils.elasticSearchPOST(esURL, GlobalConstants.CONFIGSEARCH,query)
         return response_body
     }
@@ -1201,10 +1211,16 @@ class ElasticSearchUtils
     {
         def response_body = null
         StringBuilder query = new StringBuilder()
-        //query.append('{"size":0,"query":{"filtered":{"filter":{"and":[{"or":[')
+        /*
         query.append('{"size":0,"query":{"bool":{"should":[{"term":{"ClientName":"').append(clientName).append('"}},{"term":{"ProjectName":"').append(projectName).append('"}},{"term":{"Scenario":"').append(scenario).append('"}}')
         query.append('],"minimum_should_match" : 1,"filter" :{"range":{"StartTime":{"gte":"now-').append(noOfDays).append('d/d","lt":"now+1h"}}}}},"aggs":{"RunIDS":{"terms":{"field": "RunID","size": 10000}}}}')
+        */
+
+        query.append('{"size":0,"query":{"bool":{"filter":[{"term":{"ClientName":"').append(clientName).append('"}},{"term":{"ProjectName":"').append(projectName).append('"}},{"term":{"Scenario":"').append(scenario).append('"}}')
+        query.append(',{"range":{"StartTime":{"gte":"now-').append(noOfDays).append('d/d","lt":"now+1h"}}}]}},"aggs":{"RunIDS":{"terms":{"field": "RunID","size": 10000}}}}')
+
         response_body = ElasticSearchUtils.elasticSearchPOST(esURL, GlobalConstants.STATSSEARCH,query)
+
         return response_body
     }
 
@@ -1214,7 +1230,15 @@ class ElasticSearchUtils
         StringBuilder query = new StringBuilder()
         query.append('{"query":{"match_all":{}}}')
         log.debug 'getRules query : ' +  query
-        response_body = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.RULESSEARCH,query)
+        if(GlobalConstants.getESVersion() == '5')
+        {
+            response_body = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.RULESSEARCH,query)
+        }
+        else
+        {
+            response_body = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.ES6RULESSEARCH,query)
+        }
+
         log.debug 'getRules Response : ' + response_body
 
         if(response_body != null && ruleCategory == null)

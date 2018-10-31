@@ -361,6 +361,15 @@
 
         if ($('#scale').val() === 'true') {filter += '&Scale=seconds';}
 
+        var curDate = new Date();
+        curDate = curDate.toString();
+        var timeZone = curDate.split(" ");
+
+        filter += '&Timezone=' + timeZone[5];
+
+
+
+
         var jServices = jQuery.noConflict();
         jServices.ajaxSetup({
           contentType: "application/jsonp; charset=UTF-8",
@@ -498,19 +507,22 @@
 
 		  function customValue(val)
           {
-            if (val < 40)
-            {
-                return 'Poor';
-            } else if (val >= 40 && val < 60)
-            {
-                return 'Bad';
-            } else if (val >= 60 && val < 75)
-            {
-                return 'Good';
-            } else if (val >= 75 )
-            {
-                return 'Very Good';
+            var text = '';
+            switch (true) {
+                case (val < 40):
+                    text = 'Poor';
+                    break;
+                case (val < 60):
+                    text = 'Bad';
+                    break;
+                case (val < 75):
+                    text = 'Good';
+                    break;
+                default:
+                    text = 'Very Good';
+                    break;
             }
+            return text;
           }
           //rulesSummary
           var content = '';
@@ -538,10 +550,23 @@
           }
           //sla
           content = '';
-          for (var i = 0; i < json.Transactions.length; i++) {
-            if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla)) {
-              content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].restime + '</td></tr>';
+          for (var i = 0; i < json.Transactions.length; i++)
+          {
+            if(json.header.SLACheck === undefined || json.header.SLACheck == 'onload')
+            {
+                if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla))
+                {
+                  content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].restime + '</td></tr>';
+                }
             }
+            else
+            {
+            if (parseInt(json.Transactions[i].visuallyComplete) > parseInt(json.Transactions[i].sla))
+                {
+                  content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].visuallyComplete + '</td></tr>';
+                }
+            }
+
           }
           if (content == '') {
             content += '<tr><td colspan="3">All transactions within SLA</td></tr>';
@@ -575,10 +600,20 @@
             size: 5,
             positionFixed: false
           });
+          var clientTime = 0;
+		  var totalTime = 0;
           //clientTime
           content = '';
           for (var i = 0; i < json.Transactions.length; i++) {
-            content += '<tr style="font-family:"Georgia", Times,"Times New Roman", serif;"><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].clientTime + '</td></tr>';
+            if(parseInt(json.Transactions[i].clientTime) < 0)
+            {
+                clientTime = 0;
+            }
+            else
+            {
+                clientTime = parseInt(json.Transactions[i].clientTime);
+            }
+            content += '<tr style="font-family:"Georgia", Times,"Times New Roman", serif;"><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].resourceLoadTime + '</td><td>' + clientTime.toString() + '</td></tr>';
           }
           $('#timeRows').html(content);
           $("#Transactions_ProcessingTime").tablesorter({
@@ -609,21 +644,29 @@
           });
           //responseTime
           content = '';
-          var clientTime = 0;
+
           for (var i = 0; i < json.Transactions.length; i++) {
             if (json.Transactions[i].speedIndex === undefined) {
-            if(parseInt(json.Transactions[i].clientProcessing) < 0)
-                {
-                    clientTime = 0;
-                }
-                else
-                {
-                    clientTime = parseInt(json.Transactions[i].clientProcessing);
-                }
-              content += '<tr><td align="left">' + json.Transactions[i].name + '<div class="help-tip"><p>' + json.Transactions[i].url + '</p></td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].ninetyfiveper + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + clientTime.toString() + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].visuallyComplete + '</td><td>' + json.Transactions[i].resourceCount + '</td><td>' + json.Transactions[i].resourceSize + '</td><td><a href="TransactionSamples.html' + sampleFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer">' + json.Transactions[i].count + '</a></td><td><a href="har/HarViewer.html' + filter + '&TransactionName=' + json.Transactions[i].name + '&SampleValue=' + json.Transactions[i].ninetyfiveper + '" target="_blank" rel="noopener noreferrer">View HAR</a></td><td><img src=\"images/piechart.PNG\" alt=\"' + json.Transactions[i].name + '\" onClick=\"time_click(this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
+            if(parseInt(json.Transactions[i].clientTime) < 0)
+			{
+				clientTime = 0;
+			}
+			else
+			{
+				clientTime = parseInt(json.Transactions[i].clientTime);
+			}
+			if(parseInt(json.Transactions[i].visuallyComplete) < parseInt(json.Transactions[i].resourceLoadTime))
+			{
+				totalTime = parseInt(json.Transactions[i].resourceLoadTime);
+			}
+			else
+			{
+				totalTime = parseInt(json.Transactions[i].visuallyComplete);
+			}
+			content += '<tr><td align="left">' + json.Transactions[i].name + '<div class="help-tip"><p>' + json.Transactions[i].url + '</p></td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].ninetyfiveper + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>' + 'NA' + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + clientTime.toString() + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + totalTime.toString() + '</td><td>' + json.Transactions[i].resourceCount + '</td><td>' + json.Transactions[i].resourceSize + '</td><td><a href="TransactionSamples.html' + sampleFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer">' + json.Transactions[i].count + '</a></td><td><a href="har/HarViewer.html' + filter + '&TransactionName=' + json.Transactions[i].name + '&SampleValue=' + json.Transactions[i].ninetyfiveper + '" target="_blank" rel="noopener noreferrer">View HAR</a></td><td><img src=\"images/piechart.PNG\" alt=\"' + json.Transactions[i].name + '\" onClick=\"time_click(this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
             } else {
 
-              content += '<tr><td align="left">' + json.Transactions[i].name + '<div class="help-tip"><p>' + json.Transactions[i].url + '</p></td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].ninetyfiveper + '</td><td>' + json.Transactions[i].speedIndex + '</td><td>' + json.Transactions[i].ttfbUser + '</td><td>' + json.Transactions[i].ttfpUser + '</td><td>' + (parseInt(json.Transactions[i].serverTime) + parseInt(json.Transactions[i].downloadTime)).toString() + '</td><td>' + json.Transactions[i].clientProcessing  + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].visuallyComplete +'</td><td>' + json.Transactions[i].resourceCount + '</td><td>' + json.Transactions[i].resourceSize + '</td><td><a href="TransactionSamples.html' + sampleFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer">' + json.Transactions[i].count + '</a></td><td><a href="har/HarViewer.html' + filter + '&TransactionName=' + json.Transactions[i].name + '&SampleValue=' + json.Transactions[i].ninetyfiveper + '" target="_blank" rel="noopener noreferrer">View HAR</a></td><td><img src=\"images/piechart.PNG\" alt=\"' + json.Transactions[i].name + '\" onClick=\"time_click(this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
+              content += '<tr><td align="left">' + json.Transactions[i].name + '<div class="help-tip"><p>' + json.Transactions[i].url + '</p></td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].ninetyfiveper + '</td><td>' + json.Transactions[i].speedIndex + '</td><td>' + json.Transactions[i].ttfbUser + '</td><td>' + json.Transactions[i].ttfpUser + '</td><td>' + (parseInt(json.Transactions[i].serverTime) + parseInt(json.Transactions[i].downloadTime)).toString() + '</td><td>' + json.Transactions[i].clientTime  + '</td><td>'  + json.Transactions[i].resourceLoadTime + '</td><td>' + json.Transactions[i].visuallyComplete +'</td><td>' + json.Transactions[i].resourceCount + '</td><td>' + json.Transactions[i].resourceSize + '</td><td><a href="TransactionSamples.html' + sampleFilter + '&TransactionName=' + json.Transactions[i].name + '" target="_blank" rel="noopener noreferrer">' + json.Transactions[i].count + '</a></td><td><a href="har/HarViewer.html' + filter + '&TransactionName=' + json.Transactions[i].name + '&SampleValue=' + json.Transactions[i].ninetyfiveper + '" target="_blank" rel="noopener noreferrer">View HAR</a></td><td><img src=\"images/piechart.PNG\" alt=\"' + json.Transactions[i].name + '\" onClick=\"time_click(this.alt)\" Style=\"cursor: pointer;\"/></td></tr>';
             }
 
           }
@@ -646,6 +689,9 @@
           content = '';
           for (var i = 0; i < json.Transactions.length; i++) {
             recommContent = '';
+            json.Transactions[i].recommendations.sort(function (a, b) {
+                            return a.canvPriority.localeCompare(b.canvPriority);
+                            });
             for (var j = 0; j < json.Transactions[i].recommendations.length; j++) {
               canvasProperties = json.Transactions[i].recommendations[j].canvPriority;
               propArray = canvasProperties.split(",");
@@ -755,6 +801,12 @@
 	}
 
 	if ($('#scale').val() === 'true') {filter += '&Scale=seconds';}
+
+	 var curDate = new Date();
+        curDate = curDate.toString();
+        var timeZone = curDate.split(" ");
+
+        filter += '&Timezone=' + timeZone[5];
 
 	var jServices = jQuery.noConflict();
 	jServices.ajaxSetup({
@@ -991,32 +1043,60 @@
                 	doc.rect(14, 34, 70, 8, 'FD');
                 	doc.rect(175, 34, 75, 8, 'FD');
                 	doc.setTextColor(255, 255, 255);
-                 doc.text("Top 5 Transaction with higher time", 14, 40);
-                 doc.text("Top 5 Transaction with Worst Score", 175, 40);
+                    doc.text("Top 5 Transaction with higher time", 14, 40);
+                    doc.text("Top 5 Transaction with Worst Score", 175, 40);
                     doc.setTextColor(0, 0, 0);
+
                 	var slaColumns = ["Transaction","SLA","Time"];
                 	var scoreColumns = ["Transaction","Score"];
                 	var compColumns = ["Transaction","Deviation"];
-                	var cliprocColumns = ["Transaction","ClientTime","ResourceTime"];
+                	var cliprocColumns = ["Transaction","BackendTime","FrontendTime"];
 
 
 
                 var rowCounter = 0;
+                var clientTime = 0;
                 var slaData = new Array();
                 var scoreData = new Array();
                 var cliprocData = new Array();
                 var compData = new Array();
                 for(i=0;i< json.Transactions.length;i++)
                 {
-                    slaData[rowCounter] = new Array(3);
-                    slaData[rowCounter][0] = json.Transactions[i].name;
-                    slaData[rowCounter][1] = json.Transactions[i].sla;
-                    slaData[rowCounter][2] = json.Transactions[i].restime;
+                    if(json.header.SLACheck === undefined || json.header.SLACheck == 'onload')
+                    {
+                        if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla))
+                        {
+                            slaData[rowCounter] = new Array(3);
+                            slaData[rowCounter][0] = json.Transactions[i].name;
+                            slaData[rowCounter][1] = json.Transactions[i].sla;
+                            slaData[rowCounter][2] = json.Transactions[i].restime;
+                        }
+                    }
+                    else
+                    {
+                        if (parseInt(json.Transactions[i].visuallyComplete) > parseInt(json.Transactions[i].sla))
+                        {
+                            slaData[rowCounter] = new Array(3);
+                            slaData[rowCounter][0] = json.Transactions[i].name;
+                            slaData[rowCounter][1] = json.Transactions[i].sla;
+                            slaData[rowCounter][2] = json.Transactions[i].visuallyComplete;
+                        }
+                    }
+
+
 
                     cliprocData[rowCounter] = new Array(3);
                     cliprocData[rowCounter][0] = json.Transactions[i].name;
                     cliprocData[rowCounter][1] = json.Transactions[i].resourceLoadTime;
-                    cliprocData[rowCounter][2] = json.Transactions[i].clientProcessing;
+                    if(parseInt(json.Transactions[i].clientTime) < 0)
+                    {
+                        clientTime = 0;
+                    }
+                    else
+                    {
+                        clientTime = parseInt(json.Transactions[i].clientTime);
+                    }
+                    cliprocData[rowCounter][2] = clientTime.toString();
 
 
 
@@ -1083,7 +1163,7 @@
 
                 	doc.addPage();
 
-                	var chromeImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAFZElEQVR4AW2VA5AkXRaFv/vey1KPPbO2bdu2bdu2bdu2d3/b9j92D6u6U++e7eiOiqjt2JPGOd+9SeP/aPPznhzy4UMGZIBNH/m07f/K59f4cLgSRBhMHVz74tftBwSw7Y0viWnFCgHOItnVT30kk6rMgvbvE6DBta93ay9nnkXb3k85X1euKRAGI4zNhPif0Ov/ADiv3nKVxdVrbTHErnzcgxir6nQikJesXrNproNPq26ejGdDAjkSIMF4MgFBloqfh2XLXg/snPNFIC8GMN0rIpBXdPr3DlX1i5DzOtwdcCDgbpKAMWSBinuQCBbj3tDvPwk4zstyDMGufMwD2LqiHwBfXXPfUNd/KaReCrE1SJMViwXhDhLgsMBqkSdCKOcgDwOOsdAEwG3P/e9jgKaX9q5ZeXWaGRs7IeUihBjNAMAMcsabBoBgETCkDC4kAGU8Ryzuit3ldwa2N4dqSz9e5wboL/fc9LHX/vPKjdeq1baFpeBgMRLNaI8ehU6HtHo1mKiG+6GdJXamJrpTNNGidqP3D38MeEbeNjS7+PZ34HmvvfPtNk/ZmY8+fZe94tSd5CU9OhbohABNy7IHP4TBgx/B4cEGZLDCdlJd9VuGV/2RotuhSEZRaH6ZEgpmxF7vDsDZ1h7zAG6+44Yfa/A3B5Hf/ZvL4q2ONsRuQagaNr3mdey66xP50TEtV+9ukeB66xLPvGfieqOfkS//DP1+lxDAgsAsY0QRPg68JVmRafH7BndG3WS/vsMGbvDPLcTqCNd8zOPYfZcn8o5vH2VYG70iIODUy0ou2Cw+/LSncMvrX4H2/B6KpWg+24x5mN0XwG7045esbTxfCKw1SWUn2Zv+fCV3v/IAN/7Gt/nkxbfk1ItnWTYItBkEpACHRs4db9DlQw+5mHj5awgpYQCGMBmwD4u3CLW3K1y+VCwMyPnZbdegDWsYDTZw1a6GXmEL4QIETYZex7h6X8u+egNxai1mGYKBsSC0lLns5C4wQEJAt85cur7PX2+xhtdUmdYMARrbGJ87udMmNgAEEpIIuB+SdNQXTGRg4MYPNwWOxmlusjYyU0EKIFgwRZitxHXXJtZ29+L1NFgCNAk6mp1D4aqbb94ncbUAl+SIJGNPavni7pN56d0Tva4zPXJaF1lwcCSmus7z7lUQD/2VoBkgjAFaGLk6BtuXYjDAjxF25zG+VWZ50eMblx7HbVddh2894yF89fiaS/a0ILjLdQqeeY8OszN/IB/5MzFNgZxFV/EYgCQBrf9UKbwJiEyoFyMvP+n7vOimm3nWfe5D31eDGZXv5bNn/oPHFn/m1tc0vIFgGl/7KKG21U8BbN2PnxcAj1X+kYI9HWiBxIQOVTNMpQ7XXLKSKOeCq3bz6OVH+cW9wGtNhs97c9aPgWfEQQwpjmoBWOYt3g33w2wjkIEIAmBVd0CWs3V4gDxbszqKj9ymA15iMA7PQHLXrpkyvwWgaFw2e+K9ud4l1w6AW/b7ehH+glkPaDXRiYAkZ990xTuvWfOeW4zINUQbVz4fXla1z3+uU7QAeIjR2HqLbS4jegrHWOMPkWuvoyTJJbWS3OQalo1uWGS95galaN0DapEcSHnOU1ZzXnFMSiFi5phh9an3ZaxrnX+NCGQr243ejZ/xaE/GMBmE7Ewfqvn2TUqec52ZheoBd5Szfj6caed/mYNB/N9fZnnKfZjUdS68ZmgGhQAVB2dv5UV4thn3Ozyqr3vPXjP1tzuMQHkkZ3N2/lNVPv/TX7a+Y9XhZuKnvxgwCTl3U8i9ZONKvnHeWfY4u/aaD97RV77pWjPsnLaDv/zL/v2AAF734vWxGmUBziL9F4ldCbbChT9xAAAAAElFTkSuQmCC';
+                var chromeImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAFZElEQVR4AW2VA5AkXRaFv/vey1KPPbO2bdu2bdu2bdu2d3/b9j92D6u6U++e7eiOiqjt2JPGOd+9SeP/aPPznhzy4UMGZIBNH/m07f/K59f4cLgSRBhMHVz74tftBwSw7Y0viWnFCgHOItnVT30kk6rMgvbvE6DBta93ay9nnkXb3k85X1euKRAGI4zNhPif0Ov/ADiv3nKVxdVrbTHErnzcgxir6nQikJesXrNproNPq26ejGdDAjkSIMF4MgFBloqfh2XLXg/snPNFIC8GMN0rIpBXdPr3DlX1i5DzOtwdcCDgbpKAMWSBinuQCBbj3tDvPwk4zstyDMGufMwD2LqiHwBfXXPfUNd/KaReCrE1SJMViwXhDhLgsMBqkSdCKOcgDwOOsdAEwG3P/e9jgKaX9q5ZeXWaGRs7IeUihBjNAMAMcsabBoBgETCkDC4kAGU8Ryzuit3ldwa2N4dqSz9e5wboL/fc9LHX/vPKjdeq1baFpeBgMRLNaI8ehU6HtHo1mKiG+6GdJXamJrpTNNGidqP3D38MeEbeNjS7+PZ34HmvvfPtNk/ZmY8+fZe94tSd5CU9OhbohABNy7IHP4TBgx/B4cEGZLDCdlJd9VuGV/2RotuhSEZRaH6ZEgpmxF7vDsDZ1h7zAG6+44Yfa/A3B5Hf/ZvL4q2ONsRuQagaNr3mdey66xP50TEtV+9ukeB66xLPvGfieqOfkS//DP1+lxDAgsAsY0QRPg68JVmRafH7BndG3WS/vsMGbvDPLcTqCNd8zOPYfZcn8o5vH2VYG70iIODUy0ou2Cw+/LSncMvrX4H2/B6KpWg+24x5mN0XwG7045esbTxfCKw1SWUn2Zv+fCV3v/IAN/7Gt/nkxbfk1ItnWTYItBkEpACHRs4db9DlQw+5mHj5awgpYQCGMBmwD4u3CLW3K1y+VCwMyPnZbdegDWsYDTZw1a6GXmEL4QIETYZex7h6X8u+egNxai1mGYKBsSC0lLns5C4wQEJAt85cur7PX2+xhtdUmdYMARrbGJ87udMmNgAEEpIIuB+SdNQXTGRg4MYPNwWOxmlusjYyU0EKIFgwRZitxHXXJtZ29+L1NFgCNAk6mp1D4aqbb94ncbUAl+SIJGNPavni7pN56d0Tva4zPXJaF1lwcCSmus7z7lUQD/2VoBkgjAFaGLk6BtuXYjDAjxF25zG+VWZ50eMblx7HbVddh2894yF89fiaS/a0ILjLdQqeeY8OszN/IB/5MzFNgZxFV/EYgCQBrf9UKbwJiEyoFyMvP+n7vOimm3nWfe5D31eDGZXv5bNn/oPHFn/m1tc0vIFgGl/7KKG21U8BbN2PnxcAj1X+kYI9HWiBxIQOVTNMpQ7XXLKSKOeCq3bz6OVH+cW9wGtNhs97c9aPgWfEQQwpjmoBWOYt3g33w2wjkIEIAmBVd0CWs3V4gDxbszqKj9ymA15iMA7PQHLXrpkyvwWgaFw2e+K9ud4l1w6AW/b7ehH+glkPaDXRiYAkZ990xTuvWfOeW4zINUQbVz4fXla1z3+uU7QAeIjR2HqLbS4jegrHWOMPkWuvoyTJJbWS3OQalo1uWGS95galaN0DapEcSHnOU1ZzXnFMSiFi5phh9an3ZaxrnX+NCGQr243ejZ/xaE/GMBmE7Ewfqvn2TUqec52ZheoBd5Szfj6caed/mYNB/N9fZnnKfZjUdS68ZmgGhQAVB2dv5UV4thn3Ozyqr3vPXjP1tzuMQHkkZ3N2/lNVPv/TX7a+Y9XhZuKnvxgwCTl3U8i9ZONKvnHeWfY4u/aaD97RV77pWjPsnLaDv/zL/v2AAF734vWxGmUBziL9F4ldCbbChT9xAAAAAElFTkSuQmCC';
                 var firefoxImg = 'data:image/png;base64,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';
                 var ieImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB/ElEQVR4AZ3UA6xdTRDA8d7atm3bjmpHRVxHtRvUtoLatm0Gtdug/Gpf/tPMe5lM921OvpP8cjyzs0rlOmqPPJ4aqdV9CHlQEoWQzrxL4wzkCR6S6/pYhJt4i6/4iAfYjG5IL9/6k+iPOBfHXsQ9YnK+i5YmiTd4E7yTn8P4hbAKGJH7iIiLwe4k0i1yronP8sMfxD2iSWeVqM8/SVR/Z8Qt8/NFDEVbVBXtsUN3k/r+I0rruLprhiMujqKmPK+FtI5qx5vgYTkvd1WREU8RQT95lhOXMEru0yOtnFPL9Z2kJKqa98hnq+iAH6gn94XxHG+QWX1sq16oWq+r6Zz8nVxMRUe1cA6oriqJaqiiVEdRzFEzSyeaJLHS/s2CqqpVvdRP0UBrASbRyuQEdrlzPuyYhkH9ln/W2C5KLec8eK9bF5CtYF1KCaqaHz7iNM7hbACncQvjU0pQ17TkqppB//vQCSqYgf2JMvIuHVIjZMiagHpuE4TknAUvzZTbqBuCtEoaEye7xPLupmsd03QvyuvG6P9QBauw2/WN7aaGdprK+TcuYSVmYgG2477aeU/qWL4kc9SWHUMEsQDT85g3gU6ELaqCMCIiLP4ov70V2AFXJuBXwIUXweSgFeitowQm4yJe46t4izvYhgEo4lkz/iTqWU6UlKR57HtXyxNsCR1YNTyP9gAAAABJRU5ErkJggg==';
                 var safariImg = 'data:image/png;base64,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';
@@ -1100,6 +1180,7 @@
                 var compareImg = 'data:image/png;base64,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';
                 var recomImg = 'data:image/png;base64,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';
                 var stopWatchImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4QwNDSUVq6DwBAAABIxJREFUSMedlc9vG0UUx79vZtfe+HfTuK6TqAW16g+hBA6lJygSFRJQpIpLhYQ4cOLfgAOcuHPgABIIiV6Qqh6QuFYg9QcV/ZmaNm0TnNjrOvGvXe96Z+ZxiJOUNusSj+aw2nkzn/fed94beucnzwCEZwcbbRif8OWPzFUD4SHxuTyzIGYkMXYzhAGYYZ6bTNII+66YiUTSEpQXg9dolbFtoHfa9fwUNAIOc49Kj2iSwASc5MdZDnkz2hwCCfPiCEasEdCBc5leAsCgfWKt5KwwsQHNc/VLc+FD/ovA4wMYSELVkPOQMMDVvDNduOOkXAvmPb59nGtnzK0SugY0JkCAz5k/PzOXktAtS0rmd9faObs1QeEMWgpyCr3jXOPxAAyagvc23yvAt2AiQUtO4vx0Ois7AG8caUO/wqujlRgBwB72cwgMBAMJwwAmWBUQhLCrKBCYQYfQSCPkMQAANIQBCSctc8W8Nnsj3RfizX69yL2byYIBMVDi7hR7I7I0CtCkdAMZmXDAuitES1KPBCz/mP347j5/JWkTKIOwjPYIgBUnwCS8j82VAvrKj0ip5Xy2f3ju9ET25qRbrTfblGxSahZtG3oa7RFexgFwiu9/wLcYMIrImKOzR+dfft0m6hUPfe/c+HXBaoUe0CKgxF0R3z92TpGEOcr1DRl9Qf3STPrwHLReWVnJWIlz5eMHp1RVOhs9bBLeiIu0M4CABDQAIWTXSfVOvEW5yUEYLi4uMvO+RPpUudBytGEBIIvAht4dQEPUkYW0rD37y8IuC3sIpqGY8/m9qbRvwAxKIbKheVcAA7pOs4GYYDXgQZ+UesaglEynM5YGA0iwsrBjy48HCJh7tP+hzppOA9IiZ2IoPg8dzQgxZ0hsCibG0CCAXeOMMVrvP0CZPIB2u12pVKIoAmC1mkdqq2LTeGTPj0nRHFdP8FIgZKM8CyEBWJaVy+WGBv88YL8HIgAM7LrQAMxzNW9DiVSx3dr4UywWz549a9s2tDLuCsAbriuSercAAmcRyHSBtaInNagIlk1Etm0D4EHIXmcrMSEsBYmYlye2VbQopQNPh30liFRkW/b2soqgBluu+EhEkHEhiDjAbZR7QUhGL+mgEvy32zCDt/1tw4nim+aIa1paoJIEIxpcchcDs12rXZjgKYddZPVuAQR4SH5Lb/wgThYGVmLp74vu/YHRANZV+HO94qpQEAlCH/ZNlMe5RQR+QFPLtOeIcd9vLH9Xufa11yw52Ydt9/CN2+W1LuVSS53++YXmtYOenI7TOB4AQIBDyCt04IR6/Gm1/ntjra7M6bXuydq6L+UvS63zd2uL634uU03NzI8D2MjVNTpQR7akumeCgXjSDdv+H63wx+XW9XZfGRZsTMcF77JVPB1EFYXf6BiIjCVv2YmvVoMvHvWudkLDEEQAdMeFVnEnvCACAAy6IF5Ne65buXxxcb3RV4JgCaGNAQAi7TU5CiiZ2VGHFwMI3BGpb9wp706DeVhRJLZCJ+O3TdCVTvbp4vi/KRqewcxOHtLafG9AJLa+eNA3fitu779w6mKXksfFswAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNy0xMi0xM1QxMzozNzoyMS0wNTowMP4zzK8AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTctMTItMTNUMTM6Mzc6MjEtMDU6MDCPbnQTAAAAAElFTkSuQmCC';
+				var serverTime = 0;
 
                 for (k = 0; k < json.Transactions.length; k++)
                 {
@@ -1110,7 +1191,7 @@
                         doc.setDrawColor(0, 0, 153);
                         doc.line(14, 26, 285, 26);
                         doc.setFontSize(15);
-                        doc.text(doc.splitTextToSize('URL - ' + json.Transactions[k].url, 260), 14, 33);
+                        doc.text(doc.splitTextToSize('URL - ' + json.Transactions[k].url.substring(0,90), 260), 14, 33);
                         doc.text('Device : ', 14, 43);
                         if (json.Transactions[k].device.match('Tablet')) {
                             doc.addImage(tabletImg, 'JPEG', 40, 38, 6, 6);
@@ -1143,18 +1224,38 @@
 
                         doc.text('SLA : ' + json.Transactions[k].sla + ' (ms)', 180, 43);
                         //doc.text('Version : ' + json.Transactions[k].device, 200, 30);
-                        if (json.Transactions[k].restime > json.Transactions[k].sla) {
-                            doc.setDrawColor(204, 0, 0);
-                            doc.setFillColor(204, 0, 0);
-                            doc.rect(14, 50, 36, 7, 'FD');
-                            doc.setTextColor(255, 255, 255);
-                            doc.text(14, 55, 'Exceeding SLA');
-                        } else {
-                            doc.setDrawColor(0, 153, 0);
-                            doc.setFillColor(0, 153, 0);
-                            doc.rect(14, 50, 36, 7, 'FD');
-                            doc.setTextColor(255, 255, 255);
-                            doc.text(14, 55, 'Meeting SLA');
+
+                        if(json.header.SLACheck === undefined || json.header.SLACheck == 'onload')
+                        {
+                            if (parseInt(json.Transactions[k].restime) > parseInt(json.Transactions[k].sla)) {
+                                doc.setDrawColor(204, 0, 0);
+                                doc.setFillColor(204, 0, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Exceeding SLA');
+                            } else {
+                                doc.setDrawColor(0, 153, 0);
+                                doc.setFillColor(0, 153, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Meeting SLA');
+                            }
+                        }
+                        else
+                        {
+                            if (parseInt(json.Transactions[k].visuallyComplete) > parseInt(json.Transactions[k].sla)) {
+                                doc.setDrawColor(204, 0, 0);
+                                doc.setFillColor(204, 0, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Exceeding SLA');
+                            } else {
+                                doc.setDrawColor(0, 153, 0);
+                                doc.setFillColor(0, 153, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Meeting SLA');
+                            }
                         }
 
                         if (json.Transactions[k].deviation > 5) {
@@ -1202,17 +1303,22 @@
                             doc.text('TTFB : NA', 80, 70);
                             doc.text('DOMInterative : NA', 150, 70);
                             doc.text('TTFP : NA', 14, 80);
+							serverTime = parseInt(json.Transactions[k].resourceLoadTime)
+							 doc.text('OnLoad : NA', 215, 70);
                         } else {
                             doc.text('SpeedIndex : ' + json.Transactions[k].speedIndex + ' (ms)', 14, 70);
                             doc.text('TTFB : ' + json.Transactions[k].ttfbUser + ' (ms)', 80, 70);
                             doc.text('DOMInterative : ' + json.Transactions[k].domInteractive + ' (ms)', 150, 70);
                             doc.text('TTFP : ' + json.Transactions[k].ttfpUser + ' (ms)', 14, 80);
+							serverTime = parseInt(json.Transactions[k].serverTime) + parseInt(json.Transactions[k].downloadTime)
+							 doc.text('OnLoad : ' + json.Transactions[k].restime + ' (ms)', 215, 70);
                         }
 
-                        doc.text('OnLoad : ' + json.Transactions[k].restime + ' (ms)', 215, 70);
+                       
                         doc.text('TotalPageLoad : ' + json.Transactions[k].visuallyComplete + ' (ms)', 80, 80);
-                        doc.text('Server Time : ' + json.Transactions[k].serverTime + ' (ms)', 150, 80);
-                        doc.text('Client Time : ' + json.Transactions[k].clientProcessing + ' (ms)', 215, 80);
+						
+                        doc.text('Server Time : ' + serverTime.toString() + ' (ms)', 150, 80);
+                        doc.text('Client Time : ' + json.Transactions[k].clientTime + ' (ms)', 215, 80);
 
                         doc.setFontSize(18);
                         doc.addImage(stopWatchImg, 'JPEG', 14, 94, 8, 8);
@@ -1344,6 +1450,9 @@
                         cnt = cnt + 10;
                         doc.setFontSize(15)
                         var pageHeight = doc.internal.pageSize.height;
+                        json.Transactions[k].recommendations.sort(function (a, b) {
+                            return a.canvPriority.localeCompare(b.canvPriority);
+                            });
                         for (i = 0; i < json.Transactions[k].recommendations.length; i++) {
                             if (json.Transactions[k].recommendations[i].desc.match('<ul><li>')) {
                                 if (json.Transactions[k].recommendations[i].canvPriority.match('high')) {
@@ -1464,39 +1573,39 @@
 }
 
 function orderDesc(a, b) {
-    if (a[1] === b[1]) {
+    if (parseFloat(a[1]) === parseFloat(b[1])) {
         return 0;
     }
     else {
-        return (a[1] > b[1]) ? -1 : 1;
+        return (parseFloat(a[1]) > parseFloat(b[1])) ? -1 : 1;
     }
 };
 
 
 function orderAsc(a, b) {
-    if (a[1] === b[1]) {
+    if (parseInt(a[1]) === parseInt(b[1])) {
         return 0;
     }
     else {
-        return (a[1] < b[1]) ? -1 : 1;
+        return (parseInt(a[1]) < parseInt(b[1])) ? -1 : 1;
     }
 };
 
 function order3Asc(a, b) {
-    if (a[2] === b[2]) {
+    if (parseInt(a[2]) === parseInt(b[2])) {
         return 0;
     }
     else {
-        return (a[2] < b[2]) ? -1 : 1;
+        return (parseInt(a[2]) < parseInt(b[2])) ? -1 : 1;
     }
 };
 
 function order3Desc(a, b) {
-    if (a[2] === b[2]) {
+    if (parseInt(a[2]) === parseInt(b[2])) {
         return 0;
     }
     else {
-        return (a[2] > b[2]) ? -1 : 1;
+        return (parseInt(a[2]) > parseInt(b[2])) ? -1 : 1;
     }
 };
 
@@ -1722,8 +1831,8 @@ function order3Desc(a, b) {
                                             <thead>
                                             <tr>
                                                 <th>Transaction</th>
-                                                <th>ResourceTime</th>
-                                                <th>ClientTime</th>
+                                                <th>BackendTime</th>
+                                                <th>FrontendTime</th>
                                             </tr>
                                             </thead>
                                             <tbody id="timeRows">
@@ -1807,9 +1916,8 @@ function order3Desc(a, b) {
                                             <div class="help-tip"><p>time taken in server for main document(responseEnd
                                                 - requestStart)</p></div>
                                         </th>
-                                        <th>ClientProcessing
-                                            <div class="help-tip"><p>time taken for client processing(loadEventEnd -
-                                                responseEnd)</p></div>
+                                        <th>FrontendTime
+                                            <div class="help-tip"><p>time spent exclusively on client browser without downloading anything from server</p></div>
                                         </th>
                                         <th>BackendTime
                                             <div class="help-tip"><p>sum of non overlapping resource calls</p></div>
@@ -1826,7 +1934,7 @@ function order3Desc(a, b) {
                                             <div class="help-tip"><p>total size of all resources called.incase of IE the size represents only static resources</p></div>
                                         </th>
                                         <th>Count
-                                            <div class="help-tip"><p>number of iterations</p></div>
+                                            <div class="help-tip"><p>number of samples collected for the same transaction</p></div>
                                         </th>
                                         <th>View HAR</th>
                                         <th>TimeDistribution

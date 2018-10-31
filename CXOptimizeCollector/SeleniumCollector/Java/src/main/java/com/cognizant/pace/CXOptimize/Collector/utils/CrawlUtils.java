@@ -17,6 +17,8 @@
 package com.cognizant.pace.CXOptimize.Collector.utils;
 
 import com.cognizant.pace.CXOptimize.Collector.constant.CollectorConstants;
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
@@ -34,10 +36,11 @@ import org.apache.commons.validator.routines.UrlValidator;
 public class CrawlUtils
 {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CrawlUtils.class);
-    private static UrlValidator urlValidator = new UrlValidator();
+    //private static UrlValidator urlValidator = new UrlValidator();
 
     private static String getHostName(String url)
     {
+        UrlValidator urlValidator = new UrlValidator();
         if (urlValidator.isValid(url))
         {
             try
@@ -46,12 +49,12 @@ public class CrawlUtils
             }
             catch(Exception e)
             {
-                return "NA";
+                return (url.split("//")[1]).split("/")[0];
             }
         }
         else
         {
-            return "NA";
+            return (url.split("//")[1]).split("/")[0];
         }
     }
 
@@ -73,10 +76,10 @@ public class CrawlUtils
                 modifiedResTiming.add(future.get());
             }
             executor.shutdown(); //always reclaim resources
-            LOGGER.debug("Crawled Resource Details : {}",modifiedResTiming.toString());
-            LOGGER.debug("Complete getResourceDetails");
+            LOGGER.debug("CXOP - Crawled Resource Details : {}",modifiedResTiming.toString());
+            LOGGER.debug("CXOP - Complete getResourceDetails");
         } catch (Exception e) {
-            LOGGER.debug("Exception in getResourceDetails : {}",e);
+            LOGGER.debug("CXOP - Exception in getResourceDetails : {}",e);
             executor.shutdown(); //always reclaim resources
             return resTiming;
         }
@@ -89,16 +92,9 @@ public class CrawlUtils
 
     private static Map<String, Object> callResource(Map<String, Object> resData) throws MalformedURLException {
         String resUrl = resData.get("name").toString();
-        String truncUrl = resUrl.toLowerCase().split("\\?")[0];
-
+        Map<String, Object> rs = new HashMap<>();
         Iterator iterator;
         String key;
-        Map<String, Object> rs = new HashMap<>();
-        StringBuilder sb = new StringBuilder();
-        boolean staticResrcStatus = false;
-        boolean isImage = false;
-        boolean flagSet = false;
-        String resourceType = "others";
 
         iterator = resData.keySet().iterator();
 
@@ -108,164 +104,187 @@ public class CrawlUtils
             rs.put(key, resData.get(key));
         }
 
-        try {
-            if (Double.parseDouble(resData.get("duration").toString()) <= CollectorConstants.getResDurThreshold() || Double.parseDouble(resData.get("duration").toString()) <= 0.0) {
-                rs.put("IsCached", true);
-            } else {
-                rs.put("IsCached", false);
-            }
-        }
-        catch(Exception e)
-        {
+        if(!resUrl.equals("about:blank")){
+            String truncUrl = resUrl.toLowerCase().split("\\?")[0];
 
-        }
 
-        for (String img : CollectorConstants.getImageList())
-        {
-            if (truncUrl.contains(img.toLowerCase().trim()))
-            {
-                isImage = true;
-                staticResrcStatus = true;
-                flagSet = true;
-                resourceType = img.trim();
-                break;
-            }
-        }
+            StringBuilder sb = new StringBuilder();
+            boolean staticResrcStatus = false;
+            boolean isImage = false;
+            boolean flagSet = false;
+            String resourceType = "others";
 
-        if (!flagSet)
-        {
-            for (String stat : CollectorConstants.getStaticList())
-            {
-                if (truncUrl.contains(stat.toLowerCase().trim()))
+
+            try {
+                if (Double.parseDouble(resData.get("duration").toString()) <= CollectorConstants.getResDurThreshold() || Double.parseDouble(resData.get("duration").toString()) <= 0.0) {
+                    rs.put("IsCached", true);
+                } else {
+                    rs.put("IsCached", false);
+                }
+
+                if(Double.parseDouble(resData.get("responseStart").toString()) != 0.0)
                 {
+                    if(resData.containsKey("encodedBodySize") && Double.parseDouble(resData.get("encodedBodySize").toString()) == 0.0 && resData.containsKey("transferSize") && Double.parseDouble(resData.get("transferSize").toString()) == 0.0)
+                    {
+                        rs.put("IsCached", true);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+
+            }
+
+            for (String img : CollectorConstants.getImageList())
+            {
+                if (truncUrl.contains(img.toLowerCase().trim()))
+                {
+                    isImage = true;
                     staticResrcStatus = true;
-                    isImage = false;
-                    resourceType = stat.trim();
+                    flagSet = true;
+                    resourceType = img.trim();
                     break;
                 }
             }
-        }
 
-        rs.put("IsStaticResrc", staticResrcStatus);
-        rs.put("IsImage", isImage);
-        rs.put("ResourceType", resourceType);
-        rs.put("HostName",getHostName(truncUrl));
-
-        if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getStaticExt() + "," + CollectorConstants.getImages())) {
-            try {
-                LOGGER.debug("Resource URL : " + resUrl);
-                URL url = new URL(resUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(5000);
-                conn.setRequestProperty("User-Agent", CollectorConstants.getUserAgent());
-                if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getStaticExt() + ",.svg")) {
-                    conn.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
+            if (!flagSet)
+            {
+                for (String stat : CollectorConstants.getStaticList())
+                {
+                    if (truncUrl.contains(stat.toLowerCase().trim()))
+                    {
+                        staticResrcStatus = true;
+                        isImage = false;
+                        resourceType = stat.trim();
+                        break;
+                    }
                 }
-                LOGGER.debug("Status code for : " + resUrl + " is " + conn.getResponseCode());
-                rs.put("Status", conn.getResponseCode());
-                if (conn.getResponseCode() == 200) {
-                    Map<String, List<String>> header = conn.getHeaderFields();
-                    if(header.containsKey("Last-Modified"))
-                    {
-                        rs.put("Last-Modified",header.get("Last-Modified").get(0).replaceAll(",",""));
-                    }
-                    if(header.containsKey("Content-Length"))
-                    {
-                        rs.put("Content-Length",header.get("Content-Length").get(0));
-                    }
-                    if(header.containsKey("Connection"))
-                    {
-                        rs.put("Connection",header.get("Connection").get(0));
-                    }
-                    if(header.containsKey("Cache-Control"))
-                    {
-                        rs.put("Cache-Control",header.get("Cache-Control").get(0).replaceAll(",", "#").replaceAll("=", "#"));
-                    }
-                    if(header.containsKey("ETag"))
-                    {
-                        rs.put("ETag",header.get("ETag").get(0).replaceAll("\"", ""));
-                    }
-                    if(header.containsKey("Expires"))
-                    {
-                        rs.put("Expires",header.get("Expires").get(0).replaceAll(",", ""));
-                    }
-
-
-                    // Buffer the result into a string
-                    if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getImages())) {
-                        if (CollectorUtils.stringContainsItemFromList(resUrl, ".svg"))
-                        {
-                            if(header.containsKey("Content-Encoding"))
-                            {
-                                rs.put("Content-Encoding",header.get("Content-Encoding").get(0).replaceAll(",", ""));
-                            }
-                        }
-                        try (ImageInputStream in = ImageIO.createImageInputStream(conn.getInputStream())) {
-                            final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-                            if (readers.hasNext()) {
-                                ImageReader reader = readers.next();
-                                try {
-                                    reader.setInput(in);
-                                    rs.put("Height", reader.getHeight(0));
-                                    rs.put("Width", reader.getWidth(0));
-                                } finally {
-                                    reader.dispose();
-                                }
-                            }
-                        }
-                        conn.disconnect();
-                    } else {
-                        if (header.containsKey("Content-Encoding") && CollectorUtils.stringContainsItemFromList(header.get("Content-Encoding").get(0), "gzip")) {
-                            String charset = "UTF-8"; // You should determine it based on response header.
-                            try (
-                                    InputStream gzippedResponse = conn.getInputStream();
-                                    InputStream ungzippedResponse = new GZIPInputStream(gzippedResponse);
-                                    Reader reader = new InputStreamReader(ungzippedResponse, charset);
-                                    Writer writer = new StringWriter()
-                            ) {
-                                char[] buffer = new char[10240];
-                                for (int length = 0; (length = reader.read(buffer)) > 0; ) {
-                                    writer.write(buffer, 0, length);
-                                }
-                                if(header.containsKey("Content-Encoding"))
-                                {
-                                    rs.put("Content-Encoding",header.get("Content-Encoding").get(0).replaceAll(",", ""));
-                                }
-                                //striplen = writer.toString().replace("\\n| {2}|\\t|\\r","").length();
-                                rs.put("OrgSize", writer.toString().length());
-                                if (CollectorUtils.stringContainsItemFromList(resUrl, ".js,.css")) {
-                                    rs.put("MinfSize", CollectorUtils.compress(writer.toString(), resUrl));
-                                }
-                            }
-                        } else {
-                            try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                                String line;
-                                while ((line = rd.readLine()) != null) {
-                                    sb.append(line);
-                                }
-                                if(header.containsKey("Content-Encoding"))
-                                {
-                                    rs.put("Content-Encoding",header.get("Content-Encoding").get(0).replaceAll(",", ""));
-                                }
-                                rs.put("OrgSize", sb.toString().length());
-                                if (CollectorUtils.stringContainsItemFromList(resUrl, ".js,.css")) {
-                                    rs.put("MinfSize", CollectorUtils.compress(sb.toString(), resUrl));
-                                }
-                            }
-
-                        }
-
-                        conn.disconnect();
-                    }
-
-                }
-
-            } catch (Exception e) {
-                LOGGER.error("Exception in callResource for : {} at {}",resUrl,e);
             }
+
+            rs.put("IsStaticResrc", staticResrcStatus);
+            rs.put("IsImage", isImage);
+            rs.put("ResourceType", resourceType);
+            rs.put("HostName",getHostName(truncUrl));
+
+            if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getStaticExt() + "," + CollectorConstants.getImages())) {
+                try {
+                    LOGGER.debug("CXOP - Resource URL : {}",resUrl);
+                    URL url = new URL(resUrl);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setConnectTimeout(2000);
+                    conn.setRequestProperty("User-Agent", CollectorConstants.getUserAgent());
+                    if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getStaticExt() + ",.svg")) {
+                        conn.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
+                    }
+                    LOGGER.debug("CXOP - Status code for : {} is {}" ,resUrl,conn.getResponseCode());
+                    rs.put("Status", conn.getResponseCode());
+                    if (conn.getResponseCode() == 200) {
+                        Map<String, List<String>> header = conn.getHeaderFields();
+                        if(header.containsKey("Last-Modified"))
+                        {
+                            rs.put("Last-Modified",header.get("Last-Modified").get(0).replaceAll(",",""));
+                        }
+                        if(header.containsKey("Content-Length"))
+                        {
+                            rs.put("Content-Length",header.get("Content-Length").get(0));
+                        }
+                        if(header.containsKey("Connection"))
+                        {
+                            rs.put("Connection",header.get("Connection").get(0));
+                        }
+                        if(header.containsKey("Cache-Control"))
+                        {
+                            rs.put("Cache-Control",header.get("Cache-Control").get(0).replaceAll(",", "#").replaceAll("=", "#"));
+                        }
+                        if(header.containsKey("ETag"))
+                        {
+                            rs.put("ETag",header.get("ETag").get(0).replaceAll("\"", ""));
+                        }
+                        if(header.containsKey("Expires"))
+                        {
+                            rs.put("Expires",header.get("Expires").get(0).replaceAll(",", ""));
+                        }
+
+
+                        // Buffer the result into a string
+                        if (CollectorUtils.stringContainsItemFromList(resUrl, CollectorConstants.getImages())) {
+                            if (CollectorUtils.stringContainsItemFromList(resUrl, ".svg"))
+                            {
+                                if(header.containsKey("Content-Encoding"))
+                                {
+                                    rs.put("Content-Encoding",header.get("Content-Encoding").get(0).replaceAll(",", ""));
+                                }
+                            }
+                            try (ImageInputStream in = ImageIO.createImageInputStream(conn.getInputStream())) {
+                                final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+                                if (readers.hasNext()) {
+                                    ImageReader reader = readers.next();
+                                    try {
+                                        reader.setInput(in);
+                                        rs.put("Height", reader.getHeight(0));
+                                        rs.put("Width", reader.getWidth(0));
+                                    } finally {
+                                        reader.dispose();
+                                    }
+                                }
+                            }
+                            conn.disconnect();
+                        } else {
+                            if (header.containsKey("Content-Encoding") && CollectorUtils.stringContainsItemFromList(header.get("Content-Encoding").get(0), "gzip")) {
+                                String charset = "UTF-8"; // You should determine it based on response header.
+                                try (
+                                        InputStream gzippedResponse = conn.getInputStream();
+                                        InputStream ungzippedResponse = new GZIPInputStream(gzippedResponse);
+                                        Reader reader = new InputStreamReader(ungzippedResponse, charset);
+                                        Writer writer = new StringWriter()
+                                ) {
+                                    char[] buffer = new char[10240];
+                                    for (int length = 0; (length = reader.read(buffer)) > 0; ) {
+                                        writer.write(buffer, 0, length);
+                                    }
+                                    if(header.containsKey("Content-Encoding"))
+                                    {
+                                        rs.put("Content-Encoding",header.get("Content-Encoding").get(0).replaceAll(",", ""));
+                                    }
+                                    //striplen = writer.toString().replace("\\n| {2}|\\t|\\r","").length();
+                                    rs.put("OrgSize", writer.toString().length());
+                                    if (CollectorUtils.stringContainsItemFromList(resUrl, ".js,.css")) {
+                                        rs.put("MinfSize", compress(writer.toString(), resUrl));
+                                    }
+                                }
+                            } else {
+                                try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                                    String line;
+                                    while ((line = rd.readLine()) != null) {
+                                        sb.append(line);
+                                    }
+                                    if(header.containsKey("Content-Encoding"))
+                                    {
+                                        rs.put("Content-Encoding",header.get("Content-Encoding").get(0).replaceAll(",", ""));
+                                    }
+                                    rs.put("OrgSize", sb.toString().length());
+                                    if (CollectorUtils.stringContainsItemFromList(resUrl, ".js,.css")) {
+                                        rs.put("MinfSize", compress(sb.toString(), resUrl));
+                                    }
+                                }
+
+                            }
+
+                            conn.disconnect();
+                        }
+
+                    }
+
+                } catch (Exception e) {
+                    LOGGER.error("CXOP - Exception in callResource for : {} at {}",resUrl,e);
+                }
+            }
+            LOGGER.debug("CXOP - Data for {} is {}",resUrl,rs.toString());
+
+
         }
-        LOGGER.debug("Data for " + resUrl + " : " + rs.toString());
         return rs;
+
     }
 
     /**
@@ -286,5 +305,28 @@ public class CrawlUtils
             return callResource(resDetails);
         }
 
+    }
+
+    public static long compress(String input, final String filename) {
+        long compressed = 0;
+        try {
+            Reader inputReader = new StringReader(input);
+            StringWriter outputWriter = new StringWriter();
+
+            if (CollectorUtils.stringContainsItemFromList(filename, ".js")) {
+                JavaScriptCompressor compressor = new JavaScriptCompressor(inputReader, null);
+                compressor.compress(outputWriter, -1, true, false, false, false);
+                compressed = outputWriter.toString().length();
+            } else {
+                CssCompressor compressor = new CssCompressor(inputReader);
+                compressor.compress(outputWriter, -1);
+                compressed = outputWriter.toString().length();
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Error Compressing CSS or Javascript {}",e);
+            LOGGER.debug("Continuing with simple minifier");
+            compressed = input.replace("\\n| {2}|\\t|\\r", "").length();
+        }
+        return compressed;
     }
 }

@@ -183,7 +183,7 @@ PreviewTab.prototype = Lib.extend(TabView.Tab.prototype,
     {
         var href = document.location.href;
         var index = href.indexOf("?");
-        document.location = href.substr(0, index);
+       // document.location = href.substr(0, index);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -26,7 +26,9 @@ class GlobalConstants
     public static final String BASELINEDELETE = 'baselineindex/_delete_by_query'
     public static final String CONFIGSEARCH = 'masterconfig/config/_search'
     public static final String RULESSEARCH = 'masterconfig/rules/_search'
+    public static final String ES6RULESSEARCH = 'rulesindex/rules/_search'
     public static final String RULESDOC = 'masterconfig/rules/rulesdoc'
+    public static final String ES6RULESDOC = 'rulesindex/rules/rulesdoc'
     public static final String CONFIGTABLE = 'masterconfig/config'
     public static final String CONFIGREFRESH = 'masterconfig/_refresh'
     public static final String CONFIGTABLE_WS = 'masterconfig/config/'
@@ -80,6 +82,16 @@ class GlobalConstants
         JWTPRIVATEKEY = key
     }
 
+    private static String SECRETKEY
+    static String getKey()
+    {
+        return SECRETKEY
+    }
+    static String setKey(String key)
+    {
+        SECRETKEY = key
+    }
+
     //Getter & Setter for ES Node Count
     private static int NODE_COUNT
 
@@ -90,7 +102,6 @@ class GlobalConstants
     static void setNodeCount(int nodes) {
         NODE_COUNT = nodes
     }
-    public static final String SECRETKEY = "E1BB465D57CAE7ACDBBE8091F9CE83DF"
 
     private static String ES_URL
     static String getESUrl() {
@@ -108,6 +119,15 @@ class GlobalConstants
 
     static void setRunIDCount(int count) {
         RUNIDS_DISPLAY = count
+    }
+
+    private static String ES_VERSION
+    static String getESVersion() {
+        return ES_VERSION
+    }
+
+    static void setESVersion(String version) {
+        ES_VERSION = version
     }
 
 }

@@ -220,7 +220,7 @@ ResponseTab.prototype = domplate(TabView.Tab.prototype,
                 mimeType == "application/x-javascript" || mimeType == "text/ecmascript" ||
                 mimeType == "application/ecmascript")
             {
-                responseTextBox.firstChild.innerHTML = text;
+                //responseTextBox.firstChild.innerHTML = text;
                 dp.SyntaxHighlighter.HighlightAll(responseTextBox.firstChild);
             }
             else

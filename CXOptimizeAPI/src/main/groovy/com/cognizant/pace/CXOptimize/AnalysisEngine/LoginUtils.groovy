@@ -55,6 +55,27 @@ class LoginUtils
 
     }
 
+    static def getEncryptedPassword(String esUrl,String username)
+    {
+        StringBuilder msg = new StringBuilder()
+        def loginStatus = ElasticSearchUtils.extractLoginStatus(esUrl,username)
+
+        if(loginStatus.hits.hits.size() > 0)
+        {
+             msg.append('{"status" : true,')
+            msg.append('"password" : "').append(loginStatus.hits.hits[0]."_source"?.Password).append('"}')
+
+        }
+        else
+        {
+            msg.append('{"status" : false,')
+            msg.append('"reason" : "No Such Username available"}')
+
+        }
+        return msg
+
+    }
+
 
     static def CreateUser(String esUrl,def json)
     {

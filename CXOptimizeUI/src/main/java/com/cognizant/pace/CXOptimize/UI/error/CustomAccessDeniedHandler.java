@@ -38,7 +38,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse,
-                       AccessDeniedException e) throws IOException, ServletException {
+                       AccessDeniedException e) throws IOException {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -48,7 +48,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                     + httpServletRequest.getRequestURI());
         }
 
-        httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/403");
+        httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "cxoptimize/403");
 
     }
 }

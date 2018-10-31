@@ -433,7 +433,7 @@ RequestList.prototype = domplate(
         var url = "data:" + (mimeType ? mimeType: "") + ";" +
             (encoding ? encoding : "") + "," + response;
 
-        window.open(url);
+       // window.open(url);
     },
 
     breakLayout: function(event, row)
