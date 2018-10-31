@@ -235,6 +235,7 @@ class ElasticSearchUtils
         catch (java.net.ConnectException ex)
         {
             log.debug 'PUT Connect Exception : '
+            println ex.getStackTrace()
             ex.printStackTrace()
             response_body = null
         }
@@ -985,7 +986,7 @@ class ElasticSearchUtils
         return response_body
     }
 
-    static def execTimeOfRunID(def configReader,def runID,def timeline=null,def type=null)
+    static def execTimeOfRunID(def configReader,def runID,def timeline=null,def type=null,def timezone = null)
     {
         def timeArr = []
         StringBuilder release = new StringBuilder()
@@ -1053,7 +1054,8 @@ class ElasticSearchUtils
                     release.append('')
                 }
 
-                execution.append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MinTime.value)).append(' - ').append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MaxTime.value))
+
+                execution.append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MinTime.value,timezone)).append(' - ').append(CommonUtils.getStringForTimeStamp(response_body.aggregations.MaxTime.value,timezone))
 
             }
 
@@ -1228,7 +1230,15 @@ class ElasticSearchUtils
         StringBuilder query = new StringBuilder()
         query.append('{"query":{"match_all":{}}}')
         log.debug 'getRules query : ' +  query
-        response_body = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.RULESSEARCH,query)
+        if(GlobalConstants.getESVersion() == '5')
+        {
+            response_body = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.RULESSEARCH,query)
+        }
+        else
+        {
+            response_body = ElasticSearchUtils.elasticSearchPOST(esUrl,GlobalConstants.ES6RULESSEARCH,query)
+        }
+
         log.debug 'getRules Response : ' + response_body
 
         if(response_body != null && ruleCategory == null)

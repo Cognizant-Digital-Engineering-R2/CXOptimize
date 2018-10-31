@@ -741,7 +741,8 @@ public class ApiController
             @RequestParam(value = "CurrentStart",required = false) String CurrentStart,
             @RequestParam(value = "CurrentEnd",required = false) String CurrentEnd,
             @RequestParam(value = "Override", required = false) String override,
-            @RequestParam(value = "Scale", required = false) String scale)
+            @RequestParam(value = "Scale", required = false) String scale,
+            @RequestParam(value = "Timezone", required = false) String tmzone)
             throws Exception
     {
 
@@ -840,7 +841,16 @@ public class ApiController
 
                     validateResult.put("esUrl", baseUrl);
                     validateResult.put("override", ((override == null || override.toLowerCase().trim().equals("false") || !override.toLowerCase().trim().equals("true")) ? "false" : override));
+                    if(tmzone == null || tmzone.equals(""))
+                    {
+                        validateResult.put("timezone","UTC");
+                    }
+                    else
+                    {
+                        validateResult.put("timezone",tmzone);
+                    }
 
+                    validateResult.put("esUrl", baseUrl);
                     List<Object> summaryReport = PaceAnalysisEngine.generateSummaryReport(validateResult);
                     if (summaryReport.get(3).toString().equals("false")) {
                         flag = false;
@@ -1091,7 +1101,8 @@ public class ApiController
             @RequestParam(value = "BaselineEnd",required = false) String BaselineEnd,
             @RequestParam(value = "CurrentStart",required = false) String CurrentStart,
             @RequestParam(value = "CurrentEnd",required = false) String CurrentEnd,
-            @RequestParam(value = "Scale",required = false) String scale
+            @RequestParam(value = "Scale",required = false) String scale,
+            @RequestParam(value = "Timezone", required = false) String tmzone
     )
             throws Exception
     {
@@ -1207,6 +1218,14 @@ public class ApiController
                 if(flag)
                 {
                     validateResult.put("esUrl", baseUrl);
+                    if(tmzone == null || tmzone.equals(""))
+                    {
+                        validateResult.put("timezone","UTC");
+                    }
+                    else
+                    {
+                        validateResult.put("timezone",tmzone);
+                    }
                     List<Object> summaryReport = PaceAnalysisEngine.getAllSamplesForTransaction(validateResult);
                     if (summaryReport.get(0).toString().equals("false"))
                     {

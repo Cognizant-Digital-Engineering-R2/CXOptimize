@@ -508,6 +508,9 @@
                                         <div class="col-md-3"><p style="text-align: left;vertical-align: middle;"><b>SLA Compliance Weight :  </b></p></div>
                                         <div class="col-md-2 w-75"> <input class="form-control" type="text" id="slaComplianceWeight" name="slaComplianceWeight"/></div>
                                         <div class="col-md-1"><div class="help-tip"><p>Enter weight used to calculate run status in executive summary for SLA check</p></div></div>
+                                        <div class="col-md-3"> <p style="text-align: left;vertical-align: middle;"><b>SLACheck :  </b></p></div>
+                                        <div class="col-md-2 w-75"> <input class="form-control" type="text" id="slacheck" name="slacheck"/></div>
+                                        <div class="col-md-1"> <div class="help-tip"><p>Controls whether onload or totalload compared against SLA</p></div></div>
                                     </div>
 
                                     <div class="row   p-2 text-center" >
@@ -839,6 +842,15 @@
                         $('#indvScoreComplianceWeight').val(json.indvScoreComplianceWeight);
                         $('#compareComplianceWeight').val(json.compareComplianceWeight);
                         $('#totalScoreComplianceWeight').val(json.totalScoreComplianceWeight);
+                        if(json.SLACheck === undefined)
+                        {
+                             $('#slacheck').val('onload');
+                        }
+                        else
+                        {
+                             $('#slacheck').val(json.SLACheck);
+                        }
+
 
 
                         for (i = 0; i < json.Rules.genericRules.length; i++) {
@@ -958,7 +970,7 @@
 
                 if (btnId == 'config_update')
                 {
-                    var updateJSON = '{' + '"isResourceCrawlingEnabled": ' + $('#is_resource_crawl').prop('checked') + ',' + '"ProjectName": "' + projectname + '",' + '"imageResourceExtension": "' + $('#image_resource_extension').val() + '",' + '"BaselineRunID": ' + $('#baseline_runid').val() + ',' + '"domCountThreshold": ' + $('#dom_count_thresold').val() + ',' + '"devThreshold": ' + $('#compare_deviation_threshold').val() + ',' + '"httpCallsThreshold": ' + $('#http_calls_threshold').val() + ',' + '"samplesCount": ' + $('#max_samples_threshold').val() + ',' + '"samplePercentile": "' + $('input[name="percentile"]:checked').val() + '",' + '"ClientName": "' + clientname + '",' + '"Scenario": "' + scenarioname + '",' + '"runIntervalInMinutes": ' + $('#run_interval_in_minutes').val() + ',' + '"defaultTransactionThreshold": ' + $('#default_transaction_threshold').val() + ',' + '"staticResourceExtension": "' + $('#static_resource_extension').val() + '",' + '"slaComplianceThreshold": ' + $('#slaComplianceThreshold').val() + ',' + '"indvScoreComplianceThreshold": ' + $('#indvScoreComplianceThreshold').val() + ',' + '"individualScoreThreshold": ' + $('#individualScoreThreshold').val() + ',' + '"totalScoreThreshold": ' + $('#totalScoreThreshold').val() + ',' + '"compareComplianceThreshold": ' + $('#compareComplianceThreshold').val() + ',' + '"totalScoreComplianceWeight": ' + $('#totalScoreComplianceWeight').val() + ',' + '"compareComplianceWeight": ' + $('#compareComplianceWeight').val() + ',' + '"indvScoreComplianceWeight": ' + $('#indvScoreComplianceWeight').val() + ',' + '"slaComplianceWeight": ' + $('#slaComplianceWeight').val() + ',' + '"configUpdated":true}';
+                    var updateJSON = '{' + '"isResourceCrawlingEnabled": ' + $('#is_resource_crawl').prop('checked') + ',' + '"ProjectName": "' + projectname + '",' + '"imageResourceExtension": "' + $('#image_resource_extension').val() + '",' + '"BaselineRunID": ' + $('#baseline_runid').val() + ',' + '"domCountThreshold": ' + $('#dom_count_thresold').val() + ',' + '"devThreshold": ' + $('#compare_deviation_threshold').val() + ',' + '"httpCallsThreshold": ' + $('#http_calls_threshold').val() + ',' + '"samplesCount": ' + $('#max_samples_threshold').val() + ',' + '"samplePercentile": "' + $('input[name="percentile"]:checked').val() + '",' + '"ClientName": "' + clientname + '",' + '"Scenario": "' + scenarioname + '",' + '"runIntervalInMinutes": ' + $('#run_interval_in_minutes').val() + ',' + '"defaultTransactionThreshold": ' + $('#default_transaction_threshold').val() + ',' + '"staticResourceExtension": "' + $('#static_resource_extension').val() + '",' + '"slaComplianceThreshold": ' + $('#slaComplianceThreshold').val() + ',' + '"indvScoreComplianceThreshold": ' + $('#indvScoreComplianceThreshold').val() + ',' + '"individualScoreThreshold": ' + $('#individualScoreThreshold').val() + ',' + '"totalScoreThreshold": ' + $('#totalScoreThreshold').val() + ',' + '"compareComplianceThreshold": ' + $('#compareComplianceThreshold').val() + ',' + '"totalScoreComplianceWeight": ' + $('#totalScoreComplianceWeight').val() + ',' + '"compareComplianceWeight": ' + $('#compareComplianceWeight').val() + ',' + '"indvScoreComplianceWeight": ' + $('#indvScoreComplianceWeight').val() + ',' + '"slaComplianceWeight": ' + $('#slaComplianceWeight').val() + ',' + '"SLACheck": "' + $('#slacheck').val() + '",' + '"configUpdated":true}';
 
                     var postUrl = baseUrl + '/updateConfig';
                     //location.reload();

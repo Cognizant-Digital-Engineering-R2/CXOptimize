@@ -361,6 +361,15 @@
 
         if ($('#scale').val() === 'true') {filter += '&Scale=seconds';}
 
+        var curDate = new Date();
+        curDate = curDate.toString();
+        var timeZone = curDate.split(" ");
+
+        filter += '&Timezone=' + timeZone[5];
+
+
+
+
         var jServices = jQuery.noConflict();
         jServices.ajaxSetup({
           contentType: "application/jsonp; charset=UTF-8",
@@ -498,19 +507,22 @@
 
 		  function customValue(val)
           {
-            if (val < 40)
-            {
-                return 'Poor';
-            } else if (val >= 40 && val < 60)
-            {
-                return 'Bad';
-            } else if (val >= 60 && val < 75)
-            {
-                return 'Good';
-            } else if (val >= 75 )
-            {
-                return 'Very Good';
+            var text = '';
+            switch (true) {
+                case (val < 40):
+                    text = 'Poor';
+                    break;
+                case (val < 60):
+                    text = 'Bad';
+                    break;
+                case (val < 75):
+                    text = 'Good';
+                    break;
+                default:
+                    text = 'Very Good';
+                    break;
             }
+            return text;
           }
           //rulesSummary
           var content = '';
@@ -538,10 +550,23 @@
           }
           //sla
           content = '';
-          for (var i = 0; i < json.Transactions.length; i++) {
-            if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla)) {
-              content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].restime + '</td></tr>';
+          for (var i = 0; i < json.Transactions.length; i++)
+          {
+            if(json.header.SLACheck === undefined || json.header.SLACheck == 'onload')
+            {
+                if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla))
+                {
+                  content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].restime + '</td></tr>';
+                }
             }
+            else
+            {
+            if (parseInt(json.Transactions[i].visuallyComplete) > parseInt(json.Transactions[i].sla))
+                {
+                  content += '<tr><td align="left">' + json.Transactions[i].name + '</td><td>' + json.Transactions[i].sla + '</td><td>' + json.Transactions[i].visuallyComplete + '</td></tr>';
+                }
+            }
+
           }
           if (content == '') {
             content += '<tr><td colspan="3">All transactions within SLA</td></tr>';
@@ -776,6 +801,12 @@
 	}
 
 	if ($('#scale').val() === 'true') {filter += '&Scale=seconds';}
+
+	 var curDate = new Date();
+        curDate = curDate.toString();
+        var timeZone = curDate.split(" ");
+
+        filter += '&Timezone=' + timeZone[5];
 
 	var jServices = jQuery.noConflict();
 	jServices.ajaxSetup({
@@ -1015,6 +1046,7 @@
                     doc.text("Top 5 Transaction with higher time", 14, 40);
                     doc.text("Top 5 Transaction with Worst Score", 175, 40);
                     doc.setTextColor(0, 0, 0);
+
                 	var slaColumns = ["Transaction","SLA","Time"];
                 	var scoreColumns = ["Transaction","Score"];
                 	var compColumns = ["Transaction","Deviation"];
@@ -1030,12 +1062,28 @@
                 var compData = new Array();
                 for(i=0;i< json.Transactions.length;i++)
                 {
-                    if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla)) {
-                        slaData[rowCounter] = new Array(3);
-                        slaData[rowCounter][0] = json.Transactions[i].name;
-                        slaData[rowCounter][1] = json.Transactions[i].sla;
-                        slaData[rowCounter][2] = json.Transactions[i].restime;
+                    if(json.header.SLACheck === undefined || json.header.SLACheck == 'onload')
+                    {
+                        if (parseInt(json.Transactions[i].restime) > parseInt(json.Transactions[i].sla))
+                        {
+                            slaData[rowCounter] = new Array(3);
+                            slaData[rowCounter][0] = json.Transactions[i].name;
+                            slaData[rowCounter][1] = json.Transactions[i].sla;
+                            slaData[rowCounter][2] = json.Transactions[i].restime;
+                        }
                     }
+                    else
+                    {
+                        if (parseInt(json.Transactions[i].visuallyComplete) > parseInt(json.Transactions[i].sla))
+                        {
+                            slaData[rowCounter] = new Array(3);
+                            slaData[rowCounter][0] = json.Transactions[i].name;
+                            slaData[rowCounter][1] = json.Transactions[i].sla;
+                            slaData[rowCounter][2] = json.Transactions[i].visuallyComplete;
+                        }
+                    }
+
+
 
                     cliprocData[rowCounter] = new Array(3);
                     cliprocData[rowCounter][0] = json.Transactions[i].name;
@@ -1133,6 +1181,7 @@
                 var recomImg = 'data:image/png;base64,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';
                 var stopWatchImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4QwNDSUVq6DwBAAABIxJREFUSMedlc9vG0UUx79vZtfe+HfTuK6TqAW16g+hBA6lJygSFRJQpIpLhYQ4cOLfgAOcuHPgABIIiV6Qqh6QuFYg9QcV/ZmaNm0TnNjrOvGvXe96Z+ZxiJOUNusSj+aw2nkzn/fed94beucnzwCEZwcbbRif8OWPzFUD4SHxuTyzIGYkMXYzhAGYYZ6bTNII+66YiUTSEpQXg9dolbFtoHfa9fwUNAIOc49Kj2iSwASc5MdZDnkz2hwCCfPiCEasEdCBc5leAsCgfWKt5KwwsQHNc/VLc+FD/ovA4wMYSELVkPOQMMDVvDNduOOkXAvmPb59nGtnzK0SugY0JkCAz5k/PzOXktAtS0rmd9faObs1QeEMWgpyCr3jXOPxAAyagvc23yvAt2AiQUtO4vx0Ois7AG8caUO/wqujlRgBwB72cwgMBAMJwwAmWBUQhLCrKBCYQYfQSCPkMQAANIQBCSctc8W8Nnsj3RfizX69yL2byYIBMVDi7hR7I7I0CtCkdAMZmXDAuitES1KPBCz/mP347j5/JWkTKIOwjPYIgBUnwCS8j82VAvrKj0ip5Xy2f3ju9ET25qRbrTfblGxSahZtG3oa7RFexgFwiu9/wLcYMIrImKOzR+dfft0m6hUPfe/c+HXBaoUe0CKgxF0R3z92TpGEOcr1DRl9Qf3STPrwHLReWVnJWIlz5eMHp1RVOhs9bBLeiIu0M4CABDQAIWTXSfVOvEW5yUEYLi4uMvO+RPpUudBytGEBIIvAht4dQEPUkYW0rD37y8IuC3sIpqGY8/m9qbRvwAxKIbKheVcAA7pOs4GYYDXgQZ+UesaglEynM5YGA0iwsrBjy48HCJh7tP+hzppOA9IiZ2IoPg8dzQgxZ0hsCibG0CCAXeOMMVrvP0CZPIB2u12pVKIoAmC1mkdqq2LTeGTPj0nRHFdP8FIgZKM8CyEBWJaVy+WGBv88YL8HIgAM7LrQAMxzNW9DiVSx3dr4UywWz549a9s2tDLuCsAbriuSercAAmcRyHSBtaInNagIlk1Etm0D4EHIXmcrMSEsBYmYlye2VbQopQNPh30liFRkW/b2soqgBluu+EhEkHEhiDjAbZR7QUhGL+mgEvy32zCDt/1tw4nim+aIa1paoJIEIxpcchcDs12rXZjgKYddZPVuAQR4SH5Lb/wgThYGVmLp74vu/YHRANZV+HO94qpQEAlCH/ZNlMe5RQR+QFPLtOeIcd9vLH9Xufa11yw52Ydt9/CN2+W1LuVSS53++YXmtYOenI7TOB4AQIBDyCt04IR6/Gm1/ntjra7M6bXuydq6L+UvS63zd2uL634uU03NzI8D2MjVNTpQR7akumeCgXjSDdv+H63wx+XW9XZfGRZsTMcF77JVPB1EFYXf6BiIjCVv2YmvVoMvHvWudkLDEEQAdMeFVnEnvCACAAy6IF5Ne65buXxxcb3RV4JgCaGNAQAi7TU5CiiZ2VGHFwMI3BGpb9wp706DeVhRJLZCJ+O3TdCVTvbp4vi/KRqewcxOHtLafG9AJLa+eNA3fitu779w6mKXksfFswAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNy0xMi0xM1QxMzozNzoyMS0wNTowMP4zzK8AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTctMTItMTNUMTM6Mzc6MjEtMDU6MDCPbnQTAAAAAElFTkSuQmCC';
 				var serverTime = 0;
+
                 for (k = 0; k < json.Transactions.length; k++)
                 {
                         doc.setFontSize(25);
@@ -1142,7 +1191,7 @@
                         doc.setDrawColor(0, 0, 153);
                         doc.line(14, 26, 285, 26);
                         doc.setFontSize(15);
-                        doc.text(doc.splitTextToSize('URL - ' + json.Transactions[k].url, 260), 14, 33);
+                        doc.text(doc.splitTextToSize('URL - ' + json.Transactions[k].url.substring(0,90), 260), 14, 33);
                         doc.text('Device : ', 14, 43);
                         if (json.Transactions[k].device.match('Tablet')) {
                             doc.addImage(tabletImg, 'JPEG', 40, 38, 6, 6);
@@ -1175,18 +1224,38 @@
 
                         doc.text('SLA : ' + json.Transactions[k].sla + ' (ms)', 180, 43);
                         //doc.text('Version : ' + json.Transactions[k].device, 200, 30);
-                        if (json.Transactions[k].restime > json.Transactions[k].sla) {
-                            doc.setDrawColor(204, 0, 0);
-                            doc.setFillColor(204, 0, 0);
-                            doc.rect(14, 50, 36, 7, 'FD');
-                            doc.setTextColor(255, 255, 255);
-                            doc.text(14, 55, 'Exceeding SLA');
-                        } else {
-                            doc.setDrawColor(0, 153, 0);
-                            doc.setFillColor(0, 153, 0);
-                            doc.rect(14, 50, 36, 7, 'FD');
-                            doc.setTextColor(255, 255, 255);
-                            doc.text(14, 55, 'Meeting SLA');
+
+                        if(json.header.SLACheck === undefined || json.header.SLACheck == 'onload')
+                        {
+                            if (parseInt(json.Transactions[k].restime) > parseInt(json.Transactions[k].sla)) {
+                                doc.setDrawColor(204, 0, 0);
+                                doc.setFillColor(204, 0, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Exceeding SLA');
+                            } else {
+                                doc.setDrawColor(0, 153, 0);
+                                doc.setFillColor(0, 153, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Meeting SLA');
+                            }
+                        }
+                        else
+                        {
+                            if (parseInt(json.Transactions[k].visuallyComplete) > parseInt(json.Transactions[k].sla)) {
+                                doc.setDrawColor(204, 0, 0);
+                                doc.setFillColor(204, 0, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Exceeding SLA');
+                            } else {
+                                doc.setDrawColor(0, 153, 0);
+                                doc.setFillColor(0, 153, 0);
+                                doc.rect(14, 50, 36, 7, 'FD');
+                                doc.setTextColor(255, 255, 255);
+                                doc.text(14, 55, 'Meeting SLA');
+                            }
                         }
 
                         if (json.Transactions[k].deviation > 5) {

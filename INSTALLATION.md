@@ -33,7 +33,7 @@ In order to install the server side components, download the cxoptimize_window.r
 5.	Navigate to \caddy and execute ./caddy Caddyfile
 
 ### Docker Compose
-1. Download ![](/docker-compse.yml) file to your machine
+1. Download [docker-compse.yml](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/dev/docker-compose.yml) file to your machine
 2. Make sure docker and docker-compose are installed
 3. Execute docker-compose -d up.This should start everything in the required order and application will be accessible in http://localhost:8080/cxoptimize/login
 	

@@ -192,6 +192,23 @@ class CommonUtils
         return dateFormat.format(timestamp)
     }
 
+    static def getStringForDateTime(def datetime,def timezone)
+    {
+        def utcFormat = new SimpleDateFormat("yyyyMMdd'T'hhmmss.SSS")
+        utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
+        Date utcDate = utcFormat.parse(datetime)
+        def dateFormat = new SimpleDateFormat("yyyyMMdd'T'hhmmss.SSS", Locale.US)
+        if(timezone == 'UTC')
+        {
+            dateFormat.setTimeZone(TimeZone.getTimeZone('UTC'))
+        }
+        else
+        {
+            dateFormat.setTimeZone(TimeZone.getTimeZone(timezone))
+        }
+        return Date.parse("yyyyMMdd'T'hhmmss.SSS",dateFormat.format(utcDate))
+    }
+
     static def getESTimeFormatForTimeStamp(def timestamp)
     {
         def dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss.SSSZ", Locale.US)

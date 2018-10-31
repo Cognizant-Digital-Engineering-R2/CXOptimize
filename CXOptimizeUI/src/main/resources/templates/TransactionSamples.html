@@ -281,6 +281,13 @@ var recommendationTableContent = '';
             if (runID == null || runID == '') {} else {
                 filter += '&RunID=' + runID;
             }
+
+            var curDate = new Date();
+        curDate = curDate.toString();
+        var timeZone = curDate.split(" ");
+
+        filter += '&Timezone=' + timeZone[5];
+
             var jServices = jQuery.noConflict();
             jServices.ajaxSetup({
                 contentType: "application/jsonp; charset=UTF-8",

@@ -502,7 +502,7 @@ class PaceReportEngine
 
     }
 
-    static def getJsonStringForAllSamples(def configReader,def txnName,def runID,def arrList)
+    static def getJsonStringForAllSamples(def configReader,def txnName,def runID,def arrList,def timezone)
     {
         LOGGER.debug 'getJsonString ARR LIST : ' +  arrList
         List<String> items = null
@@ -539,7 +539,7 @@ class PaceReportEngine
             jsonStr.append(runID.toString())
             jsonStr.append('",')
             jsonStr.append('"Duration":"')
-            jsonStr.append(ElasticSearchUtils.execTimeOfRunID(configReader,runID.toString()))
+            jsonStr.append(ElasticSearchUtils.execTimeOfRunID(configReader,runID.toString(),null,null,timezone))
             jsonStr.append('",')
         }
 
@@ -571,7 +571,7 @@ class PaceReportEngine
             }
             //items =  Arrays.asList(arrList[i].toString().split("\\s*##\\s*"));
             jsonStr.append('{"Time":"')
-            jsonStr.append(Date.parse("yyyyMMdd'T'hhmmss.SSS", arrList[i].StartTime.toString()).format("HH:mm:ss").toString()).append('",')
+            jsonStr.append(CommonUtils.getStringForDateTime(arrList[i].StartTime.toString(),timezone).format("HH:mm:ss").toString()).append('",')
             jsonStr.append('"Platform":"').append(arrList[i].Platform).append('",')
             jsonStr.append('"UserAgent":"').append(arrList[i].UserAgent).append('",')
             jsonStr.append('"BrowserName":"').append(arrList[i]?.BrowserName).append('",')
@@ -665,7 +665,7 @@ class PaceReportEngine
 
     }
 
-    static def getJsonStringForAllSamplesInSeconds(def configReader,def txnName,def runID,def arrList)
+    static def getJsonStringForAllSamplesInSeconds(def configReader,def txnName,def runID,def arrList,def timezone)
     {
         LOGGER.debug 'getJsonString ARR LIST : ' +  arrList
         List<String> items = null
@@ -702,7 +702,7 @@ class PaceReportEngine
             jsonStr.append(runID.toString())
             jsonStr.append('",')
             jsonStr.append('"Duration":"')
-            jsonStr.append(ElasticSearchUtils.execTimeOfRunID(configReader,runID.toString()))
+            jsonStr.append(ElasticSearchUtils.execTimeOfRunID(configReader,runID.toString(),null,null,timezone))
             jsonStr.append('",')
         }
 
@@ -734,7 +734,7 @@ class PaceReportEngine
             }
             //items =  Arrays.asList(arrList[i].toString().split("\\s*##\\s*"));
             jsonStr.append('{"Time":"')
-            jsonStr.append(Date.parse("yyyyMMdd'T'hhmmss.SSS", arrList[i].StartTime.toString()).format("HH:mm:ss").toString()).append('",')
+            jsonStr.append(Date.parse("yyyyMMdd'T'hhmmss.SSS", arrList[i].StartTime.toString(),TimeZone.getTimeZone(timezone)).format("HH:mm:ss").toString()).append('",')
             jsonStr.append('"Platform":"').append(arrList[i].Platform).append('",')
             jsonStr.append('"UserAgent":"').append(arrList[i].UserAgent).append('",')
             jsonStr.append('"BrowserName":"').append(arrList[i]?.BrowserName).append('",')
@@ -891,7 +891,7 @@ class PaceReportEngine
     }
 
 
-    static def summaryJSON(def configReader,def jsonString)
+    static def summaryJSON(def configReader,def jsonString,def timezone)
     {
         LOGGER.debug 'summaryJSON JSON String : ' +  jsonString
         def jsonObj = new JSONObject(jsonString)
@@ -929,6 +929,7 @@ class PaceReportEngine
         headerTable.append('"ClientName": "').append(analysisMap.ClientNameOrg).append('",')
         headerTable.append('"ProjectName" : "').append(analysisMap.ProjectNameOrg).append('",')
         headerTable.append('"ScenarioName" : "').append(analysisMap.ScenarioOrg).append('"')
+        headerTable.append(',"SLACheck" : "').append(configReader?.SLACheck == null ? 'onload' : 'totalload').append('"')
         if(configReader?.BaselineStart == null)
         {
             headerTable.append(',"CurrentRunID" : "').append(analysisMap.CurrentRunID).append('",')
@@ -939,22 +940,22 @@ class PaceReportEngine
         {
             if(configReader?.BaselineStart == null)
             {
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.CurrentRunID)
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.CurrentRunID,null,null,timezone)
                 headerTable.append(',"CurrentRunDuration" : "').append(runDetails[0]).append('",')
                 headerTable.append('"CurrentRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"CurrentBuildNo" : "').append(runDetails[2]).append('",')
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.BaselineRunID)
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.BaselineRunID,null,null,timezone)
                 headerTable.append('"BaselineRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"BaselineBuildNo" : "').append(runDetails[2]).append('",')
                 headerTable.append('"BaselineRunDuration" : "').append(runDetails[0]).append('"')
             }
             else
             {
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Current')
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Current',timezone)
                 headerTable.append(',"CurrentRunDuration" : "').append(runDetails[0]).append('",')
                 headerTable.append('"CurrentRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"CurrentBuildNo" : "').append(runDetails[2]).append('",')
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Baseline')
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Baseline',timezone)
                 headerTable.append('"BaselineRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"BaselineBuildNo" : "').append(runDetails[2]).append('",')
                 headerTable.append('"BaselineRunDuration" : "').append(runDetails[0]).append('"')
@@ -1067,7 +1068,7 @@ class PaceReportEngine
                 slaTable.append('{"name" : "').append(analysisMap.TransactionMetrics[i].Name).append('",')
                 slaTable.append('"platform" : "').append(analysisMap.TransactionMetrics[i].Platform).append('",')
                 slaTable.append('"useragent" : "').append(analysisMap.TransactionMetrics[i].UserAgent).append('",')
-                slaTable.append('"browser" : "').append(analysisMap.TransactionMetrics[i].UserAgent).append('",')
+                slaTable.append('"browser" : "').append(analysisMap.TransactionMetrics[i].BrowserName).append('",')
                 slaTable.append('"device" : "').append(analysisMap.TransactionMetrics[i].DeviceType).append('",')
                 slaTable.append('"sla" : "').append(analysisMap.TransactionMetrics[i].SLA).append('",')
                 slaTable.append('"restime" : "').append(Float.parseFloat(analysisMap.TransactionMetrics[i].totalPageLoadTime."95 Percentile".toString()).round()).append('",')
@@ -1384,7 +1385,7 @@ class PaceReportEngine
         return summary
     }
 
-    static def summaryJSONInSeconds(def configReader,def jsonString)
+    static def summaryJSONInSeconds(def configReader,def jsonString,def timezone)
     {
         LOGGER.debug 'summaryJSON JSON String : ' +  jsonString
         def jsonObj = new JSONObject(jsonString)
@@ -1433,22 +1434,22 @@ class PaceReportEngine
         {
             if(configReader?.BaselineStart == null)
             {
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.CurrentRunID)
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.CurrentRunID,null,null,timezone)
                 headerTable.append(',"CurrentRunDuration" : "').append(runDetails[0]).append('",')
                 headerTable.append('"CurrentRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"CurrentBuildNo" : "').append(runDetails[2]).append('",')
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.BaselineRunID)
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap.BaselineRunID,null,null,timezone)
                 headerTable.append('"BaselineRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"BaselineBuildNo" : "').append(runDetails[2]).append('",')
                 headerTable.append('"BaselineRunDuration" : "').append(runDetails[0]).append('"')
             }
             else
             {
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Current')
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Current',timezone)
                 headerTable.append(',"CurrentRunDuration" : "').append(runDetails[0]).append('",')
                 headerTable.append('"CurrentRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"CurrentBuildNo" : "').append(runDetails[2]).append('",')
-                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Baseline')
+                runDetails = ElasticSearchUtils.execTimeOfRunID(configReader,analysisMap?.CurrentRunID,'Y','Baseline',timezone)
                 headerTable.append('"BaselineRelease" : "').append(runDetails[1]).append('",')
                 headerTable.append('"BaselineBuildNo" : "').append(runDetails[2]).append('",')
                 headerTable.append('"BaselineRunDuration" : "').append(runDetails[0]).append('"')
