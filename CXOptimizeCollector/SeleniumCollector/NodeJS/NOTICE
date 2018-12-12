@@ -1,0 +1,369 @@
+Cognizant CXOptimize
+Copyright 2014 - 2018 Cognizant Technology Solutions
+
+This product includes the following open source softwares. This notice file contains the FOSS components and corresponding licenses.
+
+========================================================================
+Apache License Version 2.0
+========================================================================
+
+The following components are provided under the Apache License Version 2.0. See project link for details.
+
+Selenium : https://github.com/SeleniumHQ/selenium/blob/master/LICENSE
+Elastic Search : https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
+Kibana : https://github.com/elastic/kibana/blob/master/LICENSE.txt
+commons-validator : https://github.com/apache/commons-validator/blob/trunk/LICENSE.txt
+groovy-all : http://www.apache.org/licenses/LICENSE-2.0.txt
+htmlcompressor :  http://www.apache.org/licenses/LICENSE-2.0
+org.springframework.boot : https://github.com/spring-projects/spring-boot/blob/master/LICENSE.txt
+net.sf.uadetector.uadetector-core : http://uadetector.sourceforge.net/license.html
+net.sf.uadetector.uadetector-resources : http://uadetector.sourceforge.net/license.html
+log4j:log4j : http://www.apache.org/licenses/LICENSE-2.0.txt
+Caddy : https://github.com/mholt/caddy/blob/master/LICENSE.txt
+grafana : https://github.com/grafana/grafana/blob/master/LICENSE.md
+log4j:log4Net(C#) : https://logging.apache.org/log4net/license.html
+
+
+========================================================================
+BSD
+========================================================================
+
+The following components are provided under the BSD. See project link for details.
+
+BoomerangJS : https://github.com/SOASTA/boomerang/blob/master/LICENSE.txt
+yuicompressor : https://github.com/yui/yui3/blob/master/LICENSE.md
+com.github.jai-imageio:jai-imageio-core : https://github.com/jai-imageio/jai-imageio-core/blob/master/LICENSE.txt
+yuicompressor(C#) : https://github.com/YUICompressor-NET/YUICompressor.NET/blob/master/Build/New%20BSD%20License.txt
+
+========================================================================
+MIT
+========================================================================
+
+The following components are provided under the MIT. See project link for details.
+
+jsoup : https://github.com/jhy/jsoup/blob/master/LICENSE
+RUM-SpeedIndex : https://github.com/WPO-Foundation/RUM-SpeedIndex/blob/master/LICENSE
+bootstrap : https://github.com/angular-ui/bootstrap/blob/master/LICENSE
+justgauge : https://github.com/toorshia/justgage/blob/master/LICENSE
+chromeHAR : https://github.com/ericduran/chromeHAR/blob/gh-pages/LICENSE
+chartjs : https://github.com/chartjs/Chart.js/blob/master/LICENSE.md
+jsPDF : https://github.com/MrRio/jsPDF/blob/master/MIT-LICENSE.txt
+ 
+
+========================================================================
+Others
+========================================================================
+
+The following components are provided under the Others. See project link for details.
+
+rhino : https://www.mozilla.org/media/MPL/2.0/index.txt
+org.json : http://www.json.org/license.html
+freegeoip : https://github.com/fiorix/freegeoip/blob/master/LICENSE
+jquery : https://github.com/jquery/jquery/blob/master/LICENSE.txt
+
+
+
+
+
+
+========================================================================
+NOTICE files
+========================================================================
+
+The following NOTICEs are pertain to software distributed with this project.
+
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for
+// ------------------------------------------------------------------
+
+Selenium
+Copyright 2011-2018 Software Freedom Conservancy
+Copyright 2004-2011 Selenium committers
+
+  * LICENSE:https://github.com/SeleniumHQ/selenium/blob/master/LICENSE
+  
+Elasticsearch
+Copyright 2009-2018 Elasticsearch
+
+This product includes software developed by The Apache Software
+Foundation (http://www.apache.org/).
+
+  * LICENSE:https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
+  
+Kibana
+
+Kibana source code with Kibana X-Pack source code
+Copyright 2012-2018 Elasticsearch B.V.
+
+---
+This product includes code that was extracted from angular-ui-bootstrap@0.13.1
+which is available under an "MIT" license
+
+The MIT License
+
+Copyright (c) 2012-2016 the AngularUI Team, http://angular-ui.github.io/bootstrap/
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+This product uses Noto fonts that are licensed under the SIL Open
+Font License, Version 1.1.
+
+---
+Pretty handling of logarithmic axes.
+Copyright (c) 2007-2014 IOLA and Ole Laursen.
+Licensed under the MIT license.
+Created by Arne de Laat
+Set axis.mode to "log" and make the axis logarithmic using transform:
+    axis: {
+        mode: 'log',
+        transform: function(v) {v <= 0 ? Math.log(v) / Math.LN10 : null},
+        inverseTransform: function(v) {Math.pow(10, v)}
+    }
+The transform filters negative and zero values, because those are
+invalid on logarithmic scales.
+This plugin tries to create good looking logarithmic ticks, using
+unicode superscript characters. If all data to be plotted is between two
+powers of ten then the default flot tick generator and renderer are
+used. Logarithmic ticks are places at powers of ten and at half those
+values if there are not to many ticks already (e.g. [1, 5, 10, 50, 100]).
+For details,  see https://github.com/flot/flot/pull/1328
+
+---
+This product bundles angular-ui-bootstrap@0.12.1 which is available under a
+"MIT" license.
+
+The MIT License
+
+Copyright (c) 2012-2014 the AngularUI Team, https://github.com/organizations/angular-ui/teams/291112
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+This product bundles bootstrap@3.3.6 which is available under a
+"MIT" license.
+
+The MIT License (MIT)
+
+Copyright (c) 2011-2015 Twitter, Inc
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+This product bundles geohash.js which is available under a
+"MIT" license.  For details, see src/ui/public/utils/decode_geo_hash.js.
+
+---
+This product includes code that is based on flot-charts, which was available
+under a "MIT" license.
+
+The MIT License (MIT)
+
+Copyright (c) 2007-2014 IOLA and Ole Laursen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+This product includes code that was extracted from angular@1.3.
+Original license:
+The MIT License
+
+Copyright (c) 2010-2014 Google, Inc. http://angularjs.org
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+This product uses "radioactive button" styles that were published on
+https://zurb.com/playground/radioactive-buttons under an "MIT" License.
+
+Copyright (c) ZURB
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use, copy,
+modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so, subject to the
+following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Apache Commons Validator
+Copyright 2001-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Apache Groovy
+Copyright 2003-2018 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This product bundles icons from the famfamfam.com silk icons set
+http://www.famfamfam.com/lab/icons/silk/
+Licensed under the Creative Commons Attribution Licence v2.5
+http://creativecommons.org/licenses/by/2.5/
+
+
+Copyright 2014-2017 Grafana Labs
+
+This software is based on Kibana: Copyright 2012-2013 Elasticsearch BV
+
+
+Copyright © 2005 Sun Microsystems, Inc., 4150 Network Circle, Santa 
+Clara, California 95054, U.S.A. All rights reserved.
+
+U.S. Government Rights - Commercial software.  Government users are 
+subject to the Sun Microsystems, Inc. standard license agreement and 
+applicable provisions of the FAR and its supplements.  
+
+Use is subject to license terms.  
+
+This distribution may include materials developed by third parties.
+
+Sun, Sun Microsystems, the Sun logo and Java are trademarks or
+registered trademarks of Sun Microsystems, Inc. in the U.S. and 
+other countries.
+
+This product is covered and controlled by U.S. Export Control laws and
+may be subject to the export or import laws in other countries.  
+Nuclear, missile, chemical biological weapons or nuclear maritime end
+uses or end users, whether direct or indirect, are strictly 
+prohibited.  Export or reexport to countries subject to U.S. embargo or 
+to entities identified on U.S. export exclusion lists, including, but 
+not limited to, the denied persons and specially designated nationals
+lists is strictly prohibited.
+
+Copyright © 2005 Sun Microsystems, Inc., 4150 Network Circle, Santa 
+Clara, California 95054, Etats-Unis. Tous droits réservés.
+
+L'utilisation est soumise aux termes de la Licence.
+
+Cette distribution peut comprendre des composants développés par des 
+tierces parties.
+
+Sun, Sun Microsystems, le logo Sun et Java sont des marques de fabrique
+ou des marques déposées de Sun Microsystems, Inc. aux Etats-Unis et 
+dans d'autres pays.
+
+Ce produit est soumis à la législation américaine en matière de 
+contrôle des exportations et peut être soumis à la règlementation en 
+vigueur dans d'autres pays dans le domaine des exportations et 
+importations. Les utilisations, ou utilisateurs finaux, pour des armes 
+nucléaires,des missiles, des armes biologiques et chimiques ou du 
+nucléaire maritime, directement ou indirectement, sont strictement 
+interdites. Les exportations ou réexportations vers les pays sous 
+embargo américain, ou vers des entités figurant sur les listes 
+d'exclusion d'exportation américaines, y compris, mais de manière non 
+exhaustive, la liste de personnes qui font objet d'un ordre de ne pas 
+participer, d'une façon directe ou indirecte, aux exportations des 
+produits ou des services qui sont régis  par la législation américaine 
+en matière de contrôle des exportations et la liste de ressortissants 
+spécifiquement désignés, sont rigoureusement interdites.
+
+
+Copyright © 2010-2018 Stian Soiland-Reyes
+Copyright © 2015 Peter Hull
+Copyright © 2010-2018 University of Manchester
+Copyright © 2015 Yannick De Turck
+Copyright © 2015 Robin Stevens
+Copyright © 2015 Mark Carroll
+Copyright © 2015 Butch Howard
+Copyright © 2015-2016 Luca Bellonda
+Copyright © 2017 Ghislain Bonamy
+Copyright © 2017 Curtis Rueden
+Copyright © 2017 Roger Leigh
+Copyright © 2017 Mykola Pavluchynskyi
+Copyright © 2017 Sebastien Besson
+Copyright © 2018 Peter Jodeleit
