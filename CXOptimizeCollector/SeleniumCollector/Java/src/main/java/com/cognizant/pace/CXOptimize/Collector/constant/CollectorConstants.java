@@ -84,7 +84,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     private static final String markTimingScript = "var performance = window.performance || {};var perfResourceTiming = performance.getEntriesByType(\"mark\") || {}; return perfResourceTiming;";
     private static final String markTimingScriptIE = "return JSON.stringify(window.performance.getEntriesByType(\"mark\"));";
     private static final String getDomScript = "return document.documentElement.outerHTML;";
-    private static final String resourceLengthScript = "return window.performance.getEntriesByType('resource').length;";
+
     //Getter & Setter for UserName
     private static String UserName;
     //Getter & Setter for Password
@@ -312,9 +312,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         return resTimingScriptIE;
     }
 
-    public static String getResourceLength() {
-        return resourceLengthScript;
-    }
 
     public static String getHeapUsage() {
         return heapScript;
@@ -436,5 +433,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         TxnCounter = count;
     }
 
+    private static String[] FilterResources;
 
+    public static void setResourceFilter(String[] filter)
+    {
+        FilterResources = filter;
+    }
+
+    public static String[] getResourceFilter()
+    {
+        return FilterResources;
+    }
+
+    private static String ResourceLengthScript = "return window.performance.getEntriesByType('resource').length;";
+
+    public static void setResourceLengthScript(String[] filters)
+    {
+        if(filters.length == 0)
+        {
+            ResourceLengthScript = "var resourcesOrg=window.performance.getEntriesByType(\"resource\"),counter=0;for(i=0;i<resourcesOrg.length;i++)e=resourcesOrg[i],e.name.indexOf(\"about:\")>0||e.name.indexOf(\"javascript:\")>0||e.name.indexOf(\"res:\")>0||(counter+=1);return counter;";
+        } else {
+            ResourceLengthScript = "var resourcesOrg=window.performance.getEntriesByType(\"resource\"),counter=0;for(i=0;i<resourcesOrg.length;i++)e=resourcesOrg[i],";
+            for(int i = 0; i < CollectorConstants.getResourceFilter().length ; i ++){
+                if(i == 0){
+                    ResourceLengthScript = ResourceLengthScript + "e.name.indexOf(\"" + CollectorConstants.getResourceFilter()[i] + "\")>0";
+                } else{
+                    ResourceLengthScript = ResourceLengthScript + "||e.name.indexOf(\"" + CollectorConstants.getResourceFilter()[i] + "\")>0";
+                }
+
+            }
+            ResourceLengthScript = ResourceLengthScript + "||(counter+=1);return counter;";
+        }
+
+    }
+
+    public static String getResourceLengthScript()
+    {
+        return ResourceLengthScript;
+    }
 }
