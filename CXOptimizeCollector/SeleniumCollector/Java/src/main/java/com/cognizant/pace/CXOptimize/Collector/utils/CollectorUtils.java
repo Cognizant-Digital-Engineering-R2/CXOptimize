@@ -282,7 +282,8 @@ public class CollectorUtils {
                     if (CollectorConstants.getManualResourceTimeClear().equals("true") && !navType) {
                         LOGGER.debug("CXOP - {} - Manual Resource Truncation is enabled", txnName);
                         LOGGER.debug("CXOP - {} - Size of resource before Manual Resource Truncation : {}", txnName, resourceDetails.size());
-                        double diff = (double) (CollectorConstants.getRunStartTime() - CollectorConstants.getScriptStartTime());
+                        LOGGER.debug("CXOP - {} - Run Start : {} , Script Start : {} ", txnName, CollectorConstants.getRunStartTime(),CollectorConstants.getScriptStartTime());
+                        double diff = (double) (CollectorConstants.getScriptStartTime() - CollectorConstants.getRunStartTime());
                         LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}", txnName, diff);
                         //remove all resources start time less than the difference
                         resourceDetails.removeIf(s -> Double.parseDouble(s.get("startTime").toString()) < diff);
