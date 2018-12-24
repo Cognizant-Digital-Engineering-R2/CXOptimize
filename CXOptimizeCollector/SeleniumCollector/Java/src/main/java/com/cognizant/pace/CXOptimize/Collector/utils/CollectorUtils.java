@@ -282,11 +282,13 @@ public class CollectorUtils {
                     if (CollectorConstants.getManualResourceTimeClear().equals("true") && !navType) {
                         LOGGER.debug("CXOP - {} - Manual Resource Truncation is enabled", txnName);
                         LOGGER.debug("CXOP - {} - Size of resource before Manual Resource Truncation : {}", txnName, resourceDetails.size());
-                        LOGGER.debug("CXOP - {} - Run Start : {} , Script Start : {} ", txnName, CollectorConstants.getRunStartTime(),CollectorConstants.getScriptStartTime());
-                        double diff = (double) (CollectorConstants.getScriptStartTime() - CollectorConstants.getRunStartTime());
+                        LOGGER.debug("CXOP - {} - Previous Hard Txn Start : {} , Script Start : {} ", txnName, CollectorConstants.getPrevTxnStartTime(),CollectorConstants.getScriptStartTime());
+                        long diff =  (CollectorConstants.getScriptStartTime() - CollectorConstants.getPrevTxnStartTime());
                         LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}", txnName, diff);
                         //remove all resources start time less than the difference
-                        resourceDetails.removeIf(s -> Double.parseDouble(s.get("startTime").toString()) < diff);
+                        LOGGER.debug("CXOP - {} - Resource Before Truncation {}", resourceDetails.toString());
+                        resourceDetails.removeIf(s -> (CollectorConstants.getPrevTxnStartTime() + Long.parseLong(s.get("startTime").toString())) < diff);
+                        LOGGER.debug("CXOP - {} - Resource After Truncation {}", resourceDetails.toString());
                         LOGGER.debug("CXOP - {} - Size of resource after Manual Resource Truncation : {}", txnName, resourceDetails.size());
                     }
 
