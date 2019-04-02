@@ -343,8 +343,9 @@ class PaceAnalysisEngine
         def txnMetrics = [:]
         def rulesOutput = null
         def row = [:]
-        def comparisonPerc = (configReader?.samplePercentile == null ? 'Pcnt95' : configReader.samplePercentile)
-
+        LOGGER.debug 'Analysis sample in config :' + configReader?.samplePercentile
+		def comparisonPerc = (configReader?.samplePercentile == null ? 'Pcnt95' : configReader.samplePercentile)
+		LOGGER.debug 'Analysis will be done for ' + comparisonPerc + ' sample'
         txnCalcMetrics = ElasticSearchUtils.getAggregatedResponseTime(configReader,configReader.CurrentRun.toString(),null,'Current')
         LOGGER.debug 'OUTPUT getAggregatedResponseTime :' + txnCalcMetrics
 
@@ -352,7 +353,7 @@ class PaceAnalysisEngine
         LOGGER.debug 'OUTPUT getComparisonReport :' + comparisonReport
         txnCalcMetrics.each {key,value ->
             //detailBreakUp = (ElasticSearchUtils.getSampleForDetailedAnalysis(configReader, key, (value."$comparisonPerc").toString(),configReader.CurrentRun.toString(),'Current')).hits.hits[0].'_source'
-            detailSample = (ElasticSearchUtils.getSampleForDetailedAnalysis(configReader, key, (value."$comparisonPerc").toString(),configReader.CurrentRun.toString(),'Current')).hits.hits[0]
+ 			detailSample = (ElasticSearchUtils.getSampleForDetailedAnalysis(configReader, key, (value."$comparisonPerc").toString(),configReader.CurrentRun.toString(),'Current')).hits.hits[0]
             id = detailSample.'_id'
             detailBreakUp = detailSample.'_source'
             LOGGER.debug 'OUTPUT getSampleForDetailedAnalysis :' + detailBreakUp
