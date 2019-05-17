@@ -92,6 +92,7 @@ public class CollectorUtils {
             Map<String, Object> heapUsage = new HashMap<>();
             Map<String, Object> memoryDetails = new HashMap<>();
             ArrayList<Map<String, Object>> resourceDetails = new ArrayList<>();
+            ArrayList<Map<String, Object>> filteredResources = new ArrayList<>();
             ArrayList<Map<String, Object>> markDetails = new ArrayList<>();
             boolean isNavigationAPIEnabled, isResourceAPIEnabled, isMemoryAPIEnabled, isMarkAPIEnabled;
             StringBuilder document = new StringBuilder();
@@ -258,11 +259,12 @@ public class CollectorUtils {
                     //Mutation Observer Logic to wait until all resources gets downloaded - todoitem
 
                     LOGGER.debug("CXOP - {} - Checking if all resource are downloaded", txnName);
+                    LOGGER.debug("CXOP - {} - Resource Length Javascript : {}", txnName,CollectorConstants.getResourceLengthScript());
                     long beforeLength, afterLength = 0;
                     do {
-                        beforeLength = (long) jsExe.executeScript(CollectorConstants.getResourceLength());
+                        beforeLength = (long) jsExe.executeScript(CollectorConstants.getResourceLengthScript());
                         Thread.sleep(CollectorConstants.getResourceSettleTime());
-                        afterLength = (long) jsExe.executeScript(CollectorConstants.getResourceLength());
+                        afterLength = (long) jsExe.executeScript(CollectorConstants.getResourceLengthScript());
                         LOGGER.debug("CXOP - {} - Resource count before {} seconds is {} and current count {}", txnName, CollectorConstants.getResourceSettleTime(), beforeLength, afterLength);
                     } while (beforeLength < afterLength);
 
@@ -277,18 +279,24 @@ public class CollectorUtils {
                     }
                     jsExe.executeScript(CollectorConstants.clearResourceTiming());
 
-                    if (CollectorConstants.getManualResourceTimeClear().equals("true") && !navType) {
+                    if (CollectorConstants.getManualResourceTimeClear().equals("true") && !navType)
+                    {
                         LOGGER.debug("CXOP - {} - Manual Resource Truncation is enabled", txnName);
                         LOGGER.debug("CXOP - {} - Size of resource before Manual Resource Truncation : {}", txnName, resourceDetails.size());
-                        double diff = (double) (CollectorConstants.getRunStartTime() - CollectorConstants.getScriptStartTime());
-                        LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}", txnName, diff);
+                        LOGGER.debug("CXOP - {} - Previous Hard Txn Start : {} , Script Start : {} ", txnName, CollectorConstants.getPrevTxnStartTime(),CollectorConstants.getScriptStartTime());
+                        //long diff =  (CollectorConstants.getScriptStartTime() - CollectorConstants.getPrevTxnStartTime());
+                        //LOGGER.debug("CXOP - {} - Time between first transaction and current transaction : {}", txnName, diff);
                         //remove all resources start time less than the difference
-                        resourceDetails.removeIf(s -> Double.parseDouble(s.get("startTime").toString()) < diff);
+                        LOGGER.debug("CXOP - {} - Resource Before Truncation {}", resourceDetails.toString());
+                        resourceDetails.removeIf(s -> (CollectorConstants.getPrevTxnStartTime() + Math.round(Double.parseDouble(s.get("startTime").toString()))) < CollectorConstants.getScriptStartTime());
+                        LOGGER.debug("CXOP - {} - Resource After Truncation {}", resourceDetails.toString());
                         LOGGER.debug("CXOP - {} - Size of resource after Manual Resource Truncation : {}", txnName, resourceDetails.size());
                     }
 
-                    collectedData.put("ResourceTime", resourceDetails);
-                    LOGGER.debug("CXOP - {} - Completed Collecting Resource Timing Metrics : {}", txnName, resourceDetails.toString());
+                    filteredResources = CollectorUtils.filterResources(resourceDetails);
+
+                    collectedData.put("ResourceTime", filteredResources);
+                    LOGGER.debug("CXOP - {} - Completed Collecting Resource Timing Metrics : {}", txnName, filteredResources.toString());
 
                     Map<String, Double> resourceTime;
                     LOGGER.debug("CXOP - {} - Calling Calculate BackendTime", txnName);
@@ -305,7 +313,7 @@ public class CollectorUtils {
                     collectedData.put("visuallyComplete", ((long) navigationDetails.get("loadEventEnd") - (long) navigationDetails.get("navigationStart")));
                 }
 
-                if (navigationDetails == null && resourceDetails.size() <= 0) {
+                if (navigationDetails == null && filteredResources.size() <= 0) {
                     LOGGER.info("CXOP - {} - probably did not make a server request and hence will be ignored.", txnName);
                     return rtnValue;
                 }
@@ -630,6 +638,26 @@ public class CollectorUtils {
         result.put("backendTime", backendTime);
         LOGGER.debug("CXOP - {} - Completed  calculateBackendTime with {} Navigation", txnName, NavType);
         return result;
+    }
+
+    private static ArrayList<Map<String, Object>> filterResources(ArrayList<Map<String, Object>> resourceDetailsOrg) {
+        ArrayList<Map<String, Object>> filteredResources = new ArrayList<>();
+        for (Map<String, Object> resource : resourceDetailsOrg) {
+            if(validResource(resource.get("name").toString())){
+                filteredResources.add(resource);
+            }
+        }
+        return filteredResources;
+    }
+
+    private static boolean validResource(String name){
+        for (String filter : CollectorConstants.getResourceFilter()) {
+            if (name.contains(filter)) {
+                return false;
+            }
+        }
+        return true;
+
     }
 
     private static Map<String, Object> markListProcessed(ArrayList<Map<String, Object>> markDetails) {

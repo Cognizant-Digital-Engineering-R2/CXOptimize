@@ -967,100 +967,7 @@ class PaceReportEngine
         slaTable.append('"Transactions" : [')
 
         def hardTxnCnt = 0
-        /*
-        if(analysisMap.TransactionMetrics[0]?.NavType == null)
-        {
-            for(int i=0; i < txnCount;i++)
-            {
-                slaTable.append('{"name" : "').append(analysisMap.TransactionMetrics[i].Name).append('",')
-                slaTable.append('"platform" : "').append(getPlatform(analysisMap.TransactionMetrics[i].Platform)).append('",')
-                slaTable.append('"useragent" : "').append(analysisMap.TransactionMetrics[i].UserAgent).append('",')
-                slaTable.append('"browser" : "').append(getBrowserName(analysisMap.TransactionMetrics[i].UserAgent)).append('",')
-                slaTable.append('"device" : "').append(getPlatform(analysisMap.TransactionMetrics[i].Platform)).append('",')
-                slaTable.append('"sla" : "').append(analysisMap.TransactionMetrics[i].SLA).append('",')
-                slaTable.append('"restime" : "').append(Float.parseFloat(analysisMap.TransactionMetrics[i].totalPageLoadTime."95 Percentile".toString()).round()).append('",')
-                if(analysisMap.TransactionMetrics[i]?.score == null)
-                {
-                    slaTable.append('"score" : "').append(analysisMap.TransactionMetrics[i].Score).append('",')
-                    totalScore = totalScore + Float.parseFloat(analysisMap.TransactionMetrics[i].Score.toString())
-                }
-                else
-                {
-                    slaTable.append('"score" : "').append(analysisMap.TransactionMetrics[i].score).append('",')
-                    totalScore = totalScore + Float.parseFloat(analysisMap.TransactionMetrics[i].score.toString())
-                }
 
-                slaTable.append('"clientTime" : "').append(analysisMap.TransactionMetrics[i].clientTime).append('",')
-                slaTable.append('"avg" : "').append(analysisMap.TransactionMetrics[i].totalPageLoadTime.Average.toString()).append('",')
-                slaTable.append('"ninetyper" : "').append(analysisMap.TransactionMetrics[i].totalPageLoadTime."90 Percentile".toString()).append('",')
-                slaTable.append('"ninetyfiveper" : "').append(analysisMap.TransactionMetrics[i].totalPageLoadTime."95 Percentile".toString()).append('",')
-                slaTable.append('"count" : "').append(analysisMap.TransactionMetrics[i].totalPageLoadTime.count.toString()).append('",')
-                slaTable.append('"fetchStartTime" : "').append(analysisMap.TransactionMetrics[i].fetchStartTime).append('",')
-                slaTable.append('"redirectTime" : "').append(analysisMap.TransactionMetrics[i].redirectTime).append('",')
-                slaTable.append('"cacheFetchTime" : "').append(analysisMap.TransactionMetrics[i].cacheFetchTime).append('",')
-                slaTable.append('"dnsLookupTime" : "').append((analysisMap.TransactionMetrics[i]?.dnsLookupTime == null ? analysisMap.TransactionMetrics[i].dnsLookUpTime : analysisMap.TransactionMetrics[i].dnsLookupTime)).append('",')
-                slaTable.append('"tcpConnectTime" : "').append(analysisMap.TransactionMetrics[i].tcpConnectTime).append('",')
-                slaTable.append('"serverTime" : "').append(analysisMap.TransactionMetrics[i].serverTime).append('",')
-                slaTable.append('"downloadTime" : "').append(analysisMap.TransactionMetrics[i].downloadTime).append('",')
-                slaTable.append('"domProcessingTime" : "').append(analysisMap.TransactionMetrics[i].domProcessingTime).append('",')
-                slaTable.append('"onloadTime" : "').append((analysisMap.TransactionMetrics[i]?.onloadTime == null ? analysisMap.TransactionMetrics[i].onLoadTime : analysisMap.TransactionMetrics[i].onloadTime)).append('",')
-                slaTable.append('"recommendations" :[')
-                for(int j=0; j < analysisMap.TransactionMetrics[i].genericRulesRecommendations.size ;j++)
-                {
-                    id = analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id.toString()
-                    ruleIDs.add(id)
-                    ruleToTxnMapping.add(id + '#' +  analysisMap.TransactionMetrics[i].Name)
-                    slaTable.append('{').append('"canvPriority" : "').append(rulesOld[id].priority.toLowerCase()).append(i).append(id).append(',').append(rulesOld[id].width).append(',').append(rulesOld[id].height).append('",')
-                    slaTable.append('"canvScore" : "').append(getScoreCanvas(analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id,i,analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].score,true)).append('",')
-                    slaTable.append('"desc" : "').append(analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].comment).append('"}')
-                    if(j == (analysisMap.TransactionMetrics[i].genericRulesRecommendations.size -1))
-                    {
-                        slaTable.append('],')
-                    }
-                    else
-                    {
-                        slaTable.append(',')
-                    }
-                    if (analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id == 6)
-                    {
-                        cmtSize = cmtSize + analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].value
-                    }
-                    if (analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id == 9)
-                    {
-                        cssBody = cssBody + analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].value
-                    }
-                    if (analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id == 11)
-                    {
-                        headJS = headJS + analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].value
-                    }
-                    if (analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id == 15)
-                    {
-                        httpCalls = httpCalls + analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].value
-                    }
-                    if (analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].id == 23)
-                    {
-                        htmlSize = htmlSize + analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].value
-                        bwSaving = bwSaving + analysisMap.TransactionMetrics[i].genericRulesRecommendations[j].score
-                    }
-
-                }
-                slaTable.append('"baselineRT" : "').append(analysisMap.TransactionMetrics[i].comparativeAnalysis.baselineRT).append('",')
-                slaTable.append('"currentRT" : "').append(analysisMap.TransactionMetrics[i].comparativeAnalysis.currentRT).append('",')
-                slaTable.append('"deviation" : "').append(analysisMap.TransactionMetrics[i].comparativeAnalysis.deviation).append('",')
-                slaTable.append('"comparativeAnalysis" : "').append(analysisMap.TransactionMetrics[i].comparativeAnalysis.analysis).append('"}')
-
-                if( i == (txnCount -1))
-                {
-                    slaTable.append('],')
-                }
-                else
-                {
-                    slaTable.append(',')
-                }
-            }
-        }
-        else
-        {*/
         if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
         {
             for(int i=0; i < txnCount;i++)
@@ -1159,7 +1066,20 @@ class PaceReportEngine
                 slaTable.append('"browser" : "').append(analysisMap.TransactionMetrics[i].BrowserName).append('",')
                 slaTable.append('"device" : "').append(analysisMap.TransactionMetrics[i].DeviceType).append('",')
                 slaTable.append('"sla" : "').append(analysisMap.TransactionMetrics[i].SLA).append('",')
-                slaTable.append('"restime" : "').append(Float.parseFloat(analysisMap.TransactionMetrics[i].totalPageLoadTime."95 Percentile".toString()).round()).append('",')
+
+                if(configReader?.samplePercentile == 'Pcnt95')
+                {
+                    slaTable.append('"restime" : "').append(Float.parseFloat(analysisMap.TransactionMetrics[i].totalPageLoadTime."95 Percentile".toString()).round()).append('",')
+                }
+                if(configReader?.samplePercentile == 'Pcnt90')
+                {
+                    slaTable.append('"restime" : "').append(Float.parseFloat(analysisMap.TransactionMetrics[i].totalPageLoadTime."90 Percentile".toString()).round()).append('",')
+                }
+                if(configReader?.samplePercentile == 'Average')
+                {
+                    slaTable.append('"restime" : "').append(Float.parseFloat(analysisMap.TransactionMetrics[i].totalPageLoadTime.Average.toString()).round()).append('",')
+                }
+
 
                 if(analysisMap.TransactionMetrics[i]?.score == null)
                 {
@@ -1337,20 +1257,9 @@ class PaceReportEngine
             }
         }
 
-        // }
-
         double scorePer = 0
         double bwSavingPcnt = 0
-        /* if(analysisMap.TransactionMetrics[0]?.NavType == null)
-         {
-             if(txnCount > 0) {
-                 summaryTable.append(PaceReportEngine.getRuleSummaryJSON(ruleIDs, ruleToTxnMapping,'HardOld',configReader))
-                 scorePer = (totalScore / txnCount).round()
-                 bwSavingPcnt = (1 - (bwSaving / (txnCount * 100))) * 100
-             }
-         }
-         else
-         {*/
+
         if(txnCount > 0)
         {
             if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
@@ -1366,7 +1275,7 @@ class PaceReportEngine
                 bwSavingPcnt = (bwSaving / (txnCount * 100)) * 100
             }
         }
-        //}
+
         exectiveSummary.append('"execSummary" : {')
         exectiveSummary.append('"totalScore" :').append(scorePer).append(',')
         exectiveSummary.append('"callsReduction" :').append(httpCalls).append(',')

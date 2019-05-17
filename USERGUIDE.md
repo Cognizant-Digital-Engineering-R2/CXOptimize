@@ -21,14 +21,14 @@ The configuration created in the above step will be used in the collector.
 
 CXOptimize supports 3 different types of collectors and they support different set of features as given below.Please select your collector based on the support matrix provided below.
 
-| Metrics       | Selenium Java           | Selenium C#/VB.Net   | CodedUI   | Chrome Plugin   | JavascriptCollector  | Comments   |
+| Metrics       | Selenium Java           | Selenium C#/VB.Net   | Selenium NodeJS   | CodedUI   | Chrome Plugin   | JavascriptCollector  | Comments   |
 | ------------- |:-------------:| -----:| -----:| -----:| -----:| -----:|
-| SPA Support   | Yes | Yes | Yes |  No | Yes | no support for Angular2/Angular4
-| Resource Header   | Yes | Yes | Yes | No | No |
-| Navigation Timing   | Yes | Yes | Yes | Yes | Yes |
-| Resource Timing   | Yes | Yes | Yes | Yes | Yes |
-| RunID Support   | Yes | Yes | Yes | No | No |
-| Custom Markers   | Yes | Yes | Yes | No | No |
+| SPA Support   | Yes | Yes | Yes | Yes |  No | Yes | no support for Angular2/Angular4
+| Resource Header   | Yes | Yes | Yes | Yes | No | No |
+| Navigation Timing   | Yes | Yes | Yes | Yes | Yes | Yes |
+| Resource Timing   | Yes | Yes | Yes | Yes | Yes | Yes |
+| RunID Support   | Yes | Yes | Yes | Yes | No | No |
+| Custom Markers   | Yes | Yes | Yes | Yes | No | No |
     
 ### 1. Following are important properties which are required for the Collector module to work properly.
         ```
@@ -54,8 +54,8 @@ CXOptimize supports 3 different types of collectors and they support different s
         ```
     
 ### 3.  Following are the steps to include Collector Module to existing Selenium script and use then for collecting performance metrics.
-####    1.  Add Collector-version.jar/CXOptimizeCollector.dll to your solution
-####    2.  Add ```import com.cognizant.pace.CXOptimize.Collector.*; or using com.cognizant.pace.CXOptimize.Collector``` to your class file where you want to use it.
+####    1.  Add Collector-version.jar/CXOptimizeCollector.dll to your solution.For NodeJS use npm to install @cognizantcxoptimize/collector package from public npm registry.
+####    2.  Add ```import com.cognizant.pace.CXOptimize.Collector.*; or using com.cognizant.pace.CXOptimize.Collector``` to your class file where you want to use it.For NodeJS add this to your script ```const cxoptimize = require('@cognizantcxoptimize/collector');```
 ####    3.  Provide input path to read the Collector.properties.There are multiple ways to do this
             a.  Set it via Setter.Using 
 			```
@@ -78,14 +78,20 @@ CXOptimize supports 3 different types of collectors and they support different s
                 CollectorConstants.setMarkWaitTime(cname);
                 CollectorConstants.setResourceSettleTime(cname);
                 ```
-                		
+            d.For NodeJS place the Collector.properties in the project's root folder where your test.js file is present.    		
 ####    4.   Add the following lines of code before and after page navigation using any selenium commands like ```get(),click(),navigate()``` 
             ```
             CXOptimizeCollector.StartTransaction("Home", driver); //TransactionName & WebDriver Object for Selenium/BrowserWindow object for CodedUI
             driver.get("https://www.wikipedia.org/");
             CXOptimizeCollector.EndTransaction("Home", driver); //TransactionName &WebDriver Object for Selenium/BrowserWindow object for CodedUI - this also has overload method to pass transaction status as integer 0 or 1 based on certain check
+			
+			NodeJS snippet
+			await cxoptimize.StartTransaction('Home', driver);
+			await driver.get('http://en.wikipedia.org/');
+			await cxoptimize.EndTransaction('Home', driver,1);
             
             ```
+
 ####    5.  (Optional) Adding WebDriver wait like below also improves the accuracy of data collection when SPA's are involved
                 		
             ```
@@ -109,7 +115,7 @@ CXOptimize supports 3 different types of collectors and they support different s
             
             ```
     		        
-####    6.  When Selenium/CodedUI script is executed this log ```DataUploaded for succesfully for Home```.SLF4J is implemented for detailed logging incase of any issues.
+####    6.  When Selenium/CodedUI script is executed this log ```CXOP - Home -  Data uploaded succesfully```.SLF4J is implemented for detailed logging incase of any issues.
 
 ##	2.  Browser Plugin
 

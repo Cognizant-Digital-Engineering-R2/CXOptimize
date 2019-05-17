@@ -1191,20 +1191,30 @@ class PaceRuleEngine
                                                 {
                                                     if(CommonUtils.stringContainsItemFromList(sampleData.Resources[i]?."Cache-Control", 's-maxage'))
                                                     {
-                                                        splitStr = ((sampleData.Resources[i]?."Cache-Control".toString().split('s-maxage#')[1]).split('#')[0])
-                                                        if(splitStr.toInteger() <= 3600)
-                                                        {
-                                                            maxAge.add(sampleData.Resources[i]?.name)
-                                                        }
+                                                        try
+														{
+															splitStr = ((sampleData.Resources[i]?."Cache-Control".toString().split('s-maxage#')[1]).split('#')[0])
+															if(splitStr.toInteger() <= 3600)
+															{
+																maxAge.add(sampleData.Resources[i]?.name)
+															}
+														} catch(Exception e)
+														{
+														}
                                                     }
                                                     else
                                                     {
-                                                        splitStr = ((sampleData.Resources[i]?."Cache-Control".split('age#')[1]).split('#')[0])
+                                                        try
+														{
+															splitStr = ((sampleData.Resources[i]?."Cache-Control".split('age#')[1]).split('#')[0])
 
-                                                        if(splitStr.toInteger() <= 3600)
-                                                        {
-                                                            maxAge.add(sampleData.Resources[i]?.name)
-                                                        }
+															if(splitStr.toInteger() <= 3600)
+															{
+																maxAge.add(sampleData.Resources[i]?.name)
+															}
+														} catch(Exception e)
+														{
+														}
 
 
                                                     }
@@ -1847,20 +1857,30 @@ class PaceRuleEngine
                                             {
                                                 if(CommonUtils.stringContainsItemFromList(sampleData.Resources[i]?."Cache-Control", 's-maxage'))
                                                 {
-                                                    splitStr = ((sampleData.Resources[i]?."Cache-Control".toString().split('s-maxage#')[1]).split('#')[0])
-                                                    if(splitStr.toInteger() <= 3600)
-                                                    {
-                                                        maxAge.add(sampleData.Resources[i]?.name)
-                                                    }
+                                                    try
+													{
+														splitStr = ((sampleData.Resources[i]?."Cache-Control".toString().split('s-maxage#')[1]).split('#')[0])
+														if(splitStr.toInteger() <= 3600)
+														{
+															maxAge.add(sampleData.Resources[i]?.name)
+														}
+													} catch(Exception e)
+													{
+													}
                                                 }
                                                 else
                                                 {
-                                                    splitStr = ((sampleData.Resources[i]?."Cache-Control".split('age#')[1]).split('#')[0])
+                                                    try
+													{
+														splitStr = ((sampleData.Resources[i]?."Cache-Control".split('age#')[1]).split('#')[0])
 
-                                                    if(splitStr.toInteger() <= 3600)
-                                                    {
-                                                        maxAge.add(sampleData.Resources[i]?.name)
-                                                    }
+														if(splitStr.toInteger() <= 3600)
+														{
+															maxAge.add(sampleData.Resources[i]?.name)
+														}
+													} catch(Exception e)
+													{
+													}
 
 
                                                 }

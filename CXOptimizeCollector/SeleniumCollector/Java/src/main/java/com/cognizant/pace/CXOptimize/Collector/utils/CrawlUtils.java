@@ -194,7 +194,7 @@ public class CrawlUtils
                         }
                         if(header.containsKey("Cache-Control"))
                         {
-                            rs.put("Cache-Control",header.get("Cache-Control").get(0).replaceAll(",", "#").replaceAll("=", "#"));
+                            rs.put("Cache-Control",header.get("Cache-Control").get(0).replaceAll("public", "").replaceAll("; must-revalidate", "").replaceAll(",", "#").replaceAll("=", "#"));
                         }
                         if(header.containsKey("ETag"))
                         {

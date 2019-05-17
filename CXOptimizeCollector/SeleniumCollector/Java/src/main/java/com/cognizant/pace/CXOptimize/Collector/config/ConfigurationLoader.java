@@ -100,6 +100,13 @@ public class ConfigurationLoader {
                 } else {
                     CollectorConstants.setManualResourceTimeClear("false");
                 }
+                if (mainProperties.containsKey("filterResourcesPattern")) {
+                    CollectorConstants.setResourceFilter(mainProperties.getProperty("filterResourcesPattern").split("\\s*,\\s*"));
+                    CollectorConstants.setResourceLengthScript(mainProperties.getProperty("filterResourcesPattern").split("\\s*,\\s*"));
+                } else {
+                    CollectorConstants.setResourceFilter(("about:,javascript:,res:").split("\\s*,\\s*"));
+                    CollectorConstants.setResourceFilter(("about:,javascript:,res:").split("\\s*,\\s*"));
+                }
                 LOGGER.debug("CXOP - Loaded initialization parameters");
                 file.close();
             } else {
@@ -137,6 +144,13 @@ public class ConfigurationLoader {
                         CollectorConstants.setManualResourceTimeClear(mainProperties.getProperty("manualResourceTimeClear"));
                     } else {
                         CollectorConstants.setManualResourceTimeClear("false");
+                    }
+                    if (mainProperties.containsKey("filterResourcesPattern")) {
+                        CollectorConstants.setResourceFilter(mainProperties.getProperty("filterResourcesPattern").split("\\s*,\\s*"));
+                        CollectorConstants.setResourceLengthScript(mainProperties.getProperty("filterResourcesPattern").split("\\s*,\\s*"));
+                    } else {
+                        CollectorConstants.setResourceFilter(("about:,javascript:,res:").split("\\s*,\\s*"));
+                        CollectorConstants.setResourceLengthScript(("about:,javascript:,res:").split("\\s*,\\s*"));
                     }
 
                     LOGGER.debug("CXOP - Loaded initialization parameters");
@@ -184,6 +198,10 @@ public class ConfigurationLoader {
             if(CollectorConstants.getBuild() == null || CollectorConstants.getBuild() == "")
             {
                 CollectorConstants.setBuild(new SimpleDateFormat("yyyyMMddHH").format(new Date()));
+            }
+            if(CollectorConstants.getResourceFilter().length == 0){
+                CollectorConstants.setResourceFilter(("about:,javascript:,res:").split("\\s*,\\s*"));
+                CollectorConstants.setResourceLengthScript(("about:,javascript:,res:").split("\\s*,\\s*"));
             }
 
 
