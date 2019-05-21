@@ -458,12 +458,27 @@ class ElasticSearchUtils
             if (txnName == null)
             {
                 //query.append('{"size" : 0,"query": {"filtered": {"filter": {"and": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}]}}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "totalPageLoadTime","percents" : [90.0,95.0]}},"average" : {"avg" : {"field" : "totalPageLoadTime"}}}}}}')
-                query.append('{"size" : 0,"query": {"bool": {"filter": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}]}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "totalPageLoadTime","percents" : [90.0,95.0]}},"max":{ "max": {"field" : "totalPageLoadTime"}},"min":{ "min": {"field" : "totalPageLoadTime"}},"average" : {"avg" : {"field" : "totalPageLoadTime"}}}}}}')
+                //if(configReader?.SLACheck == 'totalload')
+                //{
+                    //query.append('{"size" : 0,"query": {"bool": {"filter": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}]}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "visuallyComplete","percents" : [90.0,95.0]}},"max":{ "max": {"field" : "visuallyComplete"}},"min":{ "min": {"field" : "visuallyComplete"}},"average" : {"avg" : {"field" : "visuallyComplete"}}}}}}')
+                //}
+                //else
+                //{
+                    query.append('{"size" : 0,"query": {"bool": {"filter": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}]}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "totalPageLoadTime","percents" : [90.0,95.0]}},"max":{ "max": {"field" : "totalPageLoadTime"}},"min":{ "min": {"field" : "totalPageLoadTime"}},"average" : {"avg" : {"field" : "totalPageLoadTime"}}}}}}')
+                //}
+
             }
             else
             {
                 //query.append('{"size" : 0,"query": {"filtered": {"filter": {"and": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}').append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "totalPageLoadTime","percents" : [90.0,95.0]}},"average" : {"avg" : {"field" : "totalPageLoadTime"}}}}}}')
-                query.append('{"size" : 0,"query": {"bool": {"filter": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}').append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "totalPageLoadTime","percents" : [90.0,95.0]}},"max":{ "max": {"field" : "totalPageLoadTime"}},"min":{ "min": {"field" : "totalPageLoadTime"}},"average" : {"avg" : {"field" : "totalPageLoadTime"}}}}}}')
+                //if(configReader?.SLACheck == 'totalload')
+                //{
+                    //query.append('{"size" : 0,"query": {"bool": {"filter": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}').append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "visuallyComplete","percents" : [90.0,95.0]}},"max":{ "max": {"field" : "visuallyComplete"}},"min":{ "min": {"field" : "visuallyComplete"}},"average" : {"avg" : {"field" : "visuallyComplete"}}}}}}')
+                //}
+                //else
+                //{
+                    query.append('{"size" : 0,"query": {"bool": {"filter": [').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"RunID": "').append((runID == null ? configReader.RunID.toString() : runID)).append('"}}').append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}},"aggs" : {"Transaction" : {"terms" : {"field" : "TransactionName","size" : 10000 },"aggs" : {"percentile" : {"percentiles" : { "field" : "totalPageLoadTime","percents" : [90.0,95.0]}},"max":{ "max": {"field" : "totalPageLoadTime"}},"min":{ "min": {"field" : "totalPageLoadTime"}},"average" : {"avg" : {"field" : "totalPageLoadTime"}}}}}}')
+                //}
             }
         }
 
@@ -516,9 +531,11 @@ class ElasticSearchUtils
             if(comparisonPerc == 'Average')
             {
                 selectedSample = ElasticSearchUtils.getSampleValueForResponseTimeAndPayLoad(configReader,it.key,(it.average.value).toString(),(runID == null ? null : runID),type)
-                txnMetrics.put("Average",Float.parseFloat(selectedSample.totalPageLoadTime.toString()).round())
-                txnMetrics.put("HttpCount",selectedSample.resourceCount)
-                txnMetrics.put("Payload",selectedSample.resourceSize)
+                //txnMetrics.put("Average",configReader?.SLACheck == 'totalload' ? Float.parseFloat(selectedSample[0].visuallyComplete.toString()).round() : Float.parseFloat(selectedSample[0].totalPageLoadTime.toString()).round())
+                txnMetrics.put("Average",Float.parseFloat(selectedSample[0].totalPageLoadTime.toString()).round())
+                txnMetrics.put("HttpCount",selectedSample[0].resourceCount)
+                txnMetrics.put("Payload",selectedSample[0].resourceSize)
+                txnMetrics.put("sampleID",selectedSample[1])
             }
             else
             {
@@ -527,9 +544,12 @@ class ElasticSearchUtils
             if(comparisonPerc == 'Pcnt90')
             {
                 selectedSample = ElasticSearchUtils.getSampleValueForResponseTimeAndPayLoad(configReader,it.key,(it.percentile.values.'90.0').toString(),(runID == null ? null : runID),type)
-                txnMetrics.put("Pcnt90",Float.parseFloat(selectedSample.totalPageLoadTime.toString()).round())
-                txnMetrics.put("HttpCount",selectedSample.resourceCount)
-                txnMetrics.put("Payload",selectedSample.resourceSize)
+
+                //txnMetrics.put("Pcnt90",configReader?.SLACheck == 'totalload' ? Float.parseFloat(selectedSample[0].visuallyComplete.toString()).round() : Float.parseFloat(selectedSample[0].totalPageLoadTime.toString()).round())
+                txnMetrics.put("Pcnt90",Float.parseFloat(selectedSample[0].totalPageLoadTime.toString()).round())
+                txnMetrics.put("HttpCount",selectedSample[0].resourceCount)
+                txnMetrics.put("Payload",selectedSample[0].resourceSize)
+                txnMetrics.put("sampleID",selectedSample[1])
             }
             else
             {
@@ -539,9 +559,11 @@ class ElasticSearchUtils
             if(comparisonPerc == 'Pcnt95')
             {
                 selectedSample = ElasticSearchUtils.getSampleValueForResponseTimeAndPayLoad(configReader,it.key,(it.percentile.values.'95.0').toString(),(runID == null ? null : runID),type)
-                txnMetrics.put("Pcnt95",Float.parseFloat(selectedSample.totalPageLoadTime.toString()).round())
-                txnMetrics.put("HttpCount",selectedSample.resourceCount)
-                txnMetrics.put("Payload",selectedSample.resourceSize)
+                //txnMetrics.put("Pcnt95",configReader?.SLACheck == 'totalload' ? Float.parseFloat(selectedSample[0].visuallyComplete.toString()).round() : Float.parseFloat(selectedSample[0].totalPageLoadTime.toString()).round())
+                txnMetrics.put("Pcnt95",Float.parseFloat(selectedSample[0].totalPageLoadTime.toString()).round())
+                txnMetrics.put("HttpCount",selectedSample[0].resourceCount)
+                txnMetrics.put("Payload",selectedSample[0].resourceSize)
+                txnMetrics.put("sampleID",selectedSample[1])
             }
             else
             {
@@ -561,7 +583,14 @@ class ElasticSearchUtils
         if(configReader.AnalysisType == 'Run' || configReader.AnalysisType == 'Transaction')
         {
             //query.append('{"fields": ["totalPageLoadTime"],"query":{"filtered":{"filter":{"and":[{"range":{"totalPageLoadTime":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}}},"sort":[{"totalPageLoadTime":{"order":"asc"}}]}')
-            query.append('{"_source": ["totalPageLoadTime","resourceCount","resourceSize"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"asc"}}]}')
+            //if(configReader?.SLACheck == 'totalload')
+            //{
+                //query.append('{"_source": ["visuallyComplete","resourceCount","resourceSize"],"query":{"bool":{"filter":[{"range":{"visuallyComplete":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"visuallyComplete":{"order":"desc"}}]}')
+            //}
+            //else
+            //{
+                query.append('{"_source": ["totalPageLoadTime","resourceCount","resourceSize"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"desc"}}]}')
+            //}
         }
 
         if(configReader.AnalysisType == 'Time')
@@ -588,7 +617,14 @@ class ElasticSearchUtils
             if(configReader.AnalysisType == 'Run' || configReader.AnalysisType == 'Transaction')
             {
                 //query.append('{"fields": ["totalPageLoadTime"],"query":{"filtered":{"filter":{"and":[{"range":{"totalPageLoadTime":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}}},"sort":[{"totalPageLoadTime":{"order":"desc"}}]}')
-                query.append('{"_source": ["totalPageLoadTime","resourceCount","resourceSize"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"desc"}}]}')
+                //if(configReader?.SLACheck == 'totalload')
+                //{
+                    //query.append('{"_source": ["visuallyComplete","resourceCount","resourceSize"],"query":{"bool":{"filter":[{"range":{"visuallyComplete":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"visuallyComplete":{"order":"asc"}}]}')
+                //}
+                //else
+                //{
+                    query.append('{"_source": ["totalPageLoadTime","resourceCount","resourceSize"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"asc"}}]}')
+                //}
             }
             if(configReader.AnalysisType == 'Time')
             {
@@ -606,7 +642,7 @@ class ElasticSearchUtils
 
             response_body = ElasticSearchUtils.elasticSearchPOST(configReader.esUrl,GlobalConstants.STATSSEARCH,query)
         }
-        return response_body.hits.hits[0]."_source"
+        return [response_body.hits.hits[0]."_source",response_body.hits.hits[0]."_id"]
     }
 
     static def getSampleValueForResponseTime(def configReader,String transactionName,String sampleValue,String runID = null,String type= null)
@@ -616,7 +652,14 @@ class ElasticSearchUtils
         if(configReader.AnalysisType == 'Run' || configReader.AnalysisType == 'Transaction')
         {
             //query.append('{"fields": ["totalPageLoadTime"],"query":{"filtered":{"filter":{"and":[{"range":{"totalPageLoadTime":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}}},"sort":[{"totalPageLoadTime":{"order":"asc"}}]}')
-            query.append('{"_source": ["totalPageLoadTime"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"asc"}}]}')
+            //if(configReader?.SLACheck == 'totalload')
+            //{
+                //query.append('{"_source": ["visuallyComplete"],"query":{"bool":{"filter":[{"range":{"visuallyComplete":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"visuallyComplete":{"order":"desc"}}]}')
+            //}
+            //else
+            //{
+                query.append('{"_source": ["totalPageLoadTime"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"desc"}}]}')
+            //}
         }
 
         if(configReader.AnalysisType == 'Time')
@@ -643,7 +686,11 @@ class ElasticSearchUtils
             if(configReader.AnalysisType == 'Run' || configReader.AnalysisType == 'Transaction')
             {
                 //query.append('{"fields": ["totalPageLoadTime"],"query":{"filtered":{"filter":{"and":[{"range":{"totalPageLoadTime":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}}},"sort":[{"totalPageLoadTime":{"order":"desc"}}]}')
-                query.append('{"_source": ["totalPageLoadTime"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"lte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"desc"}}]}')
+                //if(configReader?.SLACheck == 'totalload') {
+                    //query.append('{"_source": ["visuallyComplete"],"query":{"bool":{"filter":[{"range":{"visuallyComplete":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"visuallyComplete":{"order":"asc"}}]}')
+               // } else {
+                    query.append('{"_source": ["totalPageLoadTime"],"query":{"bool":{"filter":[{"range":{"totalPageLoadTime":{"gte":').append(sampleValue).append('}}},{"term":{"TransactionName":"').append(transactionName).append('"}},{"term":{"RunID":"').append((runID == null ? configReader.RunID.toString() : runID)).append('"}},').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(']}},"sort":[{"totalPageLoadTime":{"order":"asc"}}]}')
+               // }
             }
             if(configReader.AnalysisType == 'Time')
             {
@@ -661,7 +708,13 @@ class ElasticSearchUtils
 
             response_body = ElasticSearchUtils.elasticSearchPOST(configReader.esUrl,GlobalConstants.STATSSEARCH,query)
         }
-        return Float.parseFloat(response_body.hits.hits[0]."_source".totalPageLoadTime.toString()).round()
+
+        //if(configReader?.SLACheck == 'totalload') {
+           // return Float.parseFloat(response_body.hits.hits[0]."_source".visuallyComplete.toString()).round()
+        //}
+       // else {
+            return Float.parseFloat(response_body.hits.hits[0]."_source".totalPageLoadTime.toString()).round()
+        //}
     }
 
     static def getSampleForDetailedAnalysis(def configReader,String transactionName,String sampleValue,String runID = null,String type = null)
@@ -721,6 +774,13 @@ class ElasticSearchUtils
         return response_body
     }
 
+    static def getSampleForDetailedAnalysisByID(def configReader,def id)
+    {
+
+        def response_body = null
+        return ElasticSearchUtils.elasticSearchGET(configReader.esUrl,GlobalConstants.STATSINDEXTABLE + id)
+    }
+
     static def extractAllSamples(def configReader,String runID = null,String txnName,String type = null)
     {
         def response_body = null
@@ -729,17 +789,18 @@ class ElasticSearchUtils
         {
             runID = configReader.RunID
         }
+        def sampleCounter = (configReader?.samplesCount == null ? 10 : configReader?.samplesCount)
 
         if(configReader.AnalysisType == 'Run' || configReader.AnalysisType == 'Transaction')
         {
             //query.append('{"query":{"filtered":{"filter":{"and":[').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"TransactionName": "').append(txnName).append('"}},{"term": {"RunID": "').append(runID).append('"}}]}}}}')
-            query.append('{"query":{"bool":{"filter":[').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"TransactionName": "').append(txnName).append('"}},{"term": {"RunID": "').append(runID).append('"}}]}}}')
+            query.append('{"size": ').append(sampleCounter).append(',"query":{"bool":{"filter":[').append(ElasticSearchUtils.baseFilterQuery(configReader)).append(',{"term": {"TransactionName": "').append(txnName).append('"}},{"term": {"RunID": "').append(runID).append('"}}]}},"sort":[{"visuallyComplete":{"order":"desc"}}]}')
         }
 
         if(configReader.AnalysisType == 'Time')
         {
             //query.append('{"query":{"filtered":{"filter":{"and":[').append(ElasticSearchUtils.baseFilterQuery(configReader,'Y',type)).append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}}}}')
-            query.append('{"query":{"bool":{"filter":[').append(ElasticSearchUtils.baseFilterQuery(configReader,'Y',type)).append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}}}')
+            query.append('{"size": ').append(sampleCounter).append(',"query":{"bool":{"filter":[').append(ElasticSearchUtils.baseFilterQuery(configReader,'Y',type)).append(',{"term": {"TransactionName": "').append(txnName).append('"}}]}},"sort":[{"visuallyComplete":{"order":"desc"}}]}')
         }
 
         log.debug 'extractAllSamples query : ' +  query

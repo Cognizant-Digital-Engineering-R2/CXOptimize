@@ -39,6 +39,7 @@ class GlobalConstants
     public static final String ANALYSISDELETE = 'analysisindex/_delete_by_query'
     public static final String STATSSEARCH = 'statsindex/run/_search'
     public static final String STATSINDEX_INSERT = 'statsindex/run'
+    public static final String STATSINDEXTABLE = 'statsindex/run/'
     public static final String STATSINDEX = 'statsindex'
     public static final String STATSDELETE = 'statsindex/_delete_by_query'
     public static final String USERSEARCH = 'userdetails/user/_search'

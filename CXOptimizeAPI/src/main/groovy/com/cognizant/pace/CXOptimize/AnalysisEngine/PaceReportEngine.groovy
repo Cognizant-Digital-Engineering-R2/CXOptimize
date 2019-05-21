@@ -606,7 +606,7 @@ class PaceReportEngine
 
             }
             jsonStr.append('"visuallyComplete":').append(arrList[i].visuallyComplete).append(',')
-            jsonStr.append('"clientProcessing":').append(arrList[i].clientProcessing).append(',')
+            jsonStr.append('"clientProcessing":').append(arrList[i].clientTime).append(',')
             jsonStr.append('"resrCount":').append(arrList[i].resourceCount).append(',')
             jsonStr.append('"resrSize":').append(arrList[i].resourceSize).append(',')
             jsonStr.append('"score":').append(arrList[i].score).append(',')
@@ -769,7 +769,7 @@ class PaceReportEngine
 
             }
             jsonStr.append('"visuallyComplete":').append(CommonUtils.convertMilliToSeconds(arrList[i].visuallyComplete)).append(',')
-            jsonStr.append('"clientProcessing":').append(CommonUtils.convertMilliToSeconds(arrList[i].clientProcessing)).append(',')
+            jsonStr.append('"clientProcessing":').append(CommonUtils.convertMilliToSeconds(arrList[i].clientTime)).append(',')
             jsonStr.append('"resrCount":').append(arrList[i].resourceCount).append(',')
             jsonStr.append('"resrSize":').append(arrList[i].resourceSize).append(',')
             jsonStr.append('"score":').append(arrList[i].score).append(',')
