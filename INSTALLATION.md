@@ -10,11 +10,11 @@ CXOptimize componenets can be installed as scaled-in or scaled-out mode
 3.  Administrator rights on the machine (To run services)
 4.  JAVA_HOME system environment variable set
 
-	
+
 ##	Scaled In mode
 
 In order to install the server side components, download the cxoptimize_window.rar or cxoptimize_linux.rar from the [Releases](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3) folder.After extracting the files the folder will looks like this
-	
+
 ![](/Documents/images/installpackage.png "CXOptimize components")
 
 ###	Windows
@@ -26,26 +26,26 @@ In order to install the server side components, download the cxoptimize_window.r
 6.	(Optional) Grafana - alternative to Kibana Dashboard incase if you need rich UI and Dashboard experience.Setup details can be found [here](https://github.com/grafana/grafana)
 
 ###	Linux
-1.	Navigate to \elasticsearch-5.5.2\bin and execute ./elasticsearch (This can be executed as service as well using tools like systemctl etc)
-2.	Navigate to \api and execute java -jar CXOptimizeAPI-2.0.3.jar
-3.	Navigate to \kibana-5.5.2-linux-x86_64\bin and execute ./kibana
-4.	Navigate to \ui and execute java -jar CXOptimizeUI-2.0.3.jar
-5.	Navigate to \caddy and execute ./caddy Caddyfile
+1.	Navigate to `/elasticsearch-5.5.2/bin` and execute `./elasticsearch` (This can be executed as service as well using tools like systemctl etc)
+2.	Navigate to `/api` and execute `java -jar CXOptimizeAPI-2.0.3.jar`
+3.	Navigate to `/kibana-5.5.2-linux-x86_64/bin` and execute `./kibana`
+4.	Navigate to `/ui` and execute `java -jar CXOptimizeUI-2.0.3.jar`
+5.	Navigate to `/caddy` and execute `./caddy Caddyfile`
 
 ### Docker Compose
 1. Download [docker-compse.yml](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/blob/dev/docker-compose.yml) file to your machine
 2. Make sure docker and docker-compose are installed
 3. Execute docker-compose -d up.This should start everything in the required order and application will be accessible in http://localhost:8080/cxoptimize/login
-	
+
 ##	Scaled Out mode
 In order to install the server side components, download the cxoptimize_window.rar or cxoptimize_linux.rar from the [Releases](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3) folder.After extracting the files the folder will looks like this
 
-![](/Documents/images/installpackage.png "CXOptimize components") 
- 
+![](/Documents/images/installpackage.png "CXOptimize components")
+
 ### Step 1 - Install Elastic Search:
 1.  Copy elasticsearch-5.5.2 folder to machine where you want to deploy Elastic Search
 2.  Navigate to elasticsearch-5.5.2/config and update elasticsearch.yml
-3.  http.port: ESPORT (any port which is accessible to other machines - default 9200) 
+3.  http.port: ESPORT (any port which is accessible to other machines - default 9200)
 4.  Navigate to elasticsearch-5.5.2/bin in command prompt
 5.  Run elasticsearch-service.bat install (This will install ES as service) or ./elasticsearch for linux
 6.  Run elasticsearch-service.bat start
@@ -89,4 +89,3 @@ In order to install the server side components, download the cxoptimize_window.r
 ### Step 6 - Install Optional Components (freegeoip & Grafana):
 1.	(Optional) Manually naviage to freegeoip folder and excute freegeoip.exe.This is used to get geo location data for a given IP.It uses open source version of the IP database from MaxMind.More details will be found [here](https://github.com/fiorix/freegeoip)
 2.	(Optional) Grafana - alternative to Kibana Dashboard incase if you need rich UI and Dashboard experience.Setup details can be found [here](https://github.com/grafana/grafana)
-
