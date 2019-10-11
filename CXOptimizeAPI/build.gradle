@@ -1,5 +1,5 @@
 group 'com.cognizant.pace.CXOptimize.api'
-version '2.0.5'
+version '2.0.6'
 
 buildscript {
     ext {
@@ -36,7 +36,7 @@ apply plugin: 'com.palantir.docker'
 
 jar {
     baseName = 'CXOptimizeAPI'
-    version =  '2.0.5'
+    version =  '2.0.6'
 }
 
 ext {

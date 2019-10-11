@@ -326,9 +326,9 @@ var recommendationTableContent = '';
                 var tableHeader = '';
                 if (json.TransactionMetrics[0].userPerceivedTime === undefined) {
                     if (json.TransactionMetrics[0].speedIndex === undefined) {
-                        tableHeader = '<th>Time</th><th>PageLoadTime</th><th>ClientProcessing</th><th>BackendTime</th><th>FullLoadTime</th><th>ResourceCount</th><th>Total Payload(bytes)</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
+                        tableHeader = '<th>Time</th><th>PageLoadTime</th><th>FrontendTime</th><th>BackendTime</th><th>FullLoadTime</th><th>ResourceCount</th><th>Total Payload(bytes)</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
                     } else {
-                        tableHeader = '<th>Time</th><th>PageLoadTime</th><th>SpeedIndex</th><th>FirstByte</th><th>FirstPaint</th><th>ServerTime</th><th>ClientProcessing</th><th>BackendTime</th><th>FullLoadTime</th><th>ResourceCount</th><th>Total Payload(bytes)</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
+                        tableHeader = '<th>Time</th><th>PageLoadTime</th><th>SpeedIndex</th><th>FirstByte</th><th>FirstPaint</th><th>ServerTime</th><th>FrontendTime</th><th>BackendTime</th><th>FullLoadTime</th><th>ResourceCount</th><th>Total Payload(bytes)</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';
                     }
                 } else {
                     tableHeader = '<th>Time</th><th>TotalPage Time</th><th>User Perceived Time</th><th>Backend Time</th><th>Resource Count</th><th>Payload</th><th>Score (S)</th><th>Recommendations</th><th>View HAR</th>';

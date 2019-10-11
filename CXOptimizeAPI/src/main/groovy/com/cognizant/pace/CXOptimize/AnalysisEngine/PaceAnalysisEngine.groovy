@@ -353,9 +353,11 @@ class PaceAnalysisEngine
         LOGGER.debug 'OUTPUT getComparisonReport :' + comparisonReport
         txnCalcMetrics.each {key,value ->
             //detailBreakUp = (ElasticSearchUtils.getSampleForDetailedAnalysis(configReader, key, (value."$comparisonPerc").toString(),configReader.CurrentRun.toString(),'Current')).hits.hits[0].'_source'
- 			detailSample = (ElasticSearchUtils.getSampleForDetailedAnalysis(configReader, key, (value."$comparisonPerc").toString(),configReader.CurrentRun.toString(),'Current')).hits.hits[0]
-            id = detailSample.'_id'
-            detailBreakUp = detailSample.'_source'
+ 			//detailSample = (ElasticSearchUtils.getSampleForDetailedAnalysis(configReader, key, (value."$comparisonPerc").toString(),configReader.CurrentRun.toString(),'Current')).hits.hits[0]
+            //id = detailSample.'_id'
+            id = value.sampleID
+            //detailSample = (ElasticSearchUtils.getSampleForDetailedAnalysisByID(configReader,id)).hits.hits[0]
+            detailBreakUp = (ElasticSearchUtils.getSampleForDetailedAnalysisByID(configReader,id)).'_source'
             LOGGER.debug 'OUTPUT getSampleForDetailedAnalysis :' + detailBreakUp
             if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
             {
@@ -436,8 +438,8 @@ class PaceAnalysisEngine
                     row.put('clientProcessing',(detailBreakUp?.clientProcessing == null ? 0 : detailBreakUp.clientProcessing))
                     row.put('visuallyComplete',(detailBreakUp?.visuallyComplete == null ? 0 : detailBreakUp.visuallyComplete))
                     row.put('domInteractive',(detailBreakUp?.renderingTime == null ? 0 : detailBreakUp.renderingTime))
-                    row.put('resourceCount',detailBreakUp.Resources.size)
-                    row.put('resourceSize',detailBreakUp?.resourceSize == null ? 0 : detailBreakUp?.resourceSize)
+                    row.put('resourceCount',value.HttpCount)
+                    row.put('resourceSize',value.Payload)
                     if(configReader?.isMarkAPIEnabled != null && configReader?.isMarkAPIEnabled)
                     {
                         def markSample = ElasticSearchUtils.extractMarkDetailsUsingID(configReader,id)
@@ -488,8 +490,8 @@ class PaceAnalysisEngine
                     row.put('url',detailBreakUp.url)
                     //row.put('resourceBlockTime',Double.parseDouble(PaceRuleEngine.calculateBlockingTime(detailBreakUp.Resources).toString()).round())
                     row.put('visuallyComplete',(detailBreakUp?.visuallyComplete == null ? 0 : detailBreakUp.visuallyComplete))
-                    row.put('resourceCount',detailBreakUp.Resources.size)
-                    row.put('resourceSize',detailBreakUp?.resourceSize == null ? 0 : detailBreakUp?.resourceSize)
+                    row.put('resourceCount',value.HttpCount)
+                    row.put('resourceSize',value.Payload)
                     row.put('clientProcessing',(value."$comparisonPerc" - (detailBreakUp?.resourceLoadTime == null ? 0 :  Double.parseDouble(detailBreakUp.resourceLoadTime.toString()).round())))
                     if(configReader?.isMarkAPIEnabled != null && configReader?.isMarkAPIEnabled)
                     {
@@ -1588,12 +1590,12 @@ class PaceAnalysisEngine
             def txnData = ElasticSearchUtils.extractAllSamples(configReader,configReader?.CurrentRun.toString(),args.txnName,'Current')
             def analysisList = []
             def row = [:]
-            def sampleCounter = (configReader?.samplesCount == null ? 10 : configReader?.samplesCount)
-            def cnt = 0
+            //def sampleCounter = (configReader?.samplesCount == null ? 10 : configReader?.samplesCount)
+            //def cnt = 0
             txnData.hits.hits.each {it ->
-                if(cnt < sampleCounter)
-                {
-                    cnt++
+                //if(cnt < sampleCounter)
+                //{
+                    //cnt++
                     if(configReader?.isNativeApp != null && configReader?.isNativeApp == true)
                     {
                         rulesOutput = PaceRuleEngine.applyNativeAppRules(it._source,configReader)
@@ -1644,7 +1646,7 @@ class PaceAnalysisEngine
                             row.put('resourceSize',it._source.resourceSize)
                             row.put('ttfbUser',(it._source?.ttfbUser == null ? 0 : it._source?.ttfbUser))
                             row.put('ttfbBrowser',(it._source?.ttfbBrowser == null ? 0 : it._source?.ttfbBrowser))
-                            row.put('ttfpUser',(it._source?.ttfbUser == null ? 0 : it._source?.ttfbUser))
+                            row.put('ttfpUser',(it._source?.ttfpUser == null ? 0 : it._source?.ttfpUser))
                             row.put('ttfpBrowser',(it._source?.ttfpBrowser == null ? 0 : it._source?.ttfpBrowser))
                             row.put('clientProcessing',(it._source?.clientProcessing == null ? 0 : it._source?.clientProcessing))
                             row.put('visuallyComplete',(it._source?.visuallyComplete == null ? 0 : it._source?.visuallyComplete))
@@ -1681,7 +1683,7 @@ class PaceAnalysisEngine
                         }
                     }
 
-                }
+                //}
 
                 analysisList.add(row.clone())
             }
