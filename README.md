@@ -3,9 +3,9 @@
 
 Cognizant CXOptimize is an open-source client side performance management tool that provides a interface for UI automation scripts to collect,analyze and report performance characteristics of web page transaction.
 
-[Cognizant Digital Engineering PACE Home](https://power2perform.cognizant.com/)
+[Cognizant Digital Engineering R2 Home](https://r2engineering.cognizant.com/)
 
-[CXOptimize Home](https://power2perform.cognizant.com/CXOptimize/CXOptimize.html)
+[CXOptimize Home](https://r2engineering.cognizant.com/cde/cxoptimize)
 
 ## Customer Engagement Survey
 
@@ -21,7 +21,7 @@ Thank you for trying out our solution please provide your valuable feedback to i
 
 ## Download
 
-Download the latest version from the [Releases](https://github.com/Cognizant-Digital-Engineering-PACE/CXOptimize/releases/tag/v2.0.3). After extracting the zip, follow the steps from [INSTALLATION.md](INSTALLATION.md)
+Download the latest version from the [Releases](https://github.com/Cognizant-Digital-Engineering-R2/CXOptimize/releases/tag/v2.0.3). After extracting the zip, follow the steps from [INSTALLATION.md](INSTALLATION.md)
 
 ## Documentation
 
