@@ -21,7 +21,7 @@ Thank you for trying out our solution please provide your valuable feedback to i
 
 ## Download
 
-Download the latest version from the [Releases](https://github.com/Cognizant-Digital-Engineering-R2/CXOptimize/releases/tag/v2.0.3). After extracting the zip, follow the steps from [INSTALLATION.md](INSTALLATION.md)
+Download the latest version from the [Releases](https://github.com/Cognizant-Digital-Engineering-R2/CXOptimize/releases/tag/v2.0.6). After extracting the zip, follow the steps from [INSTALLATION.md](INSTALLATION.md)
 
 ## Documentation
 
