@@ -23,7 +23,7 @@ CXOptimize supports 3 different types of collectors and they support different s
 
 | Metrics       | Selenium Java           | Selenium C#/VB.Net   | Selenium NodeJS   | CodedUI   | Chrome Plugin   | JavascriptCollector  | Comments   |
 | ------------- |:-------------:| -----:| -----:| -----:| -----:| -----:|
-| SPA Support   | Yes | Yes | Yes | Yes |  No | Yes | no support for Angular2/Angular4
+| SPA Support   | Yes | Yes | Yes | Yes |  No | Yes | no support for Angular2/Angular4 |
 | Resource Header   | Yes | Yes | Yes | Yes | No | No |
 | Navigation Timing   | Yes | Yes | Yes | Yes | Yes | Yes |
 | Resource Timing   | Yes | Yes | Yes | Yes | Yes | Yes |
